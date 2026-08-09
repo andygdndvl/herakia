@@ -24,8 +24,18 @@ ce qui a changé depuis. Il reste à publier ce dépôt sur GitHub (Tâche 10).
 - **Tokens Tailwind uniquement** : `bg-primary`, `bg-secondary`, `bg-elevated`, `green-primary`, `green-dark`, `text-primary`, `text-secondary`, `text-muted`, `border-subtle`, `border-green`. Jamais `bg-white` ni `bg-gray-*`.
 - **Polices** : `font-display` (Syne) pour les titres, `font-sans` (DM Sans) pour le corps, `font-mono` (JetBrains Mono) pour les labels. Chargées par `next/font`, jamais par CDN.
 - **Toute animation respecte `useReducedMotion()`** de Framer Motion, comme le reste du code.
-- **Aucun test automatisé n'existe sur ce projet** et le périmètre ne s'y prête pas. Le cycle de vérification de chaque tâche est : `npm run lint`, `npm run build`, puis capture d'écran comparée. Ne jamais commiter sans avoir lancé les deux commandes.
-- **Le serveur de dev tourne sur le port 3001** (le 3000 est pris par un autre projet). Vérifier avec `curl -s -o /dev/null -w "%{http_code}" http://localhost:3001/fr` avant toute capture.
+- **Aucun test automatisé n'existe sur ce projet** et le périmètre ne s'y prête pas. Le cycle de vérification de chaque tâche est : `npm run lint`, `npx tsc --noEmit`, capture d'écran comparée, puis `npm run build`. Ne jamais commiter sans avoir lancé lint et build.
+- **Ne jamais lancer `npm run build` pendant que le serveur de dev tourne.** Les deux écrivent dans le même dossier `.next` : le build corrompt le cache du serveur, qui se met à renvoyer des 500 sur les pages non encore visitées — un symptôme trompeur, puisque la page d'accueil déjà en cache continue de répondre 200. `npx tsc --noEmit` est sûr, lui, et détecte les mêmes erreurs de typage sans toucher à `.next`. D'où l'ordre imposé ci-dessus : le build vient en dernier, une fois les captures prises.
+
+  Reprise si le cas se produit quand même :
+
+  ```bash
+  lsof -nP -iTCP:3001 -sTCP:LISTEN | awk 'NR>1{print $2}' | xargs kill
+  rm -rf /Users/andy/onyxia/.next
+  cd /Users/andy/onyxia && npm run dev
+  ```
+
+- **Le serveur de dev tourne sur le port 3001** (le 3000 est pris par un autre projet). Next.js glisse au port libre suivant si 3001 est déjà occupé : toujours lire le port réel dans sa sortie plutôt que de le supposer. Vérifier avec `curl -s -o /dev/null -w "%{http_code}" http://localhost:3001/fr` avant toute capture, et contrôler une page interne (`/fr/services`) et non seulement `/fr`, pour ne pas se laisser abuser par le cache.
 
 ## Outil de vérification visuelle
 
