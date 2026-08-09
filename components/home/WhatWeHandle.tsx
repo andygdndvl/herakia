@@ -12,15 +12,14 @@ import {
   Slack,
   Linkedin,
   Users,
-  ShieldCheck,
   MousePointerClick,
-  Hexagon,
   CheckCircle2,
   type LucideIcon,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { fadeInUp, staggerContainer, viewportSettings } from '@/lib/animations';
 import { Button } from '@/components/ui/Button';
+import { LogoMark } from '@/components/ui/Logo';
 import { useLang, localize } from '@/components/i18n/LangProvider';
 
 interface Domain {
@@ -414,7 +413,7 @@ function ChaosBoard({
               animate={{ boxShadow: ['0 0 0 0 rgba(63,206,142,0.5)', '0 0 0 60px rgba(63,206,142,0)'] }}
               transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
             />
-            <Hexagon className="h-9 w-9" strokeWidth={1.75} />
+            <LogoMark className="h-9 w-9" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -448,7 +447,7 @@ function ChaosBoard({
               transition={{ boxShadow: { duration: 1.8, repeat: Infinity, ease: 'easeOut' } }}
               className="pointer-events-auto inline-flex cursor-pointer items-center gap-2.5 rounded-2xl bg-green-primary px-9 py-4 font-display text-lg font-bold text-bg-primary shadow-glow-green ring-2 ring-green-primary/50 ring-offset-4 ring-offset-transparent transition-colors hover:bg-green-dark"
             >
-              <ShieldCheck className="h-6 w-6" />
+              <LogoMark className="h-7 w-7" />
               {buttonLabel}
               <ArrowRight className="h-5 w-5" />
             </motion.button>
