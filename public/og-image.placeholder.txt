@@ -1,0 +1,18 @@
+REMPLACER PAR UN VRAI FICHIER og-image.jpg (1200x630)
+
+Cet emplacement attend une image Open Graph de 1200×630 px nommée
+exactement `og-image.jpg`, à la racine de /public.
+
+Recommandations :
+- Format : JPG (ou PNG si transparent)
+- Poids : < 200 Ko idéalement
+- Contenu : logo Herakia + tagline « Automatisation IA »
+- Couleur de fond : #0a0a0a (charte)
+- Couleur d’accent : #3ecf8e
+
+Outils possibles :
+- Figma / Canva (template OG 1200×630)
+- og-playground.com pour générer programmatiquement
+- /api/og avec @vercel/og si besoin de génération dynamique
+
+Une fois le fichier `og-image.jpg` ajouté, supprimer ce placeholder.
