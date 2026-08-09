@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, X, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { Logo } from '@/components/ui/Logo';
 import { useDict, useLang, localize } from '@/components/i18n/LangProvider';
 
 export function Navbar() {
@@ -43,18 +44,8 @@ export function Navbar() {
         }`}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-          <Link href={localize(lang, '/')} className="group relative flex items-center gap-2" aria-label="Herakia">
-            <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-green-subtle">
-              <span className="font-display text-lg font-bold text-green-primary">O</span>
-              <motion.span
-                className="absolute inset-0 rounded-lg bg-green-primary/20"
-                animate={prefersReducedMotion ? {} : { opacity: [0, 0.5, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              />
-            </span>
-            <span className="font-display text-xl font-bold tracking-tight text-text-primary">
-              Herakia
-            </span>
+          <Link href={localize(lang, '/')} className="group relative flex items-center" aria-label="Herakia">
+            <Logo className="h-8 w-auto transition-opacity duration-300 group-hover:opacity-80" />
           </Link>
 
           <ul className="hidden items-center gap-8 lg:flex">

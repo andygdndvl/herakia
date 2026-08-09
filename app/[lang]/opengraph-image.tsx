@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { locales } from '@/dictionaries';
+import { LOGO_MARK_PNG } from './og-logo';
 
 export const runtime = 'edge';
 export const size = { width: 1200, height: 630 };
@@ -59,20 +60,8 @@ export default function Image({ params }: { params: { lang: string } }) {
         />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '60px',
-              height: '60px',
-              borderRadius: '15px',
-              backgroundColor: 'rgba(62,207,142,0.12)',
-              border: '1px solid rgba(62,207,142,0.45)',
-            }}
-          >
-            <span style={{ color: '#3ecf8e', fontSize: '36px', fontWeight: 700 }}>O</span>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={LOGO_MARK_PNG} alt="" width={60} height={60} />
           <span
             style={{ color: '#f0f0f0', fontSize: '36px', fontWeight: 700, letterSpacing: '-0.02em' }}
           >

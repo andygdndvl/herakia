@@ -67,9 +67,9 @@ export async function generateMetadata({
     creator: 'Herakia',
     publisher: 'Herakia',
     icons: {
-      icon: '/favicon_herakia.png',
-      shortcut: '/favicon_herakia.png',
-      apple: '/favicon_herakia.png',
+      icon: '/favicon.png',
+      shortcut: '/favicon.png',
+      apple: '/apple-icon.png',
     },
     robots: {
       index: true,
@@ -127,9 +127,10 @@ export default async function LangLayout({
         url: SITE,
         logo: {
           '@type': 'ImageObject',
-          url: `${SITE}/logo.png`,
-          width: 512,
-          height: 512,
+          // Version à mot-marque foncé : les moteurs affichent ce logo sur fond clair.
+          url: `${SITE}/logo-herakia.png`,
+          width: 2256,
+          height: 556,
         },
         description: dict.meta.home.description,
         foundingDate: '2024',

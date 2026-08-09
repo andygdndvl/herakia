@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Mail } from 'lucide-react';
 import { useDict, useLang, localize } from '@/components/i18n/LangProvider';
+import { Logo } from '@/components/ui/Logo';
 
 export function Footer() {
   const dict = useDict();
@@ -45,13 +46,8 @@ export function Footer() {
       <div className="relative mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <Link href={localize(lang, '/')} className="flex items-center gap-2" aria-label="Herakia">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-subtle">
-                <span className="font-display text-lg font-bold text-green-primary">O</span>
-              </span>
-              <span className="font-display text-xl font-bold tracking-tight text-text-primary">
-                Herakia
-              </span>
+            <Link href={localize(lang, '/')} className="flex items-center" aria-label="Herakia">
+              <Logo className="h-8 w-auto" />
             </Link>
             <p className="mt-6 max-w-md font-sans text-sm leading-relaxed text-text-secondary">
               {dict.footer.tagline}
