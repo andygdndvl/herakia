@@ -1,26 +1,32 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Building2, Calendar, Check, Mail, MessageSquare, Send, User, Sparkles } from 'lucide-react';
+import { Building2, Calendar, Check, Mail, MessageSquare, Phone, Send, User, Sparkles } from 'lucide-react';
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { Badge } from '@/components/ui/Badge';
 import { useLang } from '@/components/i18n/LangProvider';
+import { isValidPhoneNumber } from 'react-phone-number-input';
+import { PhoneFormField } from './PhoneFormField'; 
 
 interface FormState {
   name: string;
   email: string;
+  phone: string;
   company: string;
+  need: string;
   message: string;
 }
 
 interface FormErrors {
   name?: string;
   email?: string;
+  phone?: string;
   company?: string;
+  need?: string;
   message?: string;
 }
 
-const initialState: FormState = { name: '', email: '', company: '', message: '' };
+const initialState: FormState = { name: '', email: '', phone: '', company: '', need: '', message: '' };
 
 const TEXT = {
   fr: {
@@ -35,13 +41,17 @@ const TEXT = {
     fields: {
       name: 'Votre nom',
       email: 'Email professionnel',
+      phone: 'Téléphone',
       company: 'Entreprise',
+      need: 'Service souhaité',
       message: 'Décrivez votre besoin',
     },
     placeholders: {
       name: 'Jeanne Dupont',
       email: 'jeanne@entreprise.com',
+      phone: '06 12 34 56 78',
       company: 'Acme Industries',
+      need: 'Sélectionne un service',
       message: 'Ex : automatiser notre qualification de leads B2B intégrée à HubSpot…',
     },
     submit: 'Envoyer le message',
@@ -55,9 +65,18 @@ const TEXT = {
       name: 'Veuillez indiquer votre nom.',
       emailRequired: 'Veuillez indiquer votre email.',
       emailInvalid: 'Email invalide.',
+      phone: 'Numéro de téléphone invalide.',
       company: 'Veuillez indiquer votre entreprise.',
+      need: 'Veuillez sélectionner un service.',
       message: 'Décrivez votre besoin en au moins 20 caractères.',
     },
+    serviceOptions: [
+      { value: 'automatisation', label: 'Automatisation' },
+      { value: 'assistant-ia', label: 'Assistant IA' },
+      { value: 'ia-conversationnelle', label: 'IA conversationnelle' },
+      { value: 'donnees', label: 'Données' },
+      { value: 'audit-conseil', label: 'Audit & conseil' },
+    ],
   },
   en: {
     badge: 'Start a project',
@@ -71,13 +90,17 @@ const TEXT = {
     fields: {
       name: 'Your name',
       email: 'Work email',
+      phone: 'Phone',
       company: 'Company',
+      need: 'Service needed',
       message: 'Describe your need',
     },
     placeholders: {
       name: 'Jane Doe',
       email: 'jane@company.com',
+      phone: '+1 555 123 4567',
       company: 'Acme Industries',
+      need: 'Select a service',
       message: 'e.g. automate our B2B lead qualification integrated with HubSpot…',
     },
     submit: 'Send message',
@@ -91,9 +114,18 @@ const TEXT = {
       name: 'Please enter your name.',
       emailRequired: 'Please enter your email.',
       emailInvalid: 'Invalid email.',
+      phone: 'Invalid phone number.',
       company: 'Please enter your company.',
+      need: 'Please select a service.',
       message: 'Describe your need in at least 20 characters.',
     },
+    serviceOptions: [
+      { value: 'automatisation', label: 'Automation' },
+      { value: 'assistant-ia', label: 'AI assistant' },
+      { value: 'ia-conversationnelle', label: 'Conversational AI' },
+      { value: 'donnees', label: 'Data' },
+      { value: 'audit-conseil', label: 'Audit & consulting' },
+    ],
   },
 } as const;
 
@@ -101,9 +133,13 @@ interface ErrorMessages {
   name: string;
   emailRequired: string;
   emailInvalid: string;
+  phone: string;
   company: string;
+  need: string;
   message: string;
 }
+
+const PHONE_RE = /^\+?\d{6,20}$/;
 
 function validate(values: FormState, messages: ErrorMessages): FormErrors {
   const errors: FormErrors = {};
@@ -113,7 +149,11 @@ function validate(values: FormState, messages: ErrorMessages): FormErrors {
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
     errors.email = messages.emailInvalid;
   }
+  if (!values.phone || !isValidPhoneNumber(values.phone)) {
+    errors.phone = messages.phone;
+  }
   if (!values.company.trim()) errors.company = messages.company;
+  if (!values.need) errors.need = messages.need;
   if (values.message.trim().length < 20) {
     errors.message = messages.message;
   }
@@ -230,6 +270,83 @@ function InputField({
   );
 }
 
+interface SelectFieldProps {
+  id: keyof FormState;
+  label: string;
+  value: string;
+  error?: string;
+  touched: boolean;
+  icon: React.ReactNode;
+  options: { value: string; label: string }[];
+  placeholder: string;
+  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onBlur: () => void;
+}
+
+function SelectField({
+  id,
+  label,
+  value,
+  error,
+  touched,
+  icon,
+  options,
+  placeholder,
+  onChange,
+  onBlur,
+}: SelectFieldProps) {
+  const showError = touched && !!error;
+  const showSuccess = touched && !error && value.length > 0;
+
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="mb-2 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-text-secondary"
+      >
+        <span className="text-green-primary/70">{icon}</span>
+        {label}
+      </label>
+      <select
+        id={id}
+        name={id}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        className={`w-full rounded-xl border bg-bg-elevated px-4 py-3 font-sans text-text-primary focus:outline-none focus:ring-2 ${
+          showError
+            ? 'border-red-500/50 focus:border-red-500/80 focus:ring-red-500/20'
+            : showSuccess
+              ? 'border-green-primary/50 focus:border-green-primary focus:ring-green-primary/20'
+              : 'border-border-subtle focus:border-green-primary/50 focus:ring-green-primary/20'
+        }`}
+      >
+        <option value="" disabled>
+          {placeholder}
+        </option>
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      <AnimatePresence>
+        {showError && (
+          <motion.p
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2 }}
+            className="mt-2 font-sans text-sm text-red-400"
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export function ContactContent() {
   const prefersReducedMotion = useReducedMotion();
   const t = TEXT[useLang()];
@@ -238,7 +355,9 @@ export function ContactContent() {
   const [touched, setTouched] = useState<Record<keyof FormState, boolean>>({
     name: false,
     email: false,
+    phone: false,
     company: false,
+    need: false,
     message: false,
   });
   const [submitting, setSubmitting] = useState(false);
@@ -254,6 +373,15 @@ export function ContactContent() {
     }
   };
 
+  const handlePhoneInputChange = (phoneVal: string | undefined) => {
+  const val = phoneVal ?? '';
+  setValues((v) => ({ ...v, phone: val }));
+
+  if (touched.phone) {
+    setErrors(validate({ ...values, phone: val }, t.errors));
+  }
+};
+
   const handleBlur = (field: keyof FormState) => {
     setTouched((tch) => ({ ...tch, [field]: true }));
     setErrors(validate(values, t.errors));
@@ -263,7 +391,7 @@ export function ContactContent() {
     e.preventDefault();
     const formErrors = validate(values, t.errors);
     setErrors(formErrors);
-    setTouched({ name: true, email: true, company: true, message: true });
+    setTouched({ name: true, email: true, phone: true, company: true, need: true, message: true });
 
     if (Object.keys(formErrors).length > 0) return;
 
@@ -402,6 +530,19 @@ export function ContactContent() {
                     onBlur={() => handleBlur('email')}
                   />
 
+                  {/* Remplacement du champ téléphone */}
+<PhoneFormField
+  id="phone"
+  label={t.fields.phone}
+  value={values.phone}
+  error={errors.phone}
+  touched={touched.phone}
+  icon={<Phone className="h-3.5 w-3.5" />}
+  placeholder={t.placeholders.phone}  
+  onChange={handlePhoneInputChange}
+  onBlur={() => handleBlur('phone')}
+/>
+
                   <InputField
                     id="company"
                     label={t.fields.company}
@@ -412,6 +553,25 @@ export function ContactContent() {
                     placeholder={t.placeholders.company}
                     onChange={handleChange}
                     onBlur={() => handleBlur('company')}
+                  />
+
+                  <SelectField
+                    id="need"
+                    label={t.fields.need}
+                    value={values.need}
+                    error={errors.need}
+                    touched={touched.need}
+                    icon={<Sparkles className="h-3.5 w-3.5" />}
+                    options={[...t.serviceOptions]}
+                    placeholder={t.placeholders.need}
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      setValues((v) => ({ ...v, need: value }));
+                      if (touched.need) {
+                        setErrors(validate({ ...values, need: value }, t.errors));
+                      }
+                    }}
+                    onBlur={() => handleBlur('need')}
                   />
 
                   <InputField
@@ -521,7 +681,7 @@ export function ContactContent() {
                     type="button"
                     onClick={() => {
                       setValues(initialState);
-                      setTouched({ name: false, email: false, company: false, message: false });
+                      setTouched({ name: false, email: false, phone: false, company: false, need: false, message: false });
                       setErrors({});
                       setSubmitted(false);
                       setSubmitError(null);

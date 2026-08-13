@@ -11,8 +11,26 @@ model ContactSubmission {
   createdAt DateTime @default(now())
   name      String
   email     String
+  phone     String
   company   String?
-  message   String
+  need      String
+  message   String?
   read      Boolean  @default(false)
+  processed Boolean  @default(false)
   emailSent Boolean  @default(false)
+}
+
+model TiaCall {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  conversationId String   @unique
+  agentId        String
+  status         String
+  startedAt      DateTime?
+  durationSecs   Int?
+  callSuccessful String?
+  summary        String?
+  transcript     Json
+  read           Boolean  @default(false)
+  processed      Boolean  @default(false)
 }

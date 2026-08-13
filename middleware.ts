@@ -18,7 +18,16 @@ function detectLocale(request: NextRequest): string {
 export default auth((request) => {
   const { pathname } = request.nextUrl;
 
-  // Zone admin : protégée par NextAuth, jamais de préfixe de langue
+  // API admin : protégée par NextAuth. Renvoie 401 (pas de redirection,
+  // c'est une API, pas une page à afficher).
+  if (pathname.startsWith('/api/admin')) {
+    if (!request.auth) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+    }
+    return NextResponse.next();
+  }
+
+  // Zone admin (pages) : protégée par NextAuth, jamais de préfixe de langue
   if (pathname.startsWith('/admin')) {
     if (!request.auth && pathname !== '/admin/login') {
       const loginUrl = new URL('/admin/login', request.url);
@@ -42,5 +51,6 @@ export default auth((request) => {
 export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|favicon|logo|andy.jpg|sitemap.xml|robots.txt|.*\\..*).*)',
+    '/api/admin/:path*',
   ],
 };
