@@ -14,6 +14,8 @@ export function Footer() {
 
   const product = [
     { name: dict.footer.linkServices, href: '/services' },
+    { name: dict.footer.linkMethod, href: '/#process' },
+    { name: dict.footer.linkOffres, href: '/offres' },
     { name: dict.footer.linkFaq, href: '/#faq' },
   ];
   const contact = [

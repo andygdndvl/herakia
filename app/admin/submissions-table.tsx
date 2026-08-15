@@ -18,6 +18,11 @@ type SubmissionRow = {
 };
 
 const NEED_LABELS: Record<string, string> = {
+  // Offres actuelles (page /offres)
+  'audit-diagnostic': 'Audit & Diagnostic',
+  'agents-ia': "Mise en place d'agents IA",
+  'systeme-automatise': 'Création d’un système automatisé complet',
+  // Anciens intitulés — conservés pour les leads déjà enregistrés
   automatisation: 'Automatisation',
   'assistant-ia': 'Assistant IA',
   'ia-conversationnelle': 'IA conversationnelle',
@@ -96,7 +101,7 @@ export function SubmissionsTable({ submissions }: { submissions: SubmissionRow[]
       <span>Email</span>
       <span>Téléphone</span>
       <span>Entreprise</span>
-      <span>Service</span>
+      <span>Offre</span>
       <span />
     </div>
   );
@@ -211,7 +216,7 @@ export function SubmissionsTable({ submissions }: { submissions: SubmissionRow[]
                 }
               />
               <DetailRow label="Entreprise" value={selected.company ?? '—'} />
-              <DetailRow label="Service" value={<NeedBadge need={selected.need} />} />
+              <DetailRow label="Offre" value={<NeedBadge need={selected.need} />} />
             </div>
 
             <div className="mt-4">

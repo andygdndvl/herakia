@@ -3,6 +3,7 @@ const fr = {
   nav: {
     home: 'Accueil',
     services: 'Services',
+    offres: 'Offres',
     demo : 'Démos',
     faq: 'FAQ',
     cta: 'Démarrer un projet',
@@ -19,6 +20,7 @@ const fr = {
     colContact: 'Contact',
     colLegal: 'Légal',
     linkServices: 'Services',
+    linkOffres: 'Offres',
     linkMethod: 'Méthode',
     linkFaq: 'FAQ',
     linkStart: 'Démarrer un projet',
@@ -55,6 +57,11 @@ const fr = {
       title: 'Contact — Démarrer votre projet IA',
       description:
         "Discutons de votre projet d'automatisation IA. Premier échange gratuit et sans engagement. Réponse sous 24h.",
+    },
+    offres: {
+      title: 'Offres — Nos formules d\'automatisation IA',
+      description:
+        "Trois formules pour automatiser votre entreprise avec l'IA : audit & diagnostic, mise en place d'agents IA, ou système automatisé complet. Sur-mesure, sur devis.",
     },
   },
   faq: {

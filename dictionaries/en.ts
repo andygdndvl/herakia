@@ -5,6 +5,7 @@ const en: Dictionary = {
   nav: {
     home: 'Home',
     services: 'Services',
+    offres: 'Offers',
     demo : 'Demos',
     faq: 'FAQ',
     cta: 'Start a project',
@@ -21,6 +22,7 @@ const en: Dictionary = {
     colContact: 'Contact',
     colLegal: 'Legal',
     linkServices: 'Services',
+    linkOffres: 'Offers',
     linkMethod: 'Method',
     linkFaq: 'FAQ',
     linkStart: 'Start a project',
@@ -57,6 +59,11 @@ const en: Dictionary = {
       title: 'Contact — Start your AI project',
       description:
         "Let's talk about your AI automation project. First conversation free and with no commitment. Reply within 24h.",
+    },
+    offres: {
+      title: 'Offers — Our AI automation plans',
+      description:
+        'Three plans to automate your business with AI: audit & assessment, AI agent implementation, or a complete automated system. Bespoke, quoted on request.',
     },
   },
   faq: {

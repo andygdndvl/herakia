@@ -27,6 +27,7 @@ export function Navbar() {
     { href: '/services', label: dict.nav.services },
     { href: '/demo', label: dict.nav.demo },
     { href: '/faq', label: dict.nav.faq },
+    { href: '/offres', label: dict.nav.offres },
   ];
 
   const otherLang = lang === 'fr' ? 'en' : 'fr';

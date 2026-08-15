@@ -5,11 +5,12 @@ const SITE = 'https://herakia.com';
 
 // Ne liste ici que les pages indexables (pas cgu/confidentialite/mentions-legales,
 // qui ont `robots: { index: false }` dans leur metadata).
-const paths = ['', '/services', '/demo', '/faq', '/contact'] as const;
+const paths = ['', '/services', '/offres', '/demo', '/faq', '/contact'] as const;
 
 const priorities: Record<(typeof paths)[number], number> = {
   '': 1,
   '/services': 0.9,
+  '/offres': 0.9,
   '/demo': 0.8,
   '/faq': 0.7,
   '/contact': 0.9,

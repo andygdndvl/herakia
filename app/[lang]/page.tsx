@@ -5,6 +5,7 @@ import { Personae } from '@/components/home/Personae';
 import { WhatIsAnAgent } from '@/components/home/WhatIsAnAgent';
 import { WhatWeHandle } from '@/components/home/WhatWeHandle';
 import { About } from '@/components/home/About';
+import { HowItWorks } from '@/components/home/HowItWorks';
 import { CTAFinal } from '@/components/home/CTAFinal';
 import { MeetTia } from '@/components/home/MeetTia';
 
@@ -19,6 +20,7 @@ export default function HomePage() {
         <WhatIsAnAgent />
         <WhatWeHandle />
         <About />
+        <HowItWorks />
         <CTAFinal />
       </main>
       <Footer />

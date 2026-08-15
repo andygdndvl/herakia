@@ -91,7 +91,7 @@ export async function POST(request: Request) {
     <p><strong>Email :</strong> ${escapeHtml(email)}</p>
     <p><strong>Téléphone :</strong> ${escapeHtml(phone)}</p>
     <p><strong>Entreprise :</strong> ${company ? escapeHtml(company) : '—'}</p>
-    <p><strong>Service souhaité :</strong> ${escapeHtml(need)}</p>
+    <p><strong>Offre souhaitée :</strong> ${escapeHtml(need)}</p>
     <p><strong>Message :</strong></p>
     <p style="white-space:pre-wrap">${escapeHtml(message)}</p>
   `;

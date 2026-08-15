@@ -22,7 +22,7 @@ interface Step {
 
 const TEXT = {
   fr: {
-    eyebrow: 'Méthode',
+    eyebrow: 'Notre méthode',
     title: 'Une méthode éprouvée en 4 étapes.',
     subtitle:
       "De l'audit initial au passage à l'échelle, chaque étape vise un livrable concret et mesurable.",
@@ -35,7 +35,7 @@ const TEXT = {
     ] as Step[],
   },
   en: {
-    eyebrow: 'Method',
+    eyebrow: 'Our method',
     title: 'A proven method in 4 steps.',
     subtitle:
       'From the initial assessment to scaling up, every step targets a concrete, measurable deliverable.',
