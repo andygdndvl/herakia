@@ -18,6 +18,9 @@ const config: Config = {
         'green-dark': '#2a9e6a',
         'green-glow': 'rgba(62, 207, 142, 0.15)',
         'green-subtle': 'rgba(62, 207, 142, 0.08)',
+        // Violet complémentaire (fond ambiant)
+        'violet-primary': '#6d5bf6',
+        'violet-glow': 'rgba(109, 91, 246, 0.38)',
         // Textes
         'text-primary': '#f0f0f0',
         'text-secondary': '#a0a0a0',

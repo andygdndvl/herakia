@@ -3,6 +3,7 @@ import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import '../globals.css';
 import { getDictionary, locales, isLocale, defaultLocale, type Locale } from '@/dictionaries';
 import { LangProvider } from '@/components/i18n/LangProvider';
+import { AmbientBackground } from '@/components/layout/AmbientBackground';
 import { notFound } from 'next/navigation';
 
 const syne = Syne({
@@ -178,6 +179,7 @@ export default async function LangLayout({
         />
       </head>
       <body>
+        <AmbientBackground />
         <LangProvider lang={lang} dict={dict}>
           {children}
         </LangProvider>

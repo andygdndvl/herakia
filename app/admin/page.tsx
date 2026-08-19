@@ -4,6 +4,11 @@ import { CallsTable } from './calls-table';
 import { prisma } from '@/lib/prisma';
 import { ContactSubmission } from '@prisma/client';
 
+// Sans ça, Next.js n'a aucun signal de "donnée dynamique" sur cette page
+// (pas de cookies()/headers() appelés ici) et la fige en statique au build :
+// les demandes reçues après le déploiement n'apparaissaient jamais.
+export const dynamic = 'force-dynamic';
+
 export default async function AdminPage() {
   const [submissions, calls] = await Promise.all([
     prisma.contactSubmission.findMany({
