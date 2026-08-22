@@ -6,7 +6,8 @@ import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { Badge } from '@/components/ui/Badge';
 import { useLang } from '@/components/i18n/LangProvider';
 import { isValidPhoneNumber } from 'react-phone-number-input';
-import { PhoneFormField } from './PhoneFormField'; 
+import { PhoneFormField } from './PhoneFormField';
+import { trackEvent } from '@/lib/gtag';
 
 interface FormState {
   name: string;
@@ -404,6 +405,7 @@ export function ContactContent() {
         throw new Error(data?.error ?? t.genericError);
       }
       setSubmitted(true);
+      trackEvent('generate_lead', { form_id: 'contact', need: values.need });
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : t.genericError);
     } finally {
