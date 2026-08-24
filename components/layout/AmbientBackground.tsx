@@ -14,11 +14,19 @@ export function AmbientBackground() {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden bg-bg-primary" aria-hidden="true">
       <motion.div
-        className="absolute -left-40 -top-40 h-[36rem] w-[36rem] rounded-full bg-green-glow blur-[120px]"
+        className="absolute -left-40 -top-40 h-[50rem] w-[50rem] rounded-full"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(62,207,142,0.22) 0%, rgba(62,207,142,0.08) 35%, transparent 70%)',
+        }}
         animate={drift([0, 60, 0], [0, 40, 0], 26)}
       />
       <motion.div
-        className="absolute bottom-[-14rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-green-glow blur-[130px] opacity-70"
+        className="absolute bottom-[-16rem] left-1/3 h-[42rem] w-[42rem] rounded-full"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(62,207,142,0.18) 0%, rgba(62,207,142,0.06) 35%, transparent 70%)',
+        }}
         animate={drift([0, 40, 0], [0, -30, 0], 30)}
       />
 
