@@ -18,14 +18,16 @@ export function AgentExplainer() {
   }, []);
 
   return (
-    <iframe
-      ref={ref}
-      src="/herakia-agent-explicatif.html"
-      title="Qu’est-ce qu’un agent IA ? — il perçoit, décide, agit"
-      loading="lazy"
-      scrolling="no"
-      className="w-full"
-      style={{ height, border: 0 }}
-    />
+    <div className="overflow-hidden rounded-3xl border border-border-subtle shadow-2xl">
+      <iframe
+        ref={ref}
+        src="/herakia-agent-explicatif.html"
+        title="Qu’est-ce qu’un agent IA ? — il perçoit, décide, agit"
+        loading="lazy"
+        scrolling="no"
+        className="block w-full"
+        style={{ height, border: 0 }}
+      />
+    </div>
   );
 }
