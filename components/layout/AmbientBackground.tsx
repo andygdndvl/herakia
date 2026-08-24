@@ -18,10 +18,6 @@ export function AmbientBackground() {
         animate={drift([0, 60, 0], [0, 40, 0], 26)}
       />
       <motion.div
-        className="absolute right-[-6rem] top-[10%] h-[38rem] w-[38rem] rounded-full bg-violet-glow blur-[120px]"
-        animate={drift([0, -50, 0], [0, 50, 0], 32)}
-      />
-      <motion.div
         className="absolute bottom-[-14rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-green-glow blur-[130px] opacity-70"
         animate={drift([0, 40, 0], [0, -30, 0], 30)}
       />
