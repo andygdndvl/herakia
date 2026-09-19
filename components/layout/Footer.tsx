@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'framer-motion';
 import { Mail } from 'lucide-react';
 import { useDict, useLang, localize } from '@/components/i18n/LangProvider';
 import { Logo } from '@/components/ui/Logo';
@@ -9,7 +8,6 @@ import { Logo } from '@/components/ui/Logo';
 export function Footer() {
   const dict = useDict();
   const lang = useLang();
-  const prefersReducedMotion = useReducedMotion();
   const year = 2026;
 
   const product = [
@@ -34,14 +32,8 @@ export function Footer() {
 
   return (
     <footer className="relative overflow-hidden border-t border-border-subtle bg-bg-secondary">
-      <motion.div
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-primary to-transparent"
-        animate={prefersReducedMotion ? {} : { opacity: [0.4, 0.9, 0.4] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        aria-hidden="true"
-      />
-      <motion.div
-        className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-green-primary/5 to-transparent"
+      <div
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-primary/60 to-transparent"
         aria-hidden="true"
       />
 

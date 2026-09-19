@@ -1,9 +1,8 @@
 'use client';
 
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu, X, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Logo } from '@/components/ui/Logo';
@@ -15,12 +14,28 @@ export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { scrollY, scrollYProgress } = useScroll();
-  const prefersReducedMotion = useReducedMotion();
+  const progressRef = useRef<HTMLDivElement>(null);
 
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    setScrolled(latest > 20);
-  });
+  // Fond au scroll + barre de progression de lecture (une mise à jour par frame)
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      setScrolled(y > 20);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
 
   const links = [
     { href: '/', label: dict.nav.home },
@@ -35,10 +50,7 @@ export function Navbar() {
 
   return (
     <>
-      <motion.header
-        initial={{ y: prefersReducedMotion ? 0 : -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      <header
         className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
           scrolled
             ? 'border-b border-border-subtle bg-bg-primary/80 backdrop-blur-xl'
@@ -92,15 +104,8 @@ export function Navbar() {
           </button>
         </nav>
 
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden border-t border-border-subtle bg-bg-primary/95 backdrop-blur-xl lg:hidden"
-            >
+        {mobileOpen && (
+            <div className="overflow-hidden border-t border-border-subtle bg-bg-primary/95 backdrop-blur-xl lg:hidden">
               <ul className="space-y-2 px-6 py-6">
                 {links.map((link) => (
                   <li key={link.href}>
@@ -129,16 +134,15 @@ export function Navbar() {
                   </Button>
                 </li>
               </ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        {!prefersReducedMotion && (
-          <motion.div
-            className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-green-primary"
-            style={{ scaleX: scrollYProgress }}
-          />
+            </div>
         )}
-      </motion.header>
+        <div
+          ref={progressRef}
+          className="absolute bottom-0 left-0 h-px w-full origin-left bg-green-primary"
+          style={{ transform: 'scaleX(0)' }}
+          aria-hidden="true"
+        />
+      </header>
     </>
   );
 }

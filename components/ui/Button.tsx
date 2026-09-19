@@ -1,6 +1,3 @@
-'use client';
-
-import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -26,13 +23,14 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const variantClasses: Record<Variant, string> = {
-  primary:
-    'bg-green-primary text-bg-primary font-semibold shadow-glow-green hover:bg-green-dark hover:shadow-glow-green-lg',
-  secondary:
-    'bg-transparent text-text-primary border border-border-subtle hover:border-green-primary/50 hover:bg-green-subtle',
-  ghost:
-    'bg-transparent text-text-secondary hover:text-text-primary',
+  primary: 'bg-green-primary text-on-green font-semibold hover:bg-green-dark',
+  secondary: 'bg-transparent text-text-primary border border-border-strong hover:border-green-primary/60 hover:bg-green-subtle',
+  ghost: 'bg-transparent text-text-secondary hover:text-text-primary',
 };
+
+// Micro-interactions sobres : léger enfoncement au clic, l'icône glisse au survol
+const base =
+  'group inline-flex items-center justify-center gap-2 rounded-full font-medium font-sans transition-[background-color,border-color,color,transform] duration-300 motion-safe:active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:transition-transform [&_svg]:duration-300 motion-safe:group-hover:[&_svg]:translate-x-1';
 
 export function Button({
   children,
@@ -45,33 +43,18 @@ export function Button({
   className = '',
   ariaLabel,
 }: ButtonProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const interactionProps = prefersReducedMotion
-    ? {}
-    : { whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 } };
-
-  const baseClasses = `inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-sans ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
+  const classes = `${base} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
 
   if (href) {
     return (
-      <motion.div {...interactionProps} className="inline-block">
-        <Link href={href} aria-label={ariaLabel} className={baseClasses}>
-          {children}
-        </Link>
-      </motion.div>
+      <Link href={href} aria-label={ariaLabel} className={classes}>
+        {children}
+      </Link>
     );
   }
-
   return (
-    <motion.button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      aria-label={ariaLabel}
-      className={baseClasses}
-      {...interactionProps}
-    >
+    <button type={type} onClick={onClick} disabled={disabled} aria-label={ariaLabel} className={classes}>
       {children}
-    </motion.button>
+    </button>
   );
 }
