@@ -1,45 +1,20 @@
-'use client';
-
-import { motion, useReducedMotion } from 'framer-motion';
-
 const NOISE_URL =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E";
 
+/** Fond éditorial : filets horizontaux fins + grain léger + vignettage. Statique, sans JS. */
 export function AmbientBackground() {
-  const prefersReducedMotion = useReducedMotion();
-
-  const drift = (x: number[], y: number[], duration: number) =>
-    prefersReducedMotion ? {} : { x, y, transition: { duration, repeat: Infinity, ease: 'easeInOut' } };
-
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-bg-primary" aria-hidden="true">
-      <motion.div
-        className="absolute -left-40 -top-40 h-[50rem] w-[50rem] rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle, rgba(62,207,142,0.22) 0%, rgba(62,207,142,0.08) 35%, transparent 70%)',
-        }}
-        animate={drift([0, 60, 0], [0, 40, 0], 26)}
-      />
-      <motion.div
-        className="absolute bottom-[-16rem] left-1/3 h-[42rem] w-[42rem] rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle, rgba(62,207,142,0.18) 0%, rgba(62,207,142,0.06) 35%, transparent 70%)',
-        }}
-        animate={drift([0, 40, 0], [0, -30, 0], 30)}
-      />
-
+    <div className="pointer-events-none fixed inset-0 -z-10 bg-bg-primary" aria-hidden="true">
+      <div className="absolute inset-0 bg-rules bg-rules-72 opacity-60" />
       <div
         className="absolute inset-0 opacity-[0.05] mix-blend-soft-light"
         style={{ backgroundImage: `url("${NOISE_URL}")` }}
       />
-
       <div
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 90% 70% at 50% 0%, transparent 0%, rgba(10,10,10,0.35) 60%, rgba(10,10,10,0.75) 100%)',
+            'radial-gradient(ellipse 90% 70% at 50% 0%, transparent 0%, rgba(8,8,8,0.35) 60%, rgba(8,8,8,0.8) 100%)',
         }}
       />
     </div>

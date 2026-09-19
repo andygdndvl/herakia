@@ -31,7 +31,7 @@ const jetbrainsMono = JetBrains_Mono({
 const SITE = 'https://herakia.com';
 
 export const viewport: Viewport = {
-  themeColor: '#0a0a0a',
+  themeColor: '#080808',
   width: 'device-width',
   initialScale: 1,
 };
@@ -172,8 +172,11 @@ export default async function LangLayout({
     <html
       lang={lang}
       className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
     >
       <head>
+        {/* Doit s'exécuter avant la première peinture : active le masquage des éléments animés */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

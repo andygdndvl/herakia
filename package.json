@@ -13,6 +13,7 @@
     "@elevenlabs/client": "^1.17.0",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
+    "animejs": "^4.5.0",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^11.11.17",
     "lucide-react": "^0.454.0",
@@ -21,13 +22,15 @@
     "pg": "^8.23.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-phone-number-input": "^3.4.17"
+    "react-phone-number-input": "^3.4.17",
+    "three": "^0.170.0"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
     "@types/pg": "^8.21.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/three": "^0.170.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.18",

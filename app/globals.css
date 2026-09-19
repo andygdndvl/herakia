@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #111111;
-  --bg-elevated: #1a1a1a;
+  --bg-primary: #080808;
+  --bg-secondary: #0f0f0f;
+  --bg-elevated: #161616;
   --green-primary: #3ecf8e;
   --green-dark: #2a9e6a;
   --green-glow: rgba(62, 207, 142, 0.15);
   --green-subtle: rgba(62, 207, 142, 0.08);
-  --text-primary: #f0f0f0;
+  --text-primary: #ededed;
   --text-secondary: #a0a0a0;
-  --text-muted: #555555;
+  --text-muted: #8a8a8a;
   --border: rgba(255, 255, 255, 0.08);
   --border-green: rgba(62, 207, 142, 0.3);
 }
@@ -86,5 +86,32 @@ select:-webkit-autofill {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  /* Titres éditoriaux : Syne serrée, interlignage court */
+  .h-display {
+    @apply font-display font-extrabold leading-[0.92] tracking-[-0.035em] text-text-primary;
+    text-wrap: balance;
+  }
+  .h-section {
+    @apply font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.03em] text-text-primary md:text-6xl lg:text-7xl;
+    text-wrap: balance;
+  }
+  .eyebrow {
+    @apply block font-mono text-xs uppercase tracking-[0.14em] text-green-primary;
+  }
+}
+
+/* Éléments animés par lib/anim : masqués uniquement si JS actif et mouvement autorisé,
+   pour éviter tout flash avant l'animation. Sans JS ou en mouvement réduit : visibles. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal],
+  .js [data-scroll-hidden] {
+    opacity: 0;
+  }
+  .js [data-split] {
+    visibility: hidden;
   }
 }
