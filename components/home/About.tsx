@@ -50,16 +50,21 @@ export function About() {
   // Photo révélée par un masque qui descend
   const photoRef = useAnime<HTMLDivElement>((el) => {
     el.style.clipPath = 'inset(0 0 100% 0)';
-    onceInView(el, () => {
-      animate(el, { clipPath: ['inset(0 0 100% 0)', 'inset(0 0 0% 0)'], duration: 900, ease: 'outExpo' });
+    let anim: ReturnType<typeof animate> | undefined;
+    const stop = onceInView(el, () => {
+      anim = animate(el, { clipPath: ['inset(0 0 100% 0)', 'inset(0 0 0% 0)'], duration: 900, ease: 'outExpo' });
     });
+    return () => {
+      stop();
+      anim?.revert();
+    };
   });
 
   return (
     <section id="about" className="relative overflow-hidden px-6 py-32 lg:px-8">
       <div className="mx-auto max-w-3xl">
         <span className="eyebrow">{t.eyebrow}</span>
-        <h2 ref={titleRef} data-split className="h-section mt-4">
+        <h2 ref={titleRef} data-split className="h-section mt-4 [&_[data-word]]:whitespace-nowrap">
           {t.titleLead}
           <span className="text-green-primary">{t.titleAccent}</span>.
         </h2>

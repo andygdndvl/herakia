@@ -165,16 +165,14 @@ export function useScrollProgress<T extends HTMLElement = HTMLElement>(
 
 /** Exécute une animation arbitraire dans un scope anime.js, annulée au démontage. */
 export function useAnime<T extends HTMLElement | SVGElement = HTMLElement>(
-  setup: (root: T) => void,
+  setup: (root: T) => void | (() => void),
   deps: DependencyList = [],
 ) {
   const ref = useRef<T>(null);
   useEffect(() => {
     const root = ref.current;
     if (!root || prefersReducedMotion()) return;
-    const scope = createScope({ root }).add(() => {
-      setup(root);
-    });
+    const scope = createScope({ root }).add(() => setup(root));
     return () => scope.revert();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
