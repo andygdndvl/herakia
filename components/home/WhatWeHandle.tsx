@@ -242,7 +242,7 @@ function TitleBadge() {
       initial={{ scale: 0, opacity: 0, y: -8 }}
       animate={inView ? { scale: 1, opacity: 1, y: 0 } : {}}
       transition={{ type: 'spring', stiffness: 300, damping: 13, delay: 0.35 }}
-      className="relative -top-4 ml-2.5 inline-flex h-10 min-w-[3rem] items-center justify-center rounded-full bg-red-500 px-3 align-top font-sans text-lg font-bold tabular-nums text-white shadow-[0_6px_20px_rgba(239,68,68,0.6)] md:-top-7 md:h-14 md:min-w-[4.2rem] md:px-4 md:text-2xl"
+      className="relative top-2 ml-2.5 inline-flex h-10 min-w-[3rem] items-center justify-center rounded-full bg-red-500 px-3 align-top font-sans text-lg font-bold tabular-nums text-white shadow-[0_6px_20px_rgba(239,68,68,0.6)] md:-top-7 md:h-14 md:min-w-[4.2rem] md:px-4 md:text-2xl"
       aria-hidden="true"
     >
       {count > 99 ? '+99' : count}
@@ -568,10 +568,6 @@ export function WhatWeHandle() {
 
   return (
     <section id="chantiers" className="relative overflow-hidden px-6 py-32 lg:px-8">
-      <div
-        className="absolute left-1/2 top-0 -z-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-green-primary/5 blur-[160px]"
-        aria-hidden="true"
-      />
       <div className="relative mx-auto max-w-6xl">
         <motion.div
           variants={staggerContainer}
@@ -581,13 +577,13 @@ export function WhatWeHandle() {
           className="mx-auto max-w-3xl text-center"
         >
           <motion.div variants={fadeInUp}>
-            <span className="font-mono text-xs uppercase tracking-widest text-green-primary">
+            <span className="eyebrow">
               {t.eyebrow}
             </span>
           </motion.div>
           <motion.h2
             variants={fadeInUp}
-            className="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl text-balance"
+            className="h-section mt-4"
           >
             {t.title}
             <TitleBadge />
