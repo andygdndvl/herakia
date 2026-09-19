@@ -57,7 +57,7 @@ export function Hero() {
           <h1
             ref={titleRef}
             data-split
-            className="h-display mt-6 text-[clamp(1.7rem,4.4vw,6.5rem)]"
+            className="h-display mt-6 text-[clamp(1.75rem,5.04vw,6.5rem)] [&_[data-word]]:whitespace-nowrap"
           >
             {titleLine1.join(' ')}
             <br />
