@@ -8,7 +8,7 @@ import { useLang, localize } from '@/components/i18n/LangProvider';
 const TEXT = {
   fr: {
     badge: 'Réponse sous 24h',
-    title: 'Prêt à libérer vos équipes ?',
+    title: 'Prêt à libérer vos équipes ?',
     body: "Premier échange gratuit et sans engagement. En 30 minutes, nous identifions ensemble vos deux meilleures opportunités d'automatisation IA.",
     ctaPrimary: 'Planifier un échange',
     ctaSecondary: 'Voir nos services',
