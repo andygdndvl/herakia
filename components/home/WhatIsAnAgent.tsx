@@ -2,9 +2,6 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import {
-  Eye,
-  Brain,
-  Zap,
   Clock,
   Users,
   UserPlus,
@@ -19,8 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { ArrowRight } from 'lucide-react';
-import { type AgentPhase } from '@/components/ui/AgentLoopSchema';
-import { AgentExplainer } from '@/components/home/AgentExplainer';
+import { AgentObjectSection } from '@/components/agent-object/AgentObjectSection';
 import { Button } from '@/components/ui/Button';
 import { useLang, localize } from '@/components/i18n/LangProvider';
 
@@ -37,16 +33,6 @@ interface Role {
 
 const TEXT = {
   fr: {
-    eyebrow: 'En clair',
-    title: 'Qu’est-ce qu’un agent IA ?',
-    body: 'Pas un simple chatbot. Un agent IA est un collaborateur numérique qui perçoit ce qui arrive, décide quoi faire selon vos règles, et agit dans vos outils — tout seul, en continu.',
-    highlight: 'La différence avec un chatbot ? Un agent ne se contente pas de répondre : il agit.',
-    loopLabel: 'En continu · 24/7',
-    phases: [
-      { icon: Eye, label: 'Perçoit', desc: 'Un email, une demande, un événement arrive.' },
-      { icon: Brain, label: 'Décide', desc: 'Il analyse le contexte et applique vos règles.' },
-      { icon: Zap, label: 'Agit', desc: 'Il répond, met à jour le CRM, planifie — dans vos outils.' },
-    ] as AgentPhase[],
     rolesIntro: 'Il prend le rôle que vous voulez',
     roles: [
       { icon: Calculator, label: 'Comptable' },
@@ -69,16 +55,6 @@ const TEXT = {
     demoCta: 'Voir un agent en action',
   },
   en: {
-    eyebrow: 'In plain terms',
-    title: 'What is an AI agent?',
-    body: 'Not just a chatbot. An AI agent is a digital coworker that perceives what comes in, decides what to do based on your rules, and acts in your tools — on its own, around the clock.',
-    highlight: 'The difference with a chatbot? An agent doesn’t just reply — it acts.',
-    loopLabel: 'Around the clock · 24/7',
-    phases: [
-      { icon: Eye, label: 'Perceives', desc: 'An email, a request, an event comes in.' },
-      { icon: Brain, label: 'Decides', desc: 'It reads the context and applies your rules.' },
-      { icon: Zap, label: 'Acts', desc: 'It replies, updates the CRM, schedules — in your tools.' },
-    ] as AgentPhase[],
     rolesIntro: 'It takes on whatever role you want',
     roles: [
       { icon: Calculator, label: 'Accountant' },
@@ -108,10 +84,10 @@ export function WhatIsAnAgent() {
   const reduced = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden px-6 py-32 lg:px-8">
+    <>
+    <AgentObjectSection />
+    <section className="relative overflow-hidden px-6 pb-32 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <AgentExplainer />
-
         {/* Métiers : un agent peut prendre n'importe quel rôle */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -197,5 +173,6 @@ export function WhatIsAnAgent() {
         </motion.div>
       </div>
     </section>
+    </>
   );
 }
