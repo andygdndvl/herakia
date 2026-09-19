@@ -242,7 +242,7 @@ function TitleBadge() {
       initial={{ scale: 0, opacity: 0, y: -8 }}
       animate={inView ? { scale: 1, opacity: 1, y: 0 } : {}}
       transition={{ type: 'spring', stiffness: 300, damping: 13, delay: 0.35 }}
-      className="relative top-2 ml-2.5 inline-flex h-10 min-w-[3rem] items-center justify-center rounded-full bg-red-500 px-3 align-top font-sans text-lg font-bold tabular-nums text-white shadow-[0_6px_20px_rgba(239,68,68,0.6)] md:-top-7 md:h-14 md:min-w-[4.2rem] md:px-4 md:text-2xl"
+      className="relative top-0 ml-2.5 inline-flex h-5 min-w-[2rem] items-center justify-center rounded-full bg-red-500 px-2 align-top font-sans text-xs font-bold tabular-nums text-white shadow-[0_6px_20px_rgba(239,68,68,0.6)] md:-top-7 md:h-14 md:min-w-[4.2rem] md:px-4 md:text-2xl"
       aria-hidden="true"
     >
       {count > 99 ? '+99' : count}
@@ -583,7 +583,7 @@ export function WhatWeHandle() {
           </motion.div>
           <motion.h2
             variants={fadeInUp}
-            className="h-section mt-4"
+            className="h-section mt-4 lg:!text-6xl"
           >
             {t.title}
             <TitleBadge />
