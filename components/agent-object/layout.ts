@@ -67,7 +67,7 @@ export function layoutCallouts(anchors: ScreenAnchor[], width: number): CalloutB
     for (const a of column) {
       const y = Math.max(a.y, next);
       next = y + ROW_GAP;
-      const colX = side === 'left' ? width * 0.07 : width * 0.93;
+      const colX = side === 'left' ? width * 0.015 : width * 0.96;
       const left = side === 'left' ? colX : colX - LABEL_WIDTH;
       const edge = side === 'left' ? colX + LABEL_WIDTH + 12 : colX - LABEL_WIDTH - 12;
       const knee = side === 'left' ? edge + 30 : edge - 30;

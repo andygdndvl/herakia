@@ -92,6 +92,10 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
   camera.position.set(8, 5.2, 10);
   camera.lookAt(0, 0, 0);
+  // La caméra ne bouge jamais après ce point : on fige sa matrice de vue tout de suite.
+  // Sans ça, le tout premier appel à render() (le seul appel en mouvement réduit, qui ne boucle pas
+  // en rAF) projetterait les ancres avec une matrice de vue identité, plaçant les légendes n'importe où.
+  camera.updateMatrixWorld();
 
   const disposables: Array<{ dispose(): void }> = [];
   const track = <T extends { dispose(): void }>(x: T): T => {
@@ -310,7 +314,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const antenna = solid(new CylinderGeometry(0.02, 0.02, 0.75, 12), GREEN, 0.9, 30);
     antenna.position.set(0.2, 0.52, -0.1);
     g.add(antenna);
-    addModule('connect', g, [0, 1.5, 0], 0, circlePts(0.55, 64, 'xz', [0, H / 2 + 0.004, 0]), V(0, H / 2 + 0.004, 0), V(0, 0.3, 0));
+    addModule('connect', g, [0, 1.15, 0], 0, circlePts(0.55, 64, 'xz', [0, H / 2 + 0.004, 0]), V(0, H / 2 + 0.004, 0), V(0, 0.3, 0));
   }
   // Haut-parleur — face avant, bas droite
   {
@@ -321,7 +325,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     speaker.position.z = 0.05;
     g.add(speaker);
     for (const r of [0.25, 0.17, 0.09]) g.add(segs(circlePts(r, 48, 'xy', [0, 0, 0.102]), GREEN, 0.6));
-    addModule('reply', g, [0.5, -0.35, 1.7], 1, circlePts(0.34, 48, 'xy', [0.48, -0.95, zf]), V(0.48, -0.95, zf), V(0, -0.1, 0.1));
+    addModule('reply', g, [0.5, -0.35, 1.3], 1, circlePts(0.34, 48, 'xy', [0.48, -0.95, zf]), V(0.48, -0.95, zf), V(0, -0.1, 0.1));
   }
 
   for (const l of drawn) l.userData.count = l.geometry.attributes.position.count;
@@ -341,7 +345,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       renderer.setSize(vw, vh, false);
       const aspect = vw / vh;
       // Assez de champ pour la vue éclatée, en paysage comme en portrait
-      const half = Math.max(4.1, 4.4 / aspect);
+      const half = Math.max(4.6, 4.4 / aspect);
       camera.left = -half * aspect;
       camera.right = half * aspect;
       camera.top = half;
@@ -352,7 +356,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     render({ explode, open, rotation, time, draw }) {
       root.rotation.y = rotation + Math.sin(time / 2600) * 0.02;
       root.rotation.x = -0.04 + explode * 0.06;
-      root.position.y = -0.1 + Math.sin(time / 1800) * 0.04;
+      root.position.y = -0.1 - explode * 0.4 + Math.sin(time / 1800) * 0.04;
 
       const sep = open * 0.55;
       leftHalf.position.x = -sep;
