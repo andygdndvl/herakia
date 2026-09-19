@@ -1,8 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useRef } from 'react';
 import { useLang } from '@/components/i18n/LangProvider';
+import { useScrollProgress } from '@/lib/anim';
 
 const logos = [
   { name: 'IPSSI', src: '/logos/ipssi.png', width: 592, height: 158, scale: 0.85 },
@@ -10,40 +11,44 @@ const logos = [
   { name: 'Privilux Riviera', src: '/logos/privilux-riviera.png', width: 788, height: 567, scale: 1 },
 ];
 
+const REPEAT = 4;
+
 export function TrustedBy() {
   const lang = useLang();
   const label = lang === 'en' ? 'Trusted by' : 'Ils nous ont fait confiance';
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Le bandeau avance d'une répétition pendant que la section traverse l'écran
+  const sectionRef = useScrollProgress<HTMLElement>(
+    (p) => {
+      if (trackRef.current) trackRef.current.style.transform = `translate3d(${-(100 / REPEAT) * p}%, 0, 0)`;
+    },
+    { enter: 'bottom top', leave: 'top bottom', sync: true },
+  );
 
   return (
-    <section
-      className="relative border-y border-border-subtle bg-bg-secondary/30 py-12"
-      aria-label={label}
-    >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <p className="mb-8 text-center font-mono text-xs uppercase tracking-widest text-text-muted">
-          {label}
-        </p>
-
-        <div className="flex flex-wrap items-center justify-center gap-x-20 gap-y-8">
-          {logos.map((logo, idx) => (
-            <motion.div
-              key={logo.name}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.08 }}
-              className="flex h-16 w-36 items-center justify-center md:h-20 md:w-44"
-            >
-              <Image
-                src={logo.src}
-                alt={logo.name}
-                width={logo.width}
-                height={logo.height}
-                className="h-full w-full object-contain opacity-80 brightness-0 invert"
-                style={{ transform: `scale(${logo.scale})` }}
-              />
-            </motion.div>
-          ))}
+    <section ref={sectionRef} className="relative border-y border-border-subtle py-12" aria-label={label}>
+      <p className="mb-8 text-center font-mono text-xs uppercase tracking-widest text-text-muted">{label}</p>
+      <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+        <div ref={trackRef} className="flex w-max items-center gap-20 will-change-transform">
+          {Array.from({ length: REPEAT }).flatMap((_, r) =>
+            logos.map((logo) => (
+              <div
+                key={`${r}-${logo.name}`}
+                className="flex h-16 w-36 shrink-0 items-center justify-center md:h-20 md:w-44"
+                aria-hidden={r > 0}
+              >
+                <Image
+                  src={logo.src}
+                  alt={r === 0 ? logo.name : ''}
+                  width={logo.width}
+                  height={logo.height}
+                  className="h-full w-full object-contain opacity-80 brightness-0 invert"
+                  style={{ transform: `scale(${logo.scale})` }}
+                />
+              </div>
+            )),
+          )}
         </div>
       </div>
     </section>
