@@ -1,9 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Quote, Star } from 'lucide-react';
 import { useLang } from '@/components/i18n/LangProvider';
 import { Card } from '@/components/ui/Card';
+import { useReveal } from '@/lib/anim';
 
 const TEXT = {
   fr: {
@@ -70,47 +70,34 @@ function initials(name: string) {
 
 export function GoogleReviews() {
   const t = TEXT[useLang()];
+  const headRef = useReveal<HTMLDivElement>();
+  const gridRef = useReveal<HTMLDivElement>({ stagger: 110 });
 
   return (
     <section className="relative px-6 py-24 lg:px-8" aria-label={t.eyebrow}>
       <div className="mx-auto max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}
-          className="mb-14 text-center"
-        >
-          <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-green-primary">
+        <div ref={headRef} className="mb-14 text-center">
+          <span data-reveal className="eyebrow inline-flex items-center gap-2">
             <GoogleG />
             {t.eyebrow}
           </span>
-          <h2 className="mt-4 font-display text-3xl font-bold leading-tight tracking-tight text-text-primary md:text-4xl">
+          <h2 data-reveal className="h-section mt-4 !text-4xl md:!text-5xl">
             {t.titleLead}
             <span className="text-green-primary">{t.titleAccent}</span>.
           </h2>
-        </motion.div>
+        </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {reviews.map((review, idx) => (
-            <motion.div
-              key={review.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.4, delay: idx * 0.1 }}
-            >
+        <div ref={gridRef} className="grid gap-6 md:grid-cols-3">
+          {reviews.map((review) => (
+            <div key={review.name} data-reveal>
               <Card hoverable className="relative flex h-full flex-col !p-6">
                 <Quote className="absolute right-5 top-5 h-8 w-8 text-text-muted/20" />
-
                 <div className="flex items-center gap-3">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-green-subtle font-display text-sm font-semibold text-green-primary">
                     {initials(review.name)}
                   </span>
                   <div>
-                    <p className="font-display text-sm font-semibold text-text-primary">
-                      {review.name}
-                    </p>
+                    <p className="font-display text-sm font-semibold text-text-primary">{review.name}</p>
                     <div className="mt-0.5 flex gap-0.5">
                       {Array.from({ length: review.rating }).map((_, i) => (
                         <Star key={i} className="h-3.5 w-3.5 fill-green-primary text-green-primary" />
@@ -118,12 +105,11 @@ export function GoogleReviews() {
                     </div>
                   </div>
                 </div>
-
                 <p className="relative mt-5 flex-1 font-sans text-sm leading-relaxed text-text-secondary">
                   {review.text}
                 </p>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

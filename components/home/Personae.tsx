@@ -1,9 +1,9 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { Quote } from 'lucide-react';
 import { useLang } from '@/components/i18n/LangProvider';
+import { useReveal } from '@/lib/anim';
 
 interface Persona {
   role: string;
@@ -97,41 +97,33 @@ const TEXT = {
 } as const;
 
 export function Personae() {
-  const prefersReducedMotion = useReducedMotion();
   const t = TEXT[useLang()];
   const personae: Persona[] = t.personae.map((p, i) => ({ ...p, imageSrc: IMAGES[i] }));
+  const headRef = useReveal<HTMLDivElement>();
+  const gridRef = useReveal<HTMLDivElement>({ y: 32, stagger: 110 });
+  const closingRef = useReveal<HTMLParagraphElement>({ delay: 200 });
 
   return (
     <section id="personae" className="relative overflow-hidden px-6 py-32 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto max-w-3xl text-center"
-        >
-          <span className="block font-mono text-xs uppercase tracking-widest text-green-primary">
+        <div ref={headRef} className="mx-auto max-w-3xl text-center">
+          <span data-reveal className="eyebrow">
             {t.eyebrow}
           </span>
-          <h2 className="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl text-balance">
+          <h2 data-reveal className="h-section mt-4">
             {t.title}
           </h2>
-          <p className="mt-6 font-sans text-lg leading-relaxed text-text-secondary md:text-xl">
+          <p data-reveal className="mt-6 font-sans text-lg leading-relaxed text-text-secondary md:text-xl">
             {t.subtitle}
           </p>
-        </motion.div>
+        </div>
 
-        <div className="mt-16 grid gap-6 lg:grid-cols-3">
-          {personae.map((persona, idx) => (
-            <motion.article
+        <div ref={gridRef} className="mt-16 grid gap-6 lg:grid-cols-3">
+          {personae.map((persona) => (
+            <article
               key={persona.role}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              whileHover={prefersReducedMotion ? undefined : { y: -6 }}
-              className="group relative overflow-hidden rounded-2xl border border-border-subtle bg-bg-secondary/60 backdrop-blur-md transition-all duration-300 hover:border-border-green hover:shadow-glow-green-sm"
+              data-reveal
+              className="group relative overflow-hidden rounded-2xl border border-border-subtle bg-bg-secondary/60 backdrop-blur-md transition-[transform,border-color] duration-300 hover:border-border-green motion-safe:hover:-translate-y-1.5"
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden">
                 <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
@@ -146,10 +138,6 @@ export function Personae() {
                     className="absolute inset-0 bg-gradient-to-t from-bg-secondary via-bg-secondary/40 to-transparent"
                     aria-hidden="true"
                   />
-                  <div
-                    className="absolute inset-0 bg-gradient-to-br from-green-primary/15 via-transparent to-transparent mix-blend-soft-light"
-                    aria-hidden="true"
-                  />
                 </div>
                 <div className="absolute left-5 top-5">
                   <span className="rounded-full border border-border-green bg-bg-primary/80 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-green-primary backdrop-blur-md">
@@ -159,14 +147,10 @@ export function Personae() {
               </div>
 
               <div className="relative p-6 md:p-7">
-                <Quote
-                  className="absolute right-5 top-5 h-12 w-12 text-green-primary/10"
-                  aria-hidden="true"
-                />
+                <Quote className="absolute right-5 top-5 h-12 w-12 text-green-primary/10" aria-hidden="true" />
                 <p className="font-display text-lg font-semibold leading-snug text-text-primary md:text-xl text-balance">
                   « {persona.quote} »
                 </p>
-
                 <ul className="mt-6 space-y-3">
                   {persona.pains.map((pain) => (
                     <li
@@ -179,19 +163,17 @@ export function Personae() {
                   ))}
                 </ul>
               </div>
-            </motion.article>
+            </article>
           ))}
         </div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.6 }}
+        <p
+          ref={closingRef}
+          data-reveal
           className="mt-12 text-center font-sans text-base text-text-secondary"
         >
           {t.closing}
-        </motion.p>
+        </p>
       </div>
     </section>
   );
