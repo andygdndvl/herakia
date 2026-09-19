@@ -1,6 +1,7 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { animate, onScroll } from 'animejs';
+import { useAnime, useReveal } from '@/lib/anim';
 import {
   Clock,
   Users,
@@ -81,30 +82,27 @@ const TEXT = {
 export function WhatIsAnAgent() {
   const lang = useLang();
   const t = TEXT[lang];
-  const reduced = useReducedMotion();
+  const revealRef = useReveal<HTMLDivElement>({ stagger: 140 });
+  // Défilement continu des métiers, en pause hors écran
+  const marqueeRef = useAnime<HTMLDivElement>((track) => {
+    animate(track, { x: ['0%', '-50%'], duration: 24000, ease: 'linear', loop: true, autoplay: onScroll({ target: track }) });
+  });
 
   return (
     <>
     <AgentObjectSection />
     <section className="relative overflow-hidden px-6 pb-32 lg:px-8">
-      <div className="mx-auto max-w-6xl">
+      <div ref={revealRef} className="mx-auto max-w-6xl">
         {/* Métiers : un agent peut prendre n'importe quel rôle */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6 }}
+        <div
+          data-reveal
           className="mt-16 border-t border-border-subtle pt-10 text-center"
         >
           <p className="font-mono text-xs uppercase tracking-widest text-green-primary">
             {t.rolesIntro}
           </p>
           <div className="relative mt-8 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-            <motion.div
-              className="flex w-max gap-6 md:gap-8"
-              animate={reduced ? {} : { x: ['0%', '-50%'] }}
-              transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
-            >
+            <div ref={marqueeRef} className="flex w-max gap-6 md:gap-8">
               {[...t.roles, ...t.roles].map((role, i) => {
                 const Icon = role.icon;
                 return (
@@ -117,19 +115,16 @@ export function WhatIsAnAgent() {
                   </span>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
           <p className="mx-auto mt-8 max-w-2xl font-display text-xl font-medium leading-snug text-text-primary text-balance md:text-2xl">
             {t.rolesPunch}
           </p>
-        </motion.div>
+        </div>
 
         {/* Bénéfices concrets pour le client */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+        <div
+          data-reveal
           className="mt-16 border-t border-border-subtle pt-10"
         >
           <p className="text-center font-mono text-xs uppercase tracking-widest text-green-primary">
@@ -156,21 +151,18 @@ export function WhatIsAnAgent() {
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         {/* Renvoi vers la page démo */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.6, delay: 0.15 }}
+        <div
+          data-reveal
           className="mt-12 flex justify-center"
         >
           <Button href={localize(lang, '/demo')} variant="primary" size="lg">
             {t.demoCta}
             <ArrowRight className="h-5 w-5" />
           </Button>
-        </motion.div>
+        </div>
       </div>
     </section>
     </>
