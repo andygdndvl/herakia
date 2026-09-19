@@ -42,8 +42,10 @@ que la page soit plus lente qu'aujourd'hui.
   mise en page et leurs animations ne sont pas retravaillées.
 - **Suppression complète de Framer Motion** : les pages secondaires l'utilisent
   encore (via `ContactContent`, `AgentDemos`, `OffresList`, `ServicesList`, les
-  démos d'agents…). La dépendance est conservée ; sa suppression définitive est
-  un chantier ultérieur.
+  démos d'agents…), ainsi que deux éléments de la home trop chorégraphiés pour
+  un portage rentable : la démo interactive `WhatWeHandle` et la modale
+  `TiaCall`. La dépendance est conservée ; sa suppression définitive est un
+  chantier ultérieur.
 - **Rendu 3D photoréaliste** : écarté au profit du rendu au trait. Un rendu
   photoréaliste commandé plus tard pourrait remplacer l'objet sans toucher au
   reste.
@@ -56,7 +58,7 @@ que la page soit plus lente qu'aujourd'hui.
 | Directions écartées | « Lumière vivante » (fond WebGL) ; « Contraste franc » (fond clair) |
 | Moteur d'animation | **anime.js v4** pour toutes les animations de la home |
 | React Bits | Au cas par cas uniquement, si un composant sert un besoin précis ; aucun n'est prévu à ce stade |
-| Framer Motion | Retiré de tous les composants de la home et du layout ; conservé ailleurs (cf. hors périmètre) |
+| Framer Motion | Retiré des sections de la home, du layout et des composants partagés (Button, Badge, Card, Navbar, Footer) ; conservé dans `WhatWeHandle`, `TiaCall` et les pages secondaires |
 | Pièce maîtresse | Objet « agent Herakia » au trait, en 3D (three.js), dans la section « Qu'est-ce qu'un agent IA ? » — **pas en hero** |
 | Rendu de l'objet | Traits (arêtes) sur fond noir, lignes cachées masquées ; pas de photoréalisme |
 
@@ -65,7 +67,7 @@ que la page soit plus lente qu'aujourd'hui.
 ## 1. Charte couleurs
 
 Tokens centralisés dans `tailwind.config.ts` et `app/globals.css`. Aucune
-couleur en dur dans les composants.
+couleur en dur dans les fichiers créés ou réécrits par la refonte.
 
 ### Fonds
 
@@ -122,12 +124,12 @@ signature ; une seule section a droit au grand spectacle.
 | 1 | `Hero` | Titre géant révélé lettre par lettre (masque, `splitText`) ; courbe verte tracée au chargement ; bloc qui glisse et s'estompe au scroll. **Suppression du `ParticleField`** (canvas). |
 | 2 | `TrustedBy` | Bandeau de logos dont le défilement horizontal est lié au scroll vertical. |
 | 3 | `Personae` | Cartes révélées en cascade à l'entrée dans l'écran. |
-| 4 | `MeetTia` | Logique d'appel inchangée ; onde vocale SVG animée pendant que Tia parle. |
+| 4 | `MeetTia` | Logique d'appel inchangée ; onde vocale SVG animée en boucle discrète sur la carte (Tia « en ligne »), en pause hors écran. |
 | 5 | `WhatIsAnAgent` | ⭐ **Pièce maîtresse** (section 3 ci-dessous). Métiers et bénéfices conservés en dessous, révélations légères. |
-| 6 | `WhatWeHandle` | Démo interactive conservée ; restylée à la charte, animations Framer portées en anime.js. |
+| 6 | `WhatWeHandle` | Démo interactive conservée avec ses animations Framer ; restylée à la charte (tokens, titres). |
 | 7 | `About` | Titre en grande typo révélé par mots ; photo révélée par masque. |
 | 8 | `GoogleReviews` | Avis révélés en cascade. |
-| 9 | `HowItWorks` | Fil vert qui se dessine d'étape en étape, lié au scroll (`createDrawable`). |
+| 9 | `HowItWorks` | Fil vert qui se dessine d'étape en étape, lié au scroll (tracé SVG piloté par la progression). |
 | 10 | `CTAFinal` | Grande typo, révélation forte : dernier moment marquant. |
 
 ### Transversal
@@ -169,18 +171,22 @@ Référence d'esprit : la vue éclatée synchronisée au scroll de animejs.com
 | Haut-parleur (face avant) | vert | **Répond** — par écrit ou à la voix | **Replies** |
 
 Les trois premiers libellés reprennent les phases existantes du bloc
-(Perçoit / Décide / Agit). Textes définitifs FR et EN dans les dictionnaires ;
-les descriptions ci-dessus sont une base à relire.
+(Perçoit / Décide / Agit). Textes FR et EN dans
+`components/agent-object/content.ts`, comme les autres sections qui portent
+leurs textes dans un objet `TEXT` local ; les descriptions ci-dessus sont une
+base à relire.
 
 ### Composition
 
 - Section épinglée (`position: sticky`) sur environ 3 hauteurs d'écran.
-- Colonne gauche : eyebrow « En clair », titre « Qu'est-ce qu'un agent IA ? »,
-  paragraphe existant.
-- Droite : l'objet ; les légendes se placent en colonnes de part et d'autre,
+- En haut à gauche : eyebrow « En clair », titre « Qu'est-ce qu'un agent IA ? »,
+  paragraphe existant. Ce bloc s'efface quand les légendes arrivent.
+- Au centre : l'objet ; les légendes se placent en colonnes de part et d'autre,
   reliées à leur pièce par une ligne de rappel.
-- Les légendes sont du **HTML réel** (indexable, traduisible) ; le canvas 3D est
-  `aria-hidden`.
+- Les six capacités existent aussi en **HTML réel rendu côté serveur**
+  (indexable, lu par les lecteurs d'écran) : liste visible sur mobile,
+  `sr-only` sur desktop. Les légendes dessinées par-dessus l'objet et le canvas
+  sont `aria-hidden`.
 - Remplace le composant `AgentExplainer` (iframe vers
   `public/herakia-agent-explicatif.html`), qui est supprimé avec son fichier HTML.
 
@@ -243,18 +249,22 @@ circuitant l'animation quand `prefers-reduced-motion` est actif :
 | `useDrawPath` | Trace un chemin SVG (`createDrawable`), au chargement ou lié au scroll. |
 | `useScrollProgress` | Expose la progression 0→1 d'une section via `onScroll({ sync })`. |
 
-Chaque section consomme ces hooks plutôt que d'appeler anime.js directement.
+Plus un hook générique `useAnime(setup)` qui exécute une animation arbitraire
+dans un scope. Toute animation de section passe par un de ces hooks (scope,
+nettoyage, mouvement réduit gérés au même endroit). Seul le pilote de l'objet
+(`AgentStage`) manipule anime.js et three.js directement.
 
 ### Objet (`components/agent-object/`)
 
 | Fichier | Responsabilité |
 |---|---|
 | `AgentObjectSection.tsx` | Section épinglée, colonne texte, chargement différé de la scène, bascules mobile / mouvement réduit / sans WebGL. |
-| `scene.ts` | Construction de la géométrie (monolithe, modules, gravures, câbles, logements) ; aucun React. Expose `update(progress)` et `dispose()`. |
-| `AgentObjectCanvas.tsx` | Monte le renderer three.js, relie `useScrollProgress` à `scene.update`, projette les points d'ancrage vers l'écran. |
-| `Callouts.tsx` | Légendes HTML et lignes de rappel SVG, positionnées depuis les ancrages projetés ; version liste pour mobile. |
+| `scene.ts` | Construction de la géométrie (monolithe en deux moitiés, cœur, modules, gravures, câbles, logements) ; aucun React. Expose `resize`, `render(état)` → ancrages projetés, `dispose`. |
+| `layout.ts` | Fonctions pures : phases de la chorégraphie à partir de la progression, placement des légendes sans chevauchement. |
+| `AgentStage.tsx` | Chargé à la demande : canvas, boucle de rendu, légendes desktop et lignes de rappel positionnées depuis les ancrages projetés. |
+| `content.ts` | Textes FR/EN de la section et des six capacités. |
 
-Contenu des légendes : `dictionaries/fr.ts` et `dictionaries/en.ts`.
+Contenu des légendes : `components/agent-object/content.ts` (FR/EN).
 
 ### Dépendances
 
@@ -299,9 +309,10 @@ Un commit par étape, pour que chacune soit visible et réversible.
 ### Vérification finale
 
 - three.js absent du chargement initial de la home (vérifié dans le réseau).
-- Poids JS du premier chargement de la home inférieur ou égal à l'état actuel
-  (le retrait du `ParticleField` et de Framer Motion sur la home compense
-  l'ajout d'anime.js).
+- Poids JS du premier chargement de la home (« First Load JS » de
+  `/[lang]` dans la sortie de `npm run build`) au plus 25 Ko au-dessus de
+  l'état de départ : Framer Motion reste chargé par `WhatWeHandle`, anime.js
+  s'ajoute.
 - Lighthouse (mobile) performance et accessibilité comparés à l'état de départ :
   aucune régression.
 
