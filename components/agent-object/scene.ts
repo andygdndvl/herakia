@@ -5,6 +5,7 @@ import {
   CatmullRomCurve3,
   CylinderGeometry,
   EdgesGeometry,
+  Fog,
   Group,
   IcosahedronGeometry,
   Line,
@@ -25,6 +26,28 @@ import type { PartId, ScreenAnchor } from './layout';
 const GREEN = 0x3ecf8e;
 const WHITE = 0xdedede;
 const BG = 0x080808;
+
+// ── Hiérarchie des traits ──────────────────────────────────────────────────
+// Trois niveaux seulement : au-delà, la multiplication des valeurs intermédiaires
+// ramène le « lavis gris » que cette hiérarchie doit supprimer.
+/** silhouettes et arêtes principales des volumes (étages, pièces, couvercle) */
+const L1 = 0.95;
+/** détails fonctionnels : rainures, gorges, plaques, vis, embouts */
+const L2 = 0.55;
+/** textures répétées : moletage, graduations, couronnes de crans, câbles */
+const L3 = 0.3;
+// Le vert garde sa propre échelle : les pièces sont dix fois plus petites que le fût à l'écran,
+// aux valeurs blanches leur niveau 3 passerait sous le seuil de lisibilité. Même logique, plancher relevé.
+const G1 = 0.95;
+const G2 = 0.62;
+const G3 = 0.42;
+
+// ── Fondu de profondeur ────────────────────────────────────────────────────
+// Caméra orthographique fixe à ~13.8 unités de l'origine ; le fût occupe ±1.1 autour d'elle et les
+// pièces éclatées ±3.5. Brouillard linéaire de la couleur du fond : les traits arrière s'éteignent
+// vers le noir sans jamais disparaître (à l'arrière du fût il reste ~60 % de l'intensité nominale).
+const FOG_NEAR = 11.8;
+const FOG_FAR = 17.6;
 
 export interface SceneState {
   explode: number;
@@ -252,6 +275,9 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   const scene = new Scene();
+  // Fondu de profondeur : `LineBasicMaterial.fog` et `LineDashedMaterial.fog` sont à true par
+  // défaut, tous les traits en profitent sans autre réglage. Les volumes pleins sont déjà à `BG`.
+  scene.fog = new Fog(BG, FOG_NEAR, FOG_FAR);
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
   camera.position.set(8, 5.2, 10);
   camera.lookAt(0, 0, 0);
@@ -282,7 +308,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   };
 
   /** Volume plein (masque les traits cachés) + ses arêtes. */
-  function solid(geo: BufferGeometry, color = WHITE, opacity = 0.9, threshold = 20): Group {
+  function solid(geo: BufferGeometry, color = WHITE, opacity = L1, threshold = 20): Group {
     const g = new Group();
     g.add(new Mesh(track(geo), fill));
     const l = new LineSegments(track(new EdgesGeometry(geo, threshold)), lineMat(color, opacity));
@@ -305,14 +331,14 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
    * Étage tourné d'une pièce, coaxial à +Z : c'est la brique des bagues de barillet et des pavillons.
    * Deux arêtes circulaires seulement (seuil 30° → pas de génératrice tant que n ≥ 12).
    */
-  function stageZ(r: number, z0: number, z1: number, n: number, opacity = 0.95): Group {
+  function stageZ(r: number, z0: number, z1: number, n: number, opacity = G1): Group {
     const s = solid(new CylinderGeometry(r, r, Math.abs(z1 - z0), n), GREEN, opacity, 30);
     s.rotation.x = Math.PI / 2;
     s.position.z = (z0 + z1) / 2;
     return s;
   }
   /** Même chose, coaxial à X : corps et tige du vérin. */
-  function stageX(r: number, x0: number, x1: number, n: number, opacity = 0.95): Group {
+  function stageX(r: number, x0: number, x1: number, n: number, opacity = G1): Group {
     const s = solid(new CylinderGeometry(r, r, Math.abs(x1 - x0), n), GREEN, opacity, 30);
     s.rotation.z = Math.PI / 2;
     s.position.x = (x0 + x1) / 2;
@@ -366,7 +392,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   const rings: Group[] = RING_SPECS.map((spec) => {
     const g = new Group();
     g.position.set(0, spec.y, 0);
-    g.add(solid(new CylinderGeometry(spec.r, spec.r, spec.h, 48), WHITE, 0.95, 30));
+    g.add(solid(new CylinderGeometry(spec.r, spec.r, spec.h, 48), WHITE, L1, 30));
     root.add(g);
     return g;
   });
@@ -374,40 +400,39 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   // ── Volumes secondaires : les seuls décrochements du fût (quelques pour cent de rayon) ──
   // (enfants des étages : ils suivent l'écartement, aucun index d'étage n'est ajouté)
   {
-    const plinth = solid(new CylinderGeometry(1.0, 1.0, 0.07, 40), WHITE, 0.85, 30);
+    const plinth = solid(new CylinderGeometry(1.0, 1.0, 0.07, 40), WHITE, L1, 30);
     plinth.position.y = -RING_SPECS[0].h / 2 - 0.035;
     rings[0].add(plinth);
     for (const s of [-1, 1]) {
-      const lip = solid(new CylinderGeometry(1.1, 1.1, 0.035, 44), WHITE, 0.8, 30);
+      const lip = solid(new CylinderGeometry(1.1, 1.1, 0.035, 44), WHITE, L1, 30);
       lip.position.y = s * (RING_SPECS[2].h / 2 + 0.017);
       rings[2].add(lip);
     }
-    const collar = solid(new CylinderGeometry(0.92, 0.92, 0.05, 36), WHITE, 0.8, 30);
+    const collar = solid(new CylinderGeometry(0.92, 0.92, 0.05, 36), WHITE, L1, 30);
     collar.position.y = -RING_SPECS[4].h / 2 - 0.025;
     rings[4].add(collar);
     // Couvercle usiné du sommet : la couronne d'accouplement verte a quitté la tête pour l'embase,
     // le fût retrouve un couvercle blanc à cadran gravé (cf. gravures plus bas).
-    const lid = solid(new CylinderGeometry(LID_R, LID_R, LID_H, 20), WHITE, 0.85, 30);
+    const lid = solid(new CylinderGeometry(LID_R, LID_R, LID_H, 20), WHITE, L1, 30);
     lid.position.y = RING_SPECS[4].h / 2 + LID_H / 2;
     rings[4].add(lid);
   }
 
   // ── Gravures : sur un fût droit, l'essentiel se joue sur le flanc. Tous les traits d'un étage
   // sont fusionnés en trois LineSegments (un par niveau de gris) pour limiter les appels de rendu.
-  const engraveStrong = lineMat(WHITE, 0.58);
-  const engraveMid = lineMat(WHITE, 0.4);
-  const engraveFaint = lineMat(WHITE, 0.26);
+  // Deux niveaux ici seulement : le niveau 1 est porté par les arêtes des volumes (`solid`).
+  const engraveDetail = lineMat(WHITE, L2);
+  const engraveTexture = lineMat(WHITE, L3);
   for (let i = 0; i < rings.length; i++) {
     const spec = RING_SPECS[i];
     const d = RING_DETAILS[i];
     const rim = spec.r + 0.004;
-    const strong: Vector3[] = [];
-    const mid: Vector3[] = [];
-    const faint: Vector3[] = [];
+    const detail: Vector3[] = [];
+    const texture: Vector3[] = [];
 
     // Rainures tournées. Celles posées près des arêtes (±0.4) font office de gorge de jointure :
     // sur un fût droit, c'est elle qui marque la séparation des étages, pas un décrochement.
-    for (const f of d.grooves) mid.push(...circlePts(rim, cseg(spec.r), 'xz', [0, f * spec.h, 0]));
+    for (const f of d.grooves) detail.push(...circlePts(rim, cseg(spec.r), 'xz', [0, f * spec.h, 0]));
 
     // Graduations fines (longueurs alternées, repère long tous les cinq).
     for (let k = 0; k < d.grad; k++) {
@@ -416,7 +441,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       const gx = Math.cos(a) * rim;
       const gz = Math.sin(a) * rim;
       const y = d.gradY * spec.h;
-      faint.push(V(gx, y, gz), V(gx, y + len, gz));
+      texture.push(V(gx, y, gz), V(gx, y + len, gz));
     }
 
     // Bande moletée : traits verticaux serrés sur tout le pourtour.
@@ -426,7 +451,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
         const a = (k / count) * TAU;
         const kx = Math.cos(a) * rim;
         const kz = Math.sin(a) * rim;
-        faint.push(V(kx, y0 * spec.h, kz), V(kx, y1 * spec.h, kz));
+        texture.push(V(kx, y0 * spec.h, kz), V(kx, y1 * spec.h, kz));
       }
     }
 
@@ -437,7 +462,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       const slot = [V(-b.r * 0.72, 0, 0.004), V(b.r * 0.72, 0, 0.004)];
       for (let k = 0; k < b.count; k++) {
         const a = (k / b.count) * TAU + b.phase;
-        mid.push(...onFlank(a, b.y * spec.h, rim, head), ...onFlank(a, b.y * spec.h, rim, slot));
+        detail.push(...onFlank(a, b.y * spec.h, rim, head), ...onFlank(a, b.y * spec.h, rim, slot));
       }
     }
 
@@ -451,7 +476,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
         }
       }
       pts.push(V(-pw + 0.022, ph - 0.062, 0.002), V(pw - 0.022, ph - 0.062, 0.002));
-      strong.push(...onFlank(a, 0, rim, pts));
+      detail.push(...onFlank(a, 0, rim, pts));
     }
 
     // Faces supérieures : seules la tête et la collerette haute de R3 en laissent voir une.
@@ -464,16 +489,16 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
         const a0 = (k / t.count) * TAU;
         const a1 = a0 + (TAU / t.count) * 0.46;
         const p = (a: number, r: number) => V(Math.cos(a) * r, top, Math.sin(a) * r);
-        strong.push(p(a0, ri), p(a0, ro), p(a0, ro), p(a1, ro), p(a1, ro), p(a1, ri));
+        texture.push(p(a0, ri), p(a0, ro), p(a0, ro), p(a1, ro), p(a1, ro), p(a1, ri));
       }
     }
-    for (const r of d.engraved ?? []) faint.push(...circlePts(r, cseg(r), 'xz', [0, top, 0]));
+    for (const r of d.engraved ?? []) texture.push(...circlePts(r, cseg(r), 'xz', [0, top, 0]));
     if (d.topCrown) {
       const c = d.topCrown;
       for (let k = 0; k < c.count; k++) {
         const a = (k / c.count) * TAU;
         const r0 = k % 4 === 0 ? c.r0 : c.r0 + (c.r1 - c.r0) * 0.45;
-        mid.push(V(Math.cos(a) * r0, top, Math.sin(a) * r0), V(Math.cos(a) * c.r1, top, Math.sin(a) * c.r1));
+        texture.push(V(Math.cos(a) * r0, top, Math.sin(a) * r0), V(Math.cos(a) * c.r1, top, Math.sin(a) * c.r1));
       }
     }
     if (d.topBolts) {
@@ -482,42 +507,40 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
         const a = (k / b.count) * TAU + 0.13;
         const bx = Math.cos(a) * b.ring;
         const bz = Math.sin(a) * b.ring;
-        mid.push(...circlePts(b.r, 8, 'xz', [bx, top + 0.002, bz]));
-        mid.push(V(bx - b.r * 0.72, top + 0.002, bz), V(bx + b.r * 0.72, top + 0.002, bz));
+        detail.push(...circlePts(b.r, 8, 'xz', [bx, top + 0.002, bz]));
+        detail.push(V(bx - b.r * 0.72, top + 0.002, bz), V(bx + b.r * 0.72, top + 0.002, bz));
       }
     }
 
-    if (strong.length) rings[i].add(segsWith(strong, engraveStrong));
-    if (mid.length) rings[i].add(segsWith(mid, engraveMid));
-    if (faint.length) rings[i].add(segsWith(faint, engraveFaint));
+    if (detail.length) rings[i].add(segsWith(detail, engraveDetail));
+    if (texture.length) rings[i].add(segsWith(texture, engraveTexture));
   }
 
   // ── Cadran gravé du couvercle : c'est lui qui termine le fût, à la place de la couronne verte.
   {
     const top = RING_SPECS[4].h / 2 + LID_H + 0.004;
-    const dialFaint: Vector3[] = [];
-    for (const r of [0.46, 0.24]) dialFaint.push(...circlePts(r, cseg(r), 'xz', [0, top, 0]));
-    const dialMid: Vector3[] = [];
+    // Graduations et cercles du cadran = texture répétée (niveau 3) ; vis et aiguille = pièces
+    // fonctionnelles (niveau 2). Le contour du couvercle, lui, est une arête de volume (niveau 1).
+    const dialTexture: Vector3[] = [];
+    for (const r of [0.46, 0.24]) dialTexture.push(...circlePts(r, cseg(r), 'xz', [0, top, 0]));
     // Couronne de graduations, un repère long sur quatre.
     for (let k = 0; k < 16; k++) {
       const a = (k / 16) * TAU;
       const r0 = k % 4 === 0 ? 0.46 : 0.51;
-      dialMid.push(V(Math.cos(a) * r0, top, Math.sin(a) * r0), V(Math.cos(a) * 0.56, top, Math.sin(a) * 0.56));
+      dialTexture.push(V(Math.cos(a) * r0, top, Math.sin(a) * r0), V(Math.cos(a) * 0.56, top, Math.sin(a) * 0.56));
     }
+    const dialDetail: Vector3[] = [];
     // Vis de fixation du couvercle (c'est lui qui est boulonné, la tête n'en porte plus).
     for (let k = 0; k < 6; k++) {
       const a = (k / 6) * TAU + 0.26;
       const bx = Math.cos(a) * 0.35;
       const bz = Math.sin(a) * 0.35;
-      dialMid.push(...circlePts(0.026, 5, 'xz', [bx, top + 0.002, bz]));
-      dialMid.push(V(bx - 0.019, top + 0.002, bz - 0.019), V(bx + 0.019, top + 0.002, bz + 0.019));
+      dialDetail.push(...circlePts(0.026, 5, 'xz', [bx, top + 0.002, bz]));
+      dialDetail.push(V(bx - 0.019, top + 0.002, bz - 0.019), V(bx + 0.019, top + 0.002, bz + 0.019));
     }
     // Aiguille du cadran.
-    const dialStrong: Vector3[] = [
-      V(0, top + 0.002, 0),
-      V(Math.cos(-0.9) * 0.42, top + 0.002, Math.sin(-0.9) * 0.42),
-    ];
-    rings[4].add(segsWith(dialFaint, engraveFaint), segsWith(dialMid, engraveMid), segsWith(dialStrong, engraveStrong));
+    dialDetail.push(V(0, top + 0.002, 0), V(Math.cos(-0.9) * 0.42, top + 0.002, Math.sin(-0.9) * 0.42));
+    rings[4].add(segsWith(dialTexture, engraveTexture), segsWith(dialDetail, engraveDetail));
   }
 
   // ── Filet vert aux jointures : la seule trace de couleur à l'état fermé, on devine
@@ -542,7 +565,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     ]).getPoints(14);
     const pairs: Vector3[] = [];
     for (let i = 0; i < pts.length - 1; i++) pairs.push(pts[i], pts[i + 1]);
-    root.add(segs(pairs, WHITE, 0.22));
+    root.add(segs(pairs, WHITE, L3));
   }
 
   // ── Modules : chacun est une capacité de l'agent ──
@@ -616,7 +639,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     // Collerette arrière : elle déborde largement du corps, pour que son annulaire avant reste
     // lisible de trois quarts et porte un vrai cercle de vis (0.25 → 0.17 : 0.08 d'annulaire).
     g.add(stageZ(0.25, 0, 0.055, 14));
-    g.add(segs(boltRing(6, 0.212, 0.026, 'xy', [0, 0, 0.058], 0.3), GREEN, 0.75));
+    g.add(segs(boltRing(6, 0.212, 0.026, 'xy', [0, 0, 0.058], 0.3), GREEN, G2));
     // Bague principale, puis bague moletée (crans radiaux), puis bague de tête.
     g.add(stageZ(0.172, 0.055, 0.21, 14));
     g.add(stageZ(0.152, 0.21, 0.32, 14));
@@ -627,7 +650,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       const ky = Math.sin(a) * 0.155;
       knurl.push(V(kx, ky, 0.222), V(kx, ky, 0.308));
     }
-    g.add(segs(knurl, GREEN, 0.6));
+    g.add(segs(knurl, GREEN, G3));
     g.add(stageZ(0.125, 0.32, 0.44, 12));
     // Lentille : trois cercles concentriques + un éclat oblique.
     const lens = [
@@ -636,7 +659,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       ...circlePts(0.04, 8, 'xy', [0, 0, 0.45]),
     ];
     lens.push(V(-0.072, 0.042, 0.452), V(-0.028, 0.08, 0.452));
-    g.add(segs(lens, GREEN, 0.8));
+    g.add(segs(lens, GREEN, G2));
     addModule(
       'perceive',
       g,
@@ -659,8 +682,8 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const g = new Group();
     g.position.copy(seat.center);
     g.scale.setScalar(CORE_SCALE);
-    g.add(new LineSegments(track(new EdgesGeometry(track(new IcosahedronGeometry(0.3, 0)))), lineMat(GREEN, 0.95)));
-    g.add(new LineSegments(track(new EdgesGeometry(track(new OctahedronGeometry(0.14, 0)))), lineMat(GREEN, 0.6)));
+    g.add(new LineSegments(track(new EdgesGeometry(track(new IcosahedronGeometry(0.3, 0)))), lineMat(GREEN, G1)));
+    g.add(new LineSegments(track(new EdgesGeometry(track(new OctahedronGeometry(0.14, 0)))), lineMat(GREEN, G2)));
     coreGroup = g;
     addModule(
       'decide',
@@ -687,7 +710,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     g.rotation.y = Math.PI - az;
     // Embase : elle déborde du corps, ses vis sont sur la face tournée vers le fût (donc vers l'œil).
     g.add(stageX(0.195, 0, -0.06, 14));
-    g.add(segs(boltRing(6, 0.158, 0.022, 'yz', [0.006, 0, 0], 0.5), GREEN, 0.75));
+    g.add(segs(boltRing(6, 0.158, 0.022, 'yz', [0.006, 0, 0], 0.5), GREEN, G2));
     // Corps du vérin : deux rainures tournées + six nervures longitudinales.
     g.add(stageX(0.145, -0.06, -0.58, 14));
     const body: Vector3[] = [];
@@ -698,20 +721,20 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       const rz = Math.cos(a) * 0.147;
       body.push(V(-0.075, ry, rz), V(-0.565, ry, rz));
     }
-    g.add(segs(body, GREEN, 0.55));
+    g.add(segs(body, GREEN, G2));
     // Tige : second cylindre coaxial, plus fin, avec sa gorge de fin de course.
     g.add(stageX(0.062, -0.58, -1.02, 12));
-    g.add(segs(circlePts(0.066, 10, 'yz', [-0.955, 0, 0]), GREEN, 0.6));
+    g.add(segs(circlePts(0.066, 10, 'yz', [-0.955, 0, 0]), GREEN, G2));
     // Chape : deux joues percées de part et d'autre, traversées par un axe.
     for (const s of [-1, 1]) {
-      const cheek = solid(new BoxGeometry(0.22, 0.19, 0.035), GREEN, 0.9);
+      const cheek = solid(new BoxGeometry(0.22, 0.19, 0.035), GREEN, G1);
       cheek.position.set(-1.1, 0, s * 0.082);
       g.add(cheek);
     }
     const clevis = circlePts(0.052, 10, 'xy', [-1.1, 0, 0.102]);
     clevis.push(...circlePts(0.032, 6, 'xy', [-1.1, 0, 0.128]));
     clevis.push(V(-1.1, -0.03, 0.13), V(-1.1, 0.03, 0.13));
-    g.add(segs(clevis, GREEN, 0.8));
+    g.add(segs(clevis, GREEN, G2));
     addModule(
       'act',
       g,
@@ -735,11 +758,11 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const g = new Group();
     g.position.set(gx, gy, gz);
     // Bras de support : cylindre usiné + sa bague d'arrêt.
-    const mount = solid(new CylinderGeometry(0.052, 0.052, 0.5, 12), GREEN, 0.8, 30);
+    const mount = solid(new CylinderGeometry(0.052, 0.052, 0.5, 12), GREEN, G1, 30);
     mount.rotation.z = Math.PI / 2;
     mount.position.x = 0.25;
     g.add(mount);
-    g.add(segs(circlePts(0.078, 10, 'yz', [0.14, 0, 0]), GREEN, 0.6));
+    g.add(segs(circlePts(0.078, 10, 'yz', [0.14, 0, 0]), GREEN, G2));
     const plate = new Group();
     plate.position.x = 0.8;
     plate.rotation.y = 0.35;
@@ -760,14 +783,18 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       for (let k = 0; k < corners.length; k++) out.push(corners[k], corners[(k + 1) % corners.length]);
       return out;
     };
-    const face = [...chamfered(hw, hh, 0.14), ...chamfered(hw - 0.05, hh - 0.05, 0.105)];
+    // La plaque est la seule pièce qui porte les trois niveaux d'un coup : sa silhouette (niveau 1),
+    // sa visserie et son cadran (niveau 2), ses graduations et sa barre de valeurs (niveau 3).
+    const faceEdge = [...chamfered(hw, hh, 0.14)];
+    const faceDetail = [...chamfered(hw - 0.05, hh - 0.05, 0.105)];
+    const faceTexture: Vector3[] = [];
     // Quatre boulons d'angle, tête fendue.
     for (const sx of [-1, 1]) {
       for (const sy of [-1, 1]) {
         const bx = sx * (hw - 0.105);
         const by = sy * (hh - 0.105);
-        face.push(...circlePts(0.032, 6, 'xy', [bx, by, pz + 0.002]));
-        face.push(V(bx - 0.023, by + 0.023, pz + 0.003), V(bx + 0.023, by - 0.023, pz + 0.003));
+        faceDetail.push(...circlePts(0.032, 6, 'xy', [bx, by, pz + 0.002]));
+        faceDetail.push(V(bx - 0.023, by + 0.023, pz + 0.003), V(bx + 0.023, by - 0.023, pz + 0.003));
       }
     }
     // Cadran gravé : arc gradué de 220°, aiguille fine, moyeu.
@@ -778,25 +805,25 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       const a = a0 + (a1 - a0) * t;
       return V(Math.cos(a) * r, cy + Math.sin(a) * r, pz);
     };
-    for (let k = 0; k < 14; k++) face.push(arcPt(k / 14, 0.3), arcPt((k + 1) / 14, 0.3));
-    for (let k = 0; k < 10; k++) face.push(arcPt(k / 10, 0.245), arcPt((k + 1) / 10, 0.245));
-    for (let k = 0; k <= 10; k++) face.push(arcPt(k / 10, 0.245), arcPt(k / 10, k % 5 === 0 ? 0.19 : 0.288));
-    face.push(V(0, cy, pz + 0.002), arcPt(0.7, 0.272));
-    face.push(...circlePts(0.036, 6, 'xy', [0, cy, pz + 0.003]));
+    for (let k = 0; k < 14; k++) faceDetail.push(arcPt(k / 14, 0.3), arcPt((k + 1) / 14, 0.3));
+    for (let k = 0; k < 10; k++) faceDetail.push(arcPt(k / 10, 0.245), arcPt((k + 1) / 10, 0.245));
+    for (let k = 0; k <= 10; k++) faceTexture.push(arcPt(k / 10, 0.245), arcPt(k / 10, k % 5 === 0 ? 0.19 : 0.288));
+    faceDetail.push(V(0, cy, pz + 0.002), arcPt(0.7, 0.272));
+    faceDetail.push(...circlePts(0.036, 6, 'xy', [0, cy, pz + 0.003]));
     // Trois lignes de repères sous le cadran, alignées à gauche sur la même marge.
     [-0.09, -0.17, -0.25].forEach((y, i) => {
-      face.push(V(-0.34, y, pz), V(-0.34 + [0.56, 0.4, 0.49][i], y, pz));
-      face.push(V(-0.385, y, pz), V(-0.36, y, pz));
+      faceTexture.push(V(-0.34, y, pz), V(-0.34 + [0.56, 0.4, 0.49][i], y, pz));
+      faceTexture.push(V(-0.385, y, pz), V(-0.36, y, pz));
     });
     // Barre de valeurs : six barres sur une grille de deux lignes.
     const b0 = -0.47;
-    face.push(V(-0.36, b0, pz), V(0.36, b0, pz));
-    face.push(V(-0.36, b0 + 0.13, pz), V(0.36, b0 + 0.13, pz));
+    faceDetail.push(V(-0.36, b0, pz), V(0.36, b0, pz));
+    faceTexture.push(V(-0.36, b0 + 0.13, pz), V(0.36, b0 + 0.13, pz));
     [0.06, 0.13, 0.1, 0.19, 0.16, 0.23].forEach((h, i) => {
       const x = -0.29 + i * 0.116;
-      face.push(V(x, b0, pz), V(x, b0 + h, pz));
+      faceTexture.push(V(x, b0, pz), V(x, b0 + h, pz));
     });
-    plate.add(segs(face, GREEN, 0.85));
+    plate.add(segs(faceEdge, GREEN, G1), segs(faceDetail, GREEN, G2), segs(faceTexture, GREEN, G3));
     addModule(
       'report',
       g,
@@ -825,7 +852,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     g.scale.setScalar(REPLY_SCALE);
     // Bague de serrage : large annulaire (0.26 → 0.19) pour que son cercle de vis se lise.
     g.add(stageZ(0.26, 0, 0.07, 14));
-    g.add(segs(boltRing(8, 0.226, 0.022, 'xy', [0, 0, 0.073], 0.2), GREEN, 0.7));
+    g.add(segs(boltRing(8, 0.226, 0.022, 'xy', [0, 0, 0.073], 0.2), GREEN, G2));
     // Pavillon : trois anneaux de rayon décroissant, chacun avec sa propre profondeur —
     // les marches doivent être franches, sinon l'ensemble s'écrase en dôme vu de trois quarts.
     g.add(stageZ(0.192, 0.07, 0.17, 14));
@@ -837,7 +864,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       grille.push(V(Math.cos(a) * 0.026, Math.sin(a) * 0.026, 0.313), V(Math.cos(a) * 0.085, Math.sin(a) * 0.085, 0.313));
     }
     grille.push(...circlePts(0.026, 8, 'xy', [0, 0, 0.314]));
-    g.add(segs(grille, GREEN, 0.65));
+    g.add(segs(grille, GREEN, G2));
     addModule(
       'reply',
       g,
@@ -859,7 +886,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const gz = 0;
     const g = new Group();
     g.position.set(gx, gy, gz);
-    const disc = solid(new CylinderGeometry(0.48, 0.48, 0.11, 16), GREEN, 0.95, 30);
+    const disc = solid(new CylinderGeometry(0.48, 0.48, 0.11, 16), GREEN, G1, 30);
     disc.position.y = 0.055;
     g.add(disc);
     const topFace = 0.113;
@@ -868,7 +895,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       segs(
         [...circlePts(0.43, 14, 'xz', [0, topFace, 0]), ...circlePts(0.4, 14, 'xz', [0, topFace, 0])],
         GREEN,
-        0.55,
+        G2,
       ),
     );
     // Embouts : volume plein (masquage) + cercle de tête et deux génératrices tangentes.
@@ -889,15 +916,15 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       ports.push(V(px + ox, 0.105, pz + oz), V(px + ox, portTop, pz + oz));
       ports.push(V(px - ox, 0.105, pz - oz), V(px - ox, portTop, pz - oz));
     }
-    g.add(segs(ports, GREEN, 0.85));
+    g.add(segs(ports, GREEN, G2));
     // Tige d'accouplement : courte, SOUS la couronne (l'antenne verticale du sommet a disparu
     // avec le déménagement en embase). Fût tourné + bague d'arrêt + embout.
     // Elle est décentrée vers +Z : au centre, le plateau vu en plongée la masquerait entièrement.
     const stubZ = 0.26;
-    const stub = solid(new CylinderGeometry(0.105, 0.105, 0.55, 12), GREEN, 0.9, 30);
+    const stub = solid(new CylinderGeometry(0.105, 0.105, 0.55, 12), GREEN, G1, 30);
     stub.position.set(0, -0.275, stubZ);
     g.add(stub);
-    g.add(segs(circlePts(0.15, 12, 'xz', [0, -0.5, stubZ]), GREEN, 0.7));
+    g.add(segs(circlePts(0.15, 12, 'xz', [0, -0.5, stubZ]), GREEN, G2));
     addModule(
       'connect',
       g,
