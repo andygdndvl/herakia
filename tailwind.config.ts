@@ -8,28 +8,36 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Les valeurs vivent dans app/globals.css (`:root`), en canaux RVB ;
+      // ici on ne fait que les brancher. Une section peut donc s'inverser en
+      // redéclarant les jetons (cf. `.surface-light`).
+      // `rgb(var(--jeton) / <alpha-value>)` garde le support des modificateurs
+      // d'opacité (`bg-bg-primary/80`, `text-green-primary/[0.07]`…).
+      // Les jetons qui portaient déjà un alpha gardent l'écriture historique
+      // `rgba(…, a)` : Chrome l'arrondit différemment de `rgb(… / a)` (±1/255),
+      // et le rendu sombre doit rester identique au pixel près.
       colors: {
         // Fonds
-        'bg-primary': '#0a0d0c',
-        'bg-secondary': '#101513',
-        'bg-elevated': '#171d1b',
+        'bg-primary': 'rgb(var(--bg-primary) / <alpha-value>)',
+        'bg-secondary': 'rgb(var(--bg-secondary) / <alpha-value>)',
+        'bg-elevated': 'rgb(var(--bg-elevated) / <alpha-value>)',
         // Vert signature — unique accent, ~5 % de la surface
-        'green-primary': '#3ecf8e',
-        'green-dark': '#2a9e6a',
-        'green-glow': 'rgba(62, 207, 142, 0.15)',
-        'green-subtle': 'rgba(62, 207, 142, 0.08)',
-        'green-line': 'rgba(62, 207, 142, 0.55)',
-        'on-green': '#04120a',
-        // Textes (contrastes sur #080808 : 17:1, 7,7:1, 5,8:1)
-        'text-primary': '#ededed',
-        'text-secondary': '#a0a0a0',
-        'text-muted': '#8a8a8a',
+        'green-primary': 'rgb(var(--green-primary) / <alpha-value>)',
+        'green-dark': 'rgb(var(--green-dark) / <alpha-value>)',
+        'green-glow': 'rgba(var(--green-primary-legacy), 0.15)',
+        'green-subtle': 'rgba(var(--green-primary-legacy), 0.08)',
+        'green-line': 'rgba(var(--green-primary-legacy), 0.55)',
+        'on-green': 'rgb(var(--on-green) / <alpha-value>)',
+        // Textes (contrastes sur #0a0d0c : 17:1, 7,7:1, 5,8:1)
+        'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',
+        'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)',
+        'text-muted': 'rgb(var(--text-muted) / <alpha-value>)',
         // Lignes
-        'border-subtle': 'rgba(255, 255, 255, 0.08)',
-        'border-strong': 'rgba(255, 255, 255, 0.14)',
-        'border-green': 'rgba(62, 207, 142, 0.3)',
-        'stroke-object': '#dedede',
-        'stroke-deco': '#555555',
+        'border-subtle': 'var(--border-subtle)',
+        'border-strong': 'var(--border-strong)',
+        'border-green': 'rgba(var(--green-primary-legacy), var(--border-green-alpha,0.3))',
+        'stroke-object': 'rgb(var(--stroke-object) / <alpha-value>)',
+        'stroke-deco': 'rgb(var(--stroke-deco) / <alpha-value>)',
       },
       fontFamily: {
         display: ['var(--font-syne)', 'sans-serif'],
@@ -47,9 +55,9 @@ const config: Config = {
         'rules-72': '100% 72px',
       },
       boxShadow: {
-        'glow-green': '0 0 24px rgba(62, 207, 142, 0.12)',
-        'glow-green-lg': '0 0 48px rgba(62, 207, 142, 0.2)',
-        'glow-green-sm': '0 0 12px rgba(62, 207, 142, 0.1)',
+        'glow-green': '0 0 24px rgba(var(--green-primary-legacy), 0.12)',
+        'glow-green-lg': '0 0 48px rgba(var(--green-primary-legacy), 0.2)',
+        'glow-green-sm': '0 0 12px rgba(var(--green-primary-legacy), 0.1)',
       },
     },
   },
