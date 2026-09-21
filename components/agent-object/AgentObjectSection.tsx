@@ -14,7 +14,10 @@ type Mode = 'pending' | 'animated' | 'reduced' | 'static';
 function hasWebGL(): boolean {
   try {
     const c = document.createElement('canvas');
-    return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    const gl = c.getContext('webgl2') || c.getContext('webgl');
+    // Libère tout de suite le contexte de test (le navigateur en limite le nombre)
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
+    return !!gl;
   } catch {
     return false;
   }
@@ -78,20 +81,24 @@ export function AgentObjectSection() {
   return (
     <section aria-labelledby="agent-title" className="relative">
       <div ref={pinRef} className={pinned ? 'relative h-[300vh] md:h-[400vh]' : 'relative'}>
-        <div className={pinned ? 'sticky top-0 h-screen overflow-hidden' : 'relative overflow-hidden py-24'}>
+        <div className={pinned ? 'sticky top-0 h-svh overflow-hidden' : 'relative overflow-hidden py-24'}>
           <div ref={introRef} className="relative z-10 max-w-xl px-6 pt-24 lg:px-12 lg:pt-28">
             <span className="eyebrow">{t.eyebrow}</span>
             <h2 id="agent-title" className="h-section mt-4 !text-4xl md:!text-6xl">
               {t.title}
             </h2>
-            <p className="mt-5 hidden text-base leading-relaxed text-text-secondary md:block md:text-lg">{t.body}</p>
+            <p
+              className={`mt-5 text-base leading-relaxed text-text-secondary md:text-lg ${pinned ? 'hidden md:block' : ''}`}
+            >
+              {t.body}
+            </p>
           </div>
 
           {mode !== 'static' && near && (
             <div
               className={
                 pinned
-                  ? 'absolute inset-x-0 top-[30vh] h-[45vh] md:inset-0 md:h-auto'
+                  ? 'absolute inset-x-0 top-[30vh] h-[45vh] lg:bottom-[25vh] lg:left-1/2 lg:top-[14vh] lg:h-auto min-[1200px]:inset-0 min-[1200px]:h-auto'
                   : 'relative mx-auto mt-8 h-[70vh] max-w-6xl'
               }
             >
@@ -104,7 +111,7 @@ export function AgentObjectSection() {
             data-scroll-hidden={pinned ? '' : undefined}
             className={
               pinned
-                ? 'absolute inset-x-6 bottom-10 z-10 hidden text-center font-display text-2xl font-bold tracking-tight text-text-primary md:block lg:text-3xl'
+                ? 'absolute inset-x-6 bottom-10 z-10 hidden text-center font-display text-2xl font-bold tracking-tight text-text-primary min-[1200px]:block lg:text-3xl'
                 : 'relative mt-8 px-6 text-center font-display text-2xl font-bold tracking-tight text-text-primary lg:text-3xl'
             }
           >
@@ -117,8 +124,8 @@ export function AgentObjectSection() {
               mode === 'static'
                 ? 'relative z-10 mx-auto mt-10 grid max-w-4xl gap-6 px-6 sm:grid-cols-2 lg:grid-cols-3'
                 : pinned
-                  ? 'absolute inset-x-6 bottom-6 z-10 grid grid-cols-2 gap-x-4 gap-y-3 md:sr-only'
-                  : 'relative z-10 mx-auto mt-10 grid max-w-4xl gap-6 px-6 sm:grid-cols-2 md:sr-only'
+                  ? 'absolute inset-x-6 bottom-6 z-10 grid grid-cols-2 gap-x-4 gap-y-3 min-[1200px]:sr-only'
+                  : 'relative z-10 mx-auto mt-10 grid max-w-4xl gap-6 px-6 sm:grid-cols-2 min-[1200px]:sr-only'
             }
           >
             {PART_IDS.map((id, i) => (

@@ -228,7 +228,12 @@ function TitleBadge() {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.8 });
   const reduced = useReducedMotion();
-  const [count, setCount] = useState(reduced ? 100 : 7);
+  // Toujours 7 au rendu serveur/hydratation ; en mouvement réduit on saute à l'état final après montage
+  const [count, setCount] = useState(7);
+
+  useEffect(() => {
+    if (reduced) setCount(100);
+  }, [reduced]);
 
   useEffect(() => {
     if (!inView || reduced) return;
@@ -554,8 +559,15 @@ export function WhatWeHandle() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [absorbing, setAbsorbing] = useState(false);
   const [resolved, setResolved] = useState(false);
+  // Le serveur ne connaît pas la préférence de mouvement : on ne bascule en version calme
+  // qu'après le montage, sinon le premier rendu client diffère du HTML serveur (hydratation).
+  const [calmByPreference, setCalmByPreference] = useState(false);
 
-  const calm = prefersReducedMotion || resolved;
+  useEffect(() => {
+    if (prefersReducedMotion) setCalmByPreference(true);
+  }, [prefersReducedMotion]);
+
+  const calm = calmByPreference || resolved;
 
   const handleResolve = () => {
     if (prefersReducedMotion) {

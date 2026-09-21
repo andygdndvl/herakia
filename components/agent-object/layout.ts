@@ -52,17 +52,25 @@ export interface CalloutBox {
   ay: number;
 }
 
-const LABEL_WIDTH = 250;
+export const LABEL_WIDTH = 250;
 const ROW_GAP = 118;
 const TOP = 70;
 
-/** Range les légendes en deux colonnes (gauche/droite selon l'ancrage), sans chevauchement vertical. */
+/** Colonne fixe de chaque légende (côté de sa pièce sur l'objet) : stable quelle que soit la rotation. */
+const SIDE: Record<PartId, 'left' | 'right'> = {
+  perceive: 'left',
+  act: 'left',
+  decide: 'left',
+  connect: 'right',
+  report: 'right',
+  reply: 'right',
+};
+
+/** Range les légendes en deux colonnes fixes (gauche/droite par pièce), sans chevauchement vertical. */
 export function layoutCallouts(anchors: ScreenAnchor[], width: number): CalloutBox[] {
   const out: CalloutBox[] = [];
   for (const side of ['left', 'right'] as const) {
-    const column = anchors
-      .filter((a) => (side === 'left' ? a.x < width / 2 : a.x >= width / 2))
-      .sort((a, b) => a.y - b.y);
+    const column = anchors.filter((a) => SIDE[a.id] === side).sort((a, b) => a.y - b.y);
     let next = TOP;
     for (const a of column) {
       const y = Math.max(a.y, next);

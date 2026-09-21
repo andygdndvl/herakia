@@ -3,7 +3,7 @@
 import { useEffect, useRef, type MutableRefObject } from 'react';
 import { animate } from 'animejs';
 import { createAgentScene } from './scene';
-import { layoutCallouts, phases, PART_IDS, type PartId } from './layout';
+import { layoutCallouts, phases, PART_IDS, LABEL_WIDTH, type PartId } from './layout';
 import type { AgentObjectText } from './content';
 
 interface AgentStageProps {
@@ -30,7 +30,7 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
     if (!wrap || !canvas || !svg) return;
 
     const scene = createAgentScene(canvas);
-    const desktop = window.matchMedia('(min-width: 768px)');
+    const desktop = window.matchMedia('(min-width: 1200px)');
     const draw = { v: reduced ? 1 : 0 };
     let drawAnim: ReturnType<typeof animate> | null = null;
     let raf = 0;
@@ -105,7 +105,7 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
     // Décoratif : les capacités existent en HTML lisible dans AgentObjectSection (liste SSR)
     <div ref={wrapRef} className="absolute inset-0" aria-hidden="true">
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-      <svg ref={svgRef} className="pointer-events-none absolute inset-0 hidden h-full w-full md:block">
+      <svg ref={svgRef} className="pointer-events-none absolute inset-0 hidden h-full w-full min-[1200px]:block">
         {PART_IDS.map((id) => (
           <g key={id}>
             <polyline
@@ -136,8 +136,8 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
             ref={(el) => {
               labels.current[id] = el;
             }}
-            className="pointer-events-none absolute hidden w-[250px] md:block"
-            style={{ opacity: 0 }}
+            className="pointer-events-none absolute hidden min-[1200px]:block"
+            style={{ opacity: 0, width: LABEL_WIDTH }}
           >
             <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-green-primary">{part.k}</p>
             <p className="mt-1.5 font-display text-[22px] font-bold tracking-tight text-text-primary">{part.title}</p>
