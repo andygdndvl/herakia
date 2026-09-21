@@ -18,12 +18,18 @@ export default function HomePage() {
       <main>
         <Hero />
         <TrustedBy />
-        <Personae />
+        {/* Premier îlot clair. La règle de la page : clair = les gens, sombre =
+            la machine. Personae parle des clients, il passe donc en ivoire, au
+            même titre que les avis et « À propos » plus bas — mêmes jetons,
+            même respiration, même bascule nette. */}
+        <div className="surface-light relative py-16 md:py-24">
+          <Personae />
+        </div>
         <WhatIsAnAgent />
         <MeetTia />
         <WhatWeHandle />
-        {/* Îlot clair : les avis et « À propos » forment un chapitre ivoire au
-            milieu de la page sombre. La bascule est un changement net de fond
+        {/* Second îlot clair : les avis et « À propos » forment le chapitre
+            ivoire du bas. La bascule est un changement net de fond
             — pas de dégradé, pas de filet horizontal (cf. e4c64dd) — et l'îlot
             ajoute sa propre respiration verticale à celle des deux sections. */}
         <div className="surface-light relative py-16 md:py-24">

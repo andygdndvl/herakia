@@ -122,7 +122,11 @@ export function Personae() {
           {personae.map((persona) => (
             // data-reveal sur un wrapper : anime y laisse une transform inline qui écraserait le hover de l'article
             <div key={persona.role} data-reveal>
-              <article className="group relative h-full overflow-hidden rounded-2xl border border-border-subtle bg-bg-secondary/60 backdrop-blur-md transition-[transform,border-color] duration-300 hover:border-border-green motion-safe:hover:-translate-y-1.5">
+              {/* Carte d'îlot clair : surface blanche franche posée sur l'ivoire.
+                  Le relief vient de `shadow-card` (le filet seul ne suffit plus
+                  sur fond clair) et le voile de la photo est celui de la carte,
+                  pas un dégradé noir. */}
+              <article className="group relative h-full overflow-hidden rounded-2xl border border-border-subtle bg-bg-elevated shadow-card transition-[transform,border-color,box-shadow] duration-300 hover:border-border-green hover:shadow-card-hover motion-safe:hover:-translate-y-1.5">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
                     <Image
@@ -133,19 +137,22 @@ export function Personae() {
                       className="object-cover saturate-[0.7]"
                     />
                     <div
-                      className="absolute inset-0 bg-gradient-to-t from-bg-secondary via-bg-secondary/40 to-transparent"
+                      className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-bg-elevated via-bg-elevated/35 to-transparent"
                       aria-hidden="true"
                     />
                   </div>
                   <div className="absolute left-5 top-5">
-                    <span className="rounded-full border border-border-green bg-bg-primary/80 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-green-primary backdrop-blur-md">
+                    <span className="rounded-full border border-border-green bg-bg-elevated px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-green-primary">
                       {persona.role}
                     </span>
                   </div>
                 </div>
 
                 <div className="relative p-6 md:p-7">
-                  <Quote className="absolute right-5 top-5 h-12 w-12 text-green-primary/10" aria-hidden="true" />
+                  <Quote
+                    className="absolute right-5 top-5 h-12 w-12 text-text-muted/20"
+                    aria-hidden="true"
+                  />
                   <p className="font-display text-lg font-semibold leading-snug text-text-primary md:text-xl text-balance">
                     « {persona.quote} »
                   </p>
@@ -155,7 +162,7 @@ export function Personae() {
                         key={pain}
                         className="flex items-start gap-2.5 font-sans text-sm leading-relaxed text-text-secondary"
                       >
-                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-green-primary/60" />
+                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-green-primary" />
                         <span>{pain}</span>
                       </li>
                     ))}

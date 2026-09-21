@@ -39,6 +39,11 @@
   --border-green-alpha: 0.3;
   /* Voile des cartes .glass-card */
   --glass-bg: rgba(255, 255, 255, 0.03);
+  /* Relief des cartes (`shadow-card`, `shadow-card-hover`). Sur fond sombre une
+     ombre portée ne se voit pas : les cartes s'y lisent par leur filet, le jeton
+     est donc neutre. L'îlot clair, lui, en a besoin pour décoller de l'ivoire. */
+  --shadow-card: 0 0 0 0 rgba(0, 0, 0, 0);
+  --shadow-card-hover: 0 0 0 0 rgba(0, 0, 0, 0);
 }
 
 * {
@@ -134,6 +139,10 @@ select:-webkit-autofill {
   --border-green-alpha: 0.55;
   /* Les cartes passent du voile blanc au blanc franc */
   --glass-bg: #ffffff;
+  /* Sur ivoire, le filet seul ne suffit plus à poser une carte blanche : une
+     ombre encre très diffuse lui rend le relief que le fond sombre donnait. */
+  --shadow-card: 0 1px 2px rgba(20, 21, 15, 0.05), 0 10px 26px -14px rgba(20, 21, 15, 0.22);
+  --shadow-card-hover: 0 2px 4px rgba(20, 21, 15, 0.07), 0 20px 42px -16px rgba(20, 21, 15, 0.3);
 
   background-color: rgb(var(--bg-primary));
   color: rgb(var(--text-primary));
