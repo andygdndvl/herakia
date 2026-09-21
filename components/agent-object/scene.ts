@@ -81,7 +81,7 @@ function onFlank(a: number, y: number, r: number, pts: Vector3[]): Vector3[] {
 }
 
 interface Module {
-  id: Exclude<PartId, 'decide'>;
+  id: PartId;
   group: Group;
   rest: Vector3;
   dir: Vector3;
@@ -159,14 +159,14 @@ const RING_DETAILS: TierDetail[] = [
     grad: 36,
     gradY: -0.02,
     gradLen: 0.05,
-    knurl: { count: 40, y0: 0.1, y1: 0.34 },
+    knurl: { count: 36, y0: 0.1, y1: 0.34 },
     flankBolts: { count: 12, y: -0.3, r: 0.026, phase: 0.1 },
     plates: [
       [0.55, 0.19, 0.1],
       [3.6, 0.15, 0.085],
     ],
     engraved: [0.78, 0.52],
-    topCrown: { count: 28, r0: 0.84, r1: 0.94 },
+    topCrown: { count: 22, r0: 0.84, r1: 0.94 },
   },
   // R2 — bande moletée.
   {
@@ -174,10 +174,10 @@ const RING_DETAILS: TierDetail[] = [
     grad: 34,
     gradY: 0.24,
     gradLen: 0.05,
-    knurl: { count: 48, y0: -0.22, y1: 0.06 },
+    knurl: { count: 42, y0: -0.22, y1: 0.06 },
     plates: [[2.1, 0.14, 0.11]],
     engraved: [0.82, 0.55],
-    topCrown: { count: 32, r0: 0.88, r1: 0.98 },
+    topCrown: { count: 20, r0: 0.88, r1: 0.98 },
   },
   // R3 — section médiane : deux collerettes débordantes, crans sur la collerette haute.
   {
@@ -190,7 +190,7 @@ const RING_DETAILS: TierDetail[] = [
       [1.15, 0.22, 0.115],
       [4.4, 0.18, 0.1],
     ],
-    teeth: { count: 36, depth: 0.075, r: 1.1 },
+    teeth: { count: 30, depth: 0.075, r: 1.1 },
     engraved: [0.88, 0.6],
     topLift: 0.039,
   },
@@ -205,7 +205,8 @@ const RING_DETAILS: TierDetail[] = [
     engraved: [0.82, 0.55],
     topCrown: { count: 24, r0: 0.88, r1: 0.98 },
   },
-  // R5 — tête : la seule face supérieure entièrement visible, c'est le cadran de l'objet.
+  // R5 — tête : elle porte le couvercle usiné (cf. `LID_*`), qui recouvre le disque central.
+  // Le détail de la face supérieure reste donc sur sa couronne extérieure, hors du couvercle.
   {
     grooves: [-0.34, 0.3],
     grad: 24,
@@ -213,10 +214,12 @@ const RING_DETAILS: TierDetail[] = [
     gradLen: 0.045,
     plates: [],
     teeth: { count: 24, depth: 0.09, r: 0.88 },
-    engraved: [0.8, 0.7, 0.56, 0.36],
-    topBolts: { count: 8, ring: 0.66, r: 0.026 },
+    engraved: [0.8],
   },
 ];
+/** Couvercle blanc usiné du sommet du fût (la couronne verte a déménagé en embase). */
+const LID_R = 0.62;
+const LID_H = 0.085;
 const RING_CENTER_INDEX = 2;
 // Écart avec le brief (0.42) : à 0.42 la caméra (fixe, en plongée oblique) voit l'anneau du dessus
 // (R4) masquer le cœur même à `open` = 1, quelle que soit sa taille raisonnable — l'anneau central
@@ -231,6 +234,18 @@ const MODULE_STAGGER = 0.04;
 // inchangées dans le monde ; les deux pièces restent logées dans le fût à l'état fermé.
 const PERCEIVE_SCALE = 1.28;
 const REPLY_SCALE = 1.32;
+/** Le cœur est désormais une pièce à part entière, sortie du fût : il lui faut la taille des autres. */
+const CORE_SCALE = 1.5;
+// Azimuts de sortie (0 = +X, π/2 = +Z). Ils sont choisis pour que la PROJECTION à 1440×900 en fin
+// d'ouverture donne la lecture en Z voulue : à gauche perceive > act > reply, à droite decide >
+// report > connect. La bascule (rotation X) mélange les axes, donc ces valeurs ne se devinent pas
+// des vecteurs 3D seuls : elles sont résolues pour des cibles écran (cf. shape-dense-report.md).
+const PERCEIVE_AZ = (172 * Math.PI) / 180;
+const DECIDE_AZ = (28 * Math.PI) / 180;
+const ACT_AZ = (152 * Math.PI) / 180;
+// La membrane est un pavillon peu profond : à 147° son axe tombait perpendiculaire à l'axe de vue
+// et elle se lisait comme une pile de traits plats. 105° la remet de trois quarts face caméra.
+const REPLY_AZ = (105 * Math.PI) / 180;
 const RING_BOTTOM = RING_SPECS[0].y - RING_SPECS[0].h / 2;
 
 export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
@@ -324,6 +339,26 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     return pts;
   }
 
+  /**
+   * Collerette d'accroche posée à plat sur le flanc du fût, à l'azimut `az` (0 = +X, π/2 = +Z).
+   * Les pièces ne sortent plus toutes vers l'avant : chacune a son azimut, et sa collerette doit
+   * être dans le plan tangent correspondant, sinon elle se lit comme une ellipse posée de travers.
+   */
+  function flankRing(ringR: number, y: number, az: number, rad: number, n: number) {
+    const c = V(Math.cos(az) * (ringR + 0.004), y, Math.sin(az) * (ringR + 0.004));
+    const tx = -Math.sin(az);
+    const tz = Math.cos(az);
+    const pts: Vector3[] = [];
+    for (let i = 0; i < n; i++) {
+      for (const k of [i, i + 1]) {
+        const a = (k / n) * TAU;
+        const u = Math.cos(a) * rad;
+        pts.push(V(c.x + tx * u, c.y + Math.sin(a) * rad, c.z + tz * u));
+      }
+    }
+    return { pts, center: c };
+  }
+
   const root = new Group();
   scene.add(root);
 
@@ -350,6 +385,11 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const collar = solid(new CylinderGeometry(0.92, 0.92, 0.05, 36), WHITE, 0.8, 30);
     collar.position.y = -RING_SPECS[4].h / 2 - 0.025;
     rings[4].add(collar);
+    // Couvercle usiné du sommet : la couronne d'accouplement verte a quitté la tête pour l'embase,
+    // le fût retrouve un couvercle blanc à cadran gravé (cf. gravures plus bas).
+    const lid = solid(new CylinderGeometry(LID_R, LID_R, LID_H, 20), WHITE, 0.85, 30);
+    lid.position.y = RING_SPECS[4].h / 2 + LID_H / 2;
+    rings[4].add(lid);
   }
 
   // ── Gravures : sur un fût droit, l'essentiel se joue sur le flanc. Tous les traits d'un étage
@@ -452,6 +492,34 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     if (faint.length) rings[i].add(segsWith(faint, engraveFaint));
   }
 
+  // ── Cadran gravé du couvercle : c'est lui qui termine le fût, à la place de la couronne verte.
+  {
+    const top = RING_SPECS[4].h / 2 + LID_H + 0.004;
+    const dialFaint: Vector3[] = [];
+    for (const r of [0.46, 0.24]) dialFaint.push(...circlePts(r, cseg(r), 'xz', [0, top, 0]));
+    const dialMid: Vector3[] = [];
+    // Couronne de graduations, un repère long sur quatre.
+    for (let k = 0; k < 16; k++) {
+      const a = (k / 16) * TAU;
+      const r0 = k % 4 === 0 ? 0.46 : 0.51;
+      dialMid.push(V(Math.cos(a) * r0, top, Math.sin(a) * r0), V(Math.cos(a) * 0.56, top, Math.sin(a) * 0.56));
+    }
+    // Vis de fixation du couvercle (c'est lui qui est boulonné, la tête n'en porte plus).
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * TAU + 0.26;
+      const bx = Math.cos(a) * 0.35;
+      const bz = Math.sin(a) * 0.35;
+      dialMid.push(...circlePts(0.026, 5, 'xz', [bx, top + 0.002, bz]));
+      dialMid.push(V(bx - 0.019, top + 0.002, bz - 0.019), V(bx + 0.019, top + 0.002, bz + 0.019));
+    }
+    // Aiguille du cadran.
+    const dialStrong: Vector3[] = [
+      V(0, top + 0.002, 0),
+      V(Math.cos(-0.9) * 0.42, top + 0.002, Math.sin(-0.9) * 0.42),
+    ];
+    rings[4].add(segsWith(dialFaint, engraveFaint), segsWith(dialMid, engraveMid), segsWith(dialStrong, engraveStrong));
+  }
+
   // ── Filet vert aux jointures : la seule trace de couleur à l'état fermé, on devine
   // qu'il y a quelque chose à l'intérieur (brief : opacité ≤ 0.35).
   const seamMat = lineMat(GREEN, 0.3);
@@ -459,20 +527,6 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const spec = RING_SPECS[i];
     rings[i].add(segsWith(circlePts(spec.r + 0.01, cseg(spec.r), 'xz', [0, -spec.h / 2 - 0.012, 0]), seamMat));
   }
-
-  // ── Cœur vert (visible quand les anneaux s'écartent) ──
-  // Avec la bascule, la vue devient plongeante : un cœur resté sur l'axe central est masqué PAR LE
-  // DESSUS par l'étage supérieur (R4), quelle que soit sa taille — la ligne de vue entre dans
-  // l'écart R3/R4 et ressort sous R4 avant d'atteindre l'axe. Il est donc décalé à ~0.8 du centre,
-  // du côté qui fait face à la caméra une fois la rotation Y de la séquence appliquée (≈0.3 rad),
-  // et légèrement vers la gauche de l'écran pour que sa légende (colonne de gauche) ne traverse pas
-  // tout l'objet. Il reste dans l'enveloppe du fût, donc invisible tant que rien n'est ouvert.
-  const coreMats = [lineMat(GREEN, 0), lineMat(GREEN, 0)];
-  const core = new Group();
-  core.position.set(-0.28, 0.22, 0.74);
-  core.add(new LineSegments(track(new EdgesGeometry(track(new IcosahedronGeometry(0.3, 0)))), coreMats[0]));
-  core.add(new LineSegments(track(new EdgesGeometry(track(new OctahedronGeometry(0.14, 0)))), coreMats[1]));
-  root.add(core);
 
   // ── Câbles fixes sous l'objet ──
   const cables: Array<[number, number, number, number]> = [
@@ -485,7 +539,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       V(x, RING_BOTTOM, z),
       V(x + (ex - x) * 0.2, RING_BOTTOM - 0.8, z + (ez - z) * 0.2),
       V(ex, RING_BOTTOM - 1.6, ez),
-    ]).getPoints(18);
+    ]).getPoints(14);
     const pairs: Vector3[] = [];
     for (let i = 0; i < pts.length - 1; i++) pairs.push(pts[i], pts[i + 1]);
     root.add(segs(pairs, WHITE, 0.22));
@@ -493,6 +547,8 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
 
   // ── Modules : chacun est une capacité de l'agent ──
   const modules: Module[] = [];
+  /** La cage du cœur tourne lentement sur elle-même ; le reste des pièces est fixe. */
+  let coreGroup: Group | null = null;
   /**
    * `group.position` porte ici la position de la pièce POSÉE sur le flanc, et `dir` le trajet
    * qu'elle parcourait depuis ce point : leur somme est la position éclatée finale, qui ne change
@@ -542,16 +598,17 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     });
   }
 
-  // Capteur — barillet d'objectif sur R4, posé devant.
+  // 01 · Capteur — barillet d'objectif sur R4, sorti vers le HAUT-GAUCHE (rangée haute, colonne de gauche).
   // Collerette arrière boulonnée → deux bagues de diamètres décroissants (l'une moletée) → lentille.
   {
     collect = []; // tout le vert créé ici appartient à cette pièce
     const r4 = RING_SPECS[3];
-    const gx = -0.28;
-    const gy = r4.y;
-    const gz = r4.r;
+    const az = PERCEIVE_AZ;
+    const seat = flankRing(r4.r, r4.y, az, 0.25 * PERCEIVE_SCALE, 14);
     const g = new Group();
-    g.position.set(gx, gy, gz);
+    g.position.copy(seat.center);
+    // Le barillet est dessiné le long de +Z : on le tourne pour qu'il vise son azimut de sortie.
+    g.rotation.y = Math.PI / 2 - az;
     // À l'échelle 1 le barillet ne faisait que ~50 px de large à l'écran, sous le seuil de
     // lisibilité du brief (60–120 px) : on l'agrandit d'un cinquième. L'ancre de légende est
     // divisée par la même valeur pour rester au même point dans le monde.
@@ -583,24 +640,51 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     addModule(
       'perceive',
       g,
-      [-0.2, 0.15, 1.9],
+      [-1.715, 1.1, 0.018],
       3,
-      circlePts(0.25 * PERCEIVE_SCALE, 14, 'xy', [gx, gy, gz + 0.004]),
-      V(gx, gy, gz + 0.004),
+      seat.pts,
+      seat.center,
       V(0, 0.25 / PERCEIVE_SCALE, 0.2 / PERCEIVE_SCALE),
-      [-0.1, r4.y, 0.08], // logé derrière le flanc de R4
+      [0.15, r4.y, 0], // logé dans l'empilement, l'axe couché vers son azimut de sortie
     );
   }
-  // Agir — vérin articulé sur R3 (central), flanc gauche.
+  // 02 · Cœur — cage à facettes, sortie du haut du fût vers le HAUT-DROITE.
+  // C'est une pièce comme les autres depuis cette passe : même mécanique repos caché → émergence,
+  // même collerette d'accroche, même lien pointillé. Elle finit loin du fût, donc jamais masquée.
+  {
+    collect = [];
+    const r5 = RING_SPECS[4];
+    const az = DECIDE_AZ;
+    const seat = flankRing(r5.r, r5.y, az, 0.2, 12);
+    const g = new Group();
+    g.position.copy(seat.center);
+    g.scale.setScalar(CORE_SCALE);
+    g.add(new LineSegments(track(new EdgesGeometry(track(new IcosahedronGeometry(0.3, 0)))), lineMat(GREEN, 0.95)));
+    g.add(new LineSegments(track(new EdgesGeometry(track(new OctahedronGeometry(0.14, 0)))), lineMat(GREEN, 0.6)));
+    coreGroup = g;
+    addModule(
+      'decide',
+      g,
+      [2.705, -0.298, -1.514],
+      4,
+      seat.pts,
+      seat.center,
+      // L'ancre est sur l'axe de rotation de la cage : sans ça le point de rappel tournerait avec elle.
+      V(0, 0.3, 0),
+      [0, 0.35, 0.05], // au cœur de l'empilement, masqué par les volumes pleins des étages
+    );
+  }
+  // 03 · Bras — vérin articulé sur R3 (central), flanc gauche.
   // Embase boulonnée → corps nervuré → tige coaxiale sortie → chape percée + axe traversant.
   {
     collect = []; // tout le vert créé ici appartient à cette pièce
     const r3 = RING_SPECS[2];
-    const gx = -r3.r;
-    const gy = r3.y;
-    const gz = 0.1;
+    const az = ACT_AZ;
+    const seat = flankRing(r3.r, r3.y, az, 0.215, 14);
     const g = new Group();
-    g.position.set(gx, gy, gz);
+    g.position.copy(seat.center);
+    // Le vérin est dessiné le long de -X : on le tourne pour qu'il vise son azimut de sortie.
+    g.rotation.y = Math.PI - az;
     // Embase : elle déborde du corps, ses vis sont sur la face tournée vers le fût (donc vers l'œil).
     g.add(stageX(0.195, 0, -0.06, 14));
     g.add(segs(boltRing(6, 0.158, 0.022, 'yz', [0.006, 0, 0], 0.5), GREEN, 0.75));
@@ -631,15 +715,15 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     addModule(
       'act',
       g,
-      [-1.7, 0.1, 0.3],
+      [-1.421, 0.559, 0.528],
       2,
-      circlePts(0.215, 14, 'yz', [gx - 0.004, gy, gz]),
-      V(gx - 0.004, gy, gz),
+      seat.pts,
+      seat.center,
       V(-0.6, 0.2, 0),
       [0.46, r3.y, 0], // vérin rentré dans le fût, décalé pour que sa longueur y tienne
     );
   }
-  // Rendre compte — plaque à cadran sur R4, flanc droit.
+  // 04 · Écran — plaque à cadran sur R4, flanc droit.
   // Plaque à coins coupés boulonnée aux 4 angles : cadran gradué + aiguille, lignes de repères,
   // et la barre de valeurs d'avant, désormais alignée sur une grille.
   {
@@ -716,7 +800,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     addModule(
       'report',
       g,
-      [1.5, 0.35, 0.2],
+      [1.133, -1.619, -1.108],
       3,
       circlePts(0.1, 14, 'yz', [gx + 0.004, gy, gz]),
       V(gx + 0.004, gy, gz),
@@ -724,13 +808,54 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       [-0.38, r4.y - 0.12, -0.08], // plaque rangée à plat dans la colonne
     );
   }
-  // Se connecter — couronne d'accouplement sur R5, posée dessus.
-  // Plateau tourné + rainure de guidage, couronne de 10 embouts cylindriques, tige filetée.
+  // 05 · Voix — membrane annelée sur R1, devant.
+  // Bague de serrage vissée, puis pavillon en trois anneaux de rayons décroissants (vraie
+  // profondeur, chacun est un volume), enfin la grille de fentes radiales sur la membrane.
   {
     collect = []; // tout le vert créé ici appartient à cette pièce
-    const r5 = RING_SPECS[4];
+    const r1 = RING_SPECS[0];
+    const az = REPLY_AZ;
+    const seat = flankRing(r1.r, r1.y, az, 0.26 * REPLY_SCALE, 14);
+    const g = new Group();
+    g.position.copy(seat.center);
+    // Le pavillon est dessiné le long de +Z : on le tourne pour qu'il vise son azimut de sortie.
+    g.rotation.y = Math.PI / 2 - az;
+    // Même correction d'échelle que le barillet (cf. `PERCEIVE_SCALE`) : c'est la plus petite
+    // pièce à l'écran, elle passait sous les 60 px du brief.
+    g.scale.setScalar(REPLY_SCALE);
+    // Bague de serrage : large annulaire (0.26 → 0.19) pour que son cercle de vis se lise.
+    g.add(stageZ(0.26, 0, 0.07, 14));
+    g.add(segs(boltRing(8, 0.226, 0.022, 'xy', [0, 0, 0.073], 0.2), GREEN, 0.7));
+    // Pavillon : trois anneaux de rayon décroissant, chacun avec sa propre profondeur —
+    // les marches doivent être franches, sinon l'ensemble s'écrase en dôme vu de trois quarts.
+    g.add(stageZ(0.192, 0.07, 0.17, 14));
+    g.add(stageZ(0.142, 0.17, 0.25, 12));
+    g.add(stageZ(0.094, 0.25, 0.31, 12));
+    const grille: Vector3[] = [];
+    for (let k = 0; k < 14; k++) {
+      const a = (k / 14) * TAU;
+      grille.push(V(Math.cos(a) * 0.026, Math.sin(a) * 0.026, 0.313), V(Math.cos(a) * 0.085, Math.sin(a) * 0.085, 0.313));
+    }
+    grille.push(...circlePts(0.026, 8, 'xy', [0, 0, 0.314]));
+    g.add(segs(grille, GREEN, 0.65));
+    addModule(
+      'reply',
+      g,
+      [-2.698, 0.829, 1.431],
+      0,
+      seat.pts,
+      seat.center,
+      V(0, -0.08 / REPLY_SCALE, 0.08 / REPLY_SCALE),
+      [0.22, r1.y, 0.1], // membrane logée derrière le flanc de l'embase
+    );
+  }
+  // 06 · Connecteurs — couronne d'accouplement EN EMBASE : elle quitte le fût par-dessous R1 et
+  // descend vers la droite. Plateau tourné + rainure de guidage, 10 embouts, tige d'accouplement.
+  {
+    collect = []; // tout le vert créé ici appartient à cette pièce
+    const r1 = RING_SPECS[0];
     const gx = 0;
-    const gy = r5.y + r5.h / 2;
+    const gy = r1.y - r1.h / 2 - 0.07; // sous la plinthe : la couronne se détache de l'embase
     const gz = 0;
     const g = new Group();
     g.position.set(gx, gy, gz);
@@ -765,74 +890,23 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       ports.push(V(px - ox, 0.105, pz - oz), V(px - ox, portTop, pz - oz));
     }
     g.add(segs(ports, GREEN, 0.85));
-    // Tige filetée : en vue plongeante un filet en travers est sous le pixel — le pas est donc
-    // dessiné comme une pile de bagues régulières, qui se lit encore vue de dessus.
-    const rodX = 0.17;
-    const rodZ = -0.09;
-    const rodTop = 0.66;
-    const rodR = 0.036;
-    const rodFill = blank(new CylinderGeometry(rodR, rodR, rodTop - 0.11, 8));
-    rodFill.position.set(rodX, (rodTop + 0.11) / 2, rodZ);
-    g.add(rodFill);
-    const rod: Vector3[] = [
-      V(rodX - rodR, 0.11, rodZ), V(rodX - rodR, rodTop, rodZ),
-      V(rodX + rodR, 0.11, rodZ), V(rodX + rodR, rodTop, rodZ),
-    ];
-    for (let k = 0; k < 6; k++) rod.push(...circlePts(rodR, 6, 'xz', [rodX, 0.17 + k * 0.083, rodZ]));
-    // Embout : petite bague de plus grand diamètre au sommet.
-    rod.push(...circlePts(0.058, 8, 'xz', [rodX, rodTop + 0.06, rodZ]));
-    rod.push(V(rodX - 0.058, rodTop, rodZ), V(rodX - 0.058, rodTop + 0.06, rodZ));
-    rod.push(V(rodX + 0.058, rodTop, rodZ), V(rodX + 0.058, rodTop + 0.06, rodZ));
-    g.add(segs(rod, GREEN, 0.75));
+    // Tige d'accouplement : courte, SOUS la couronne (l'antenne verticale du sommet a disparu
+    // avec le déménagement en embase). Fût tourné + bague d'arrêt + embout.
+    // Elle est décentrée vers +Z : au centre, le plateau vu en plongée la masquerait entièrement.
+    const stubZ = 0.26;
+    const stub = solid(new CylinderGeometry(0.105, 0.105, 0.55, 12), GREEN, 0.9, 30);
+    stub.position.set(0, -0.275, stubZ);
+    g.add(stub);
+    g.add(segs(circlePts(0.15, 12, 'xz', [0, -0.5, stubZ]), GREEN, 0.7));
     addModule(
       'connect',
       g,
-      [0, 1.15, 0],
-      4,
-      circlePts(0.48, 18, 'xz', [gx, gy + 0.004, gz]),
-      V(gx, gy + 0.004, gz),
-      V(0, 0.26, 0),
-      [0, 0.02, 0], // couronne rentrée dans la colonne, tige comprise
-    );
-  }
-  // Répondre — membrane annelée sur R1, devant.
-  // Bague de serrage vissée, puis pavillon en trois anneaux de rayons décroissants (vraie
-  // profondeur, chacun est un volume), enfin la grille de fentes radiales sur la membrane.
-  {
-    collect = []; // tout le vert créé ici appartient à cette pièce
-    const r1 = RING_SPECS[0];
-    const gx = 0.3;
-    const gy = r1.y;
-    const gz = r1.r;
-    const g = new Group();
-    g.position.set(gx, gy, gz);
-    // Même correction d'échelle que le barillet (cf. `PERCEIVE_SCALE`) : c'est la plus petite
-    // pièce à l'écran, elle passait sous les 60 px du brief.
-    g.scale.setScalar(REPLY_SCALE);
-    // Bague de serrage : large annulaire (0.26 → 0.19) pour que son cercle de vis se lise.
-    g.add(stageZ(0.26, 0, 0.07, 14));
-    g.add(segs(boltRing(8, 0.226, 0.022, 'xy', [0, 0, 0.073], 0.2), GREEN, 0.7));
-    // Pavillon : trois anneaux de rayon décroissant, chacun avec sa propre profondeur —
-    // les marches doivent être franches, sinon l'ensemble s'écrase en dôme vu de trois quarts.
-    g.add(stageZ(0.192, 0.07, 0.17, 14));
-    g.add(stageZ(0.142, 0.17, 0.25, 12));
-    g.add(stageZ(0.094, 0.25, 0.31, 12));
-    const grille: Vector3[] = [];
-    for (let k = 0; k < 14; k++) {
-      const a = (k / 14) * TAU;
-      grille.push(V(Math.cos(a) * 0.026, Math.sin(a) * 0.026, 0.313), V(Math.cos(a) * 0.085, Math.sin(a) * 0.085, 0.313));
-    }
-    grille.push(...circlePts(0.026, 8, 'xy', [0, 0, 0.314]));
-    g.add(segs(grille, GREEN, 0.65));
-    addModule(
-      'reply',
-      g,
-      [0.5, -0.35, 1.3],
+      [1.49, -1.231, -0.416],
       0,
-      circlePts(0.26 * REPLY_SCALE, 14, 'xy', [gx, gy, gz + 0.004]),
-      V(gx, gy, gz + 0.004),
-      V(0, -0.08 / REPLY_SCALE, 0.08 / REPLY_SCALE),
-      [0.22, r1.y, 0.1], // membrane logée derrière le flanc de l'embase
+      circlePts(0.48, 18, 'xz', [gx, gy - 0.004, gz]),
+      V(gx, gy - 0.004, gz),
+      V(0.44, 0.12, 0.06),
+      [0, -0.9, 0], // couronne rentrée dans la colonne, tige d'accouplement comprise
     );
   }
 
@@ -876,9 +950,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
         const shift = (i - RING_CENTER_INDEX) * RING_OPEN_STEP * open;
         rings[i].position.y = RING_SPECS[i].y + shift;
       }
-      core.rotation.y = time / 4000;
-      coreMats[0].opacity = open * 0.95;
-      coreMats[1].opacity = open * 0.6;
+      if (coreGroup) coreGroup.rotation.y = time / 4000;
 
       for (const l of drawn) l.geometry.setDrawRange(0, Math.floor((l.userData.count * draw) / 2) * 2);
 
@@ -906,7 +978,6 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
 
       scene.updateMatrixWorld();
       const anchors = modules.map((m) => project(m.id, tmp.copy(m.anchor).applyMatrix4(m.group.matrixWorld)));
-      anchors.push(project('decide', tmp.set(0, 0, 0).applyMatrix4(core.matrixWorld)));
       renderer.render(scene, camera);
       return anchors;
     },

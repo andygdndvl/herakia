@@ -1,4 +1,6 @@
-export const PART_IDS = ['perceive', 'decide', 'act', 'connect', 'report', 'reply'] as const;
+// Ordre de lecture en Z : gauche → droite, puis on descend d'une rangée.
+// C'est aussi l'ordre d'apparition des légendes et celui de la liste HTML de secours.
+export const PART_IDS = ['perceive', 'decide', 'act', 'report', 'reply', 'connect'] as const;
 export type PartId = (typeof PART_IDS)[number];
 
 export const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
@@ -60,10 +62,10 @@ const TOP = 70;
 const SIDE: Record<PartId, 'left' | 'right'> = {
   perceive: 'left',
   act: 'left',
-  decide: 'left',
-  connect: 'right',
+  reply: 'left',
+  decide: 'right',
   report: 'right',
-  reply: 'right',
+  connect: 'right',
 };
 
 /** Range les légendes en deux colonnes fixes (gauche/droite par pièce), sans chevauchement vertical. */
