@@ -52,6 +52,11 @@ export interface CalloutBox {
   points: string;
   ax: number;
   ay: number;
+  /**
+   * Repère d'ancrage : deux courtes graduations perpendiculaires à la ligne de rappel, de part et
+   * d'autre du point. C'est le trait de cote d'un plan d'ingénieur, pas une simple pastille.
+   */
+  tick: string;
 }
 
 export const LABEL_WIDTH = 250;
@@ -81,6 +86,13 @@ export function layoutCallouts(anchors: ScreenAnchor[], width: number): CalloutB
       const left = side === 'left' ? colX : colX - LABEL_WIDTH;
       const edge = side === 'left' ? colX + LABEL_WIDTH + 12 : colX - LABEL_WIDTH - 12;
       const knee = side === 'left' ? edge + 30 : edge - 30;
+      // Normale à la ligne de rappel : les deux graduations s'y posent, avec un jeu de 3.5 px
+      // autour du point pour qu'il reste lisible.
+      const len = Math.hypot(knee - a.x, y - a.y) || 1;
+      const nx = -(y - a.y) / len;
+      const ny = (knee - a.x) / len;
+      const tk = (s: number) =>
+        `M${(a.x + nx * 3.5 * s).toFixed(1)},${(a.y + ny * 3.5 * s).toFixed(1)}L${(a.x + nx * 9 * s).toFixed(1)},${(a.y + ny * 9 * s).toFixed(1)}`;
       out.push({
         id: a.id,
         side,
@@ -89,6 +101,7 @@ export function layoutCallouts(anchors: ScreenAnchor[], width: number): CalloutB
         points: `${a.x},${a.y} ${knee},${y} ${edge},${y}`,
         ax: a.x,
         ay: a.y,
+        tick: `${tk(1)}${tk(-1)}`,
       });
     }
   }
