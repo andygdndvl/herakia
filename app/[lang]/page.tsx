@@ -10,6 +10,7 @@ import { GoogleReviews } from '@/components/home/GoogleReviews';
 import { HowItWorks } from '@/components/home/HowItWorks';
 import { CTAFinal } from '@/components/home/CTAFinal';
 import { MeetTia } from '@/components/home/MeetTia';
+import { TiaInlineCTA } from '@/components/home/TiaInlineCTA';
 
 export default function HomePage() {
   return (
@@ -19,11 +20,12 @@ export default function HomePage() {
         <Hero />
         <TrustedBy />
         <Personae />
-        <MeetTia />
         <WhatIsAnAgent />
+        <TiaInlineCTA />
         <WhatWeHandle />
-        <About />
+        <MeetTia />
         <GoogleReviews />
+        <About />
         <HowItWorks />
         <CTAFinal />
       </main>
