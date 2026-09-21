@@ -335,6 +335,10 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   let collect: Array<{ mat: LineBasicMaterial; base: number }> | null = null;
   const lineMat = (color: number, opacity: number) => {
     const m = track(new LineBasicMaterial({ color, transparent: true, opacity }));
+    // Le fondu de profondeur sert à donner du volume au fût blanc. Les pièces vertes, elles,
+    // portent l'information : elles doivent rester également lisibles où qu'elles soient dans la
+    // profondeur (sans ça la couronne d'embase, la plus éloignée, vire au vert sombre).
+    if (color === GREEN) m.fog = false;
     collect?.push({ mat: m, base: opacity });
     return m;
   };
@@ -635,7 +639,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     socket.position.y = -RING_SPECS[ring].y;
     rings[ring].add(socket);
     const tetherMat = track(
-      new LineDashedMaterial({ color: GREEN, dashSize: 0.06, gapSize: 0.05, transparent: true, opacity: 0 }),
+      new LineDashedMaterial({ color: GREEN, dashSize: 0.06, gapSize: 0.05, transparent: true, opacity: 0, fog: false }),
     );
     const tether = new Line(track(new BufferGeometry().setFromPoints([V(0, 0, 0), V(0, 0, 0)])), tetherMat);
     root.add(tether);
