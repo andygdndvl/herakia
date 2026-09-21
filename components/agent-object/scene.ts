@@ -225,6 +225,12 @@ const RING_CENTER_INDEX = 2;
 const RING_OPEN_STEP = 0.52;
 /** décalage de départ d'une pièce verte à la suivante : la sortie ne part pas d'un bloc */
 const MODULE_STAGGER = 0.04;
+// Les deux pièces les plus petites (barillet d'objectif, membrane) sont dessinées à l'échelle 1
+// puis agrandies : à l'échelle 1 elles tombaient sous les 60 px de large à l'écran, le plancher de
+// lisibilité fixé par le brief. Les ancres de légende sont divisées par le même facteur, donc
+// inchangées dans le monde ; les deux pièces restent logées dans le fût à l'état fermé.
+const PERCEIVE_SCALE = 1.28;
+const REPLY_SCALE = 1.32;
 const RING_BOTTOM = RING_SPECS[0].y - RING_SPECS[0].h / 2;
 
 export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
@@ -277,6 +283,45 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   }
   function segs(points: Vector3[], color = WHITE, opacity = 0.6): LineSegments {
     return segsWith(points, lineMat(color, opacity));
+  }
+  /** Volume plein SANS arêtes : ne sert qu'à masquer ce qui passe derrière (silhouette dessinée à la main). */
+  const blank = (geo: BufferGeometry) => new Mesh(track(geo), fill);
+  /**
+   * Étage tourné d'une pièce, coaxial à +Z : c'est la brique des bagues de barillet et des pavillons.
+   * Deux arêtes circulaires seulement (seuil 30° → pas de génératrice tant que n ≥ 12).
+   */
+  function stageZ(r: number, z0: number, z1: number, n: number, opacity = 0.95): Group {
+    const s = solid(new CylinderGeometry(r, r, Math.abs(z1 - z0), n), GREEN, opacity, 30);
+    s.rotation.x = Math.PI / 2;
+    s.position.z = (z0 + z1) / 2;
+    return s;
+  }
+  /** Même chose, coaxial à X : corps et tige du vérin. */
+  function stageX(r: number, x0: number, x1: number, n: number, opacity = 0.95): Group {
+    const s = solid(new CylinderGeometry(r, r, Math.abs(x1 - x0), n), GREEN, opacity, 30);
+    s.rotation.z = Math.PI / 2;
+    s.position.x = (x0 + x1) / 2;
+    return s;
+  }
+  /** Couronne de vis à plat sur une face (plan 'xy' ou 'xz'), tête + fente. */
+  function boltRing(
+    count: number,
+    ring: number,
+    r: number,
+    plane: Plane,
+    c: [number, number, number],
+    phase = 0,
+  ): Vector3[] {
+    const pts: Vector3[] = [];
+    for (let k = 0; k < count; k++) {
+      const a = (k / count) * TAU + phase;
+      const u = Math.cos(a) * ring;
+      const v = Math.sin(a) * ring;
+      const cc: [number, number, number] =
+        plane === 'xy' ? [c[0] + u, c[1] + v, c[2]] : plane === 'xz' ? [c[0] + u, c[1], c[2] + v] : [c[0], c[1] + u, c[2] + v];
+      pts.push(...circlePts(r, 5, plane, cc));
+    }
+    return pts;
   }
 
   const root = new Group();
@@ -497,7 +542,8 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     });
   }
 
-  // Capteur — sur R4, posé devant.
+  // Capteur — barillet d'objectif sur R4, posé devant.
+  // Collerette arrière boulonnée → deux bagues de diamètres décroissants (l'une moletée) → lentille.
   {
     collect = []; // tout le vert créé ici appartient à cette pièce
     const r4 = RING_SPECS[3];
@@ -506,74 +552,96 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const gz = r4.r;
     const g = new Group();
     g.position.set(gx, gy, gz);
-    const box = solid(new BoxGeometry(0.4, 0.32, 0.2), GREEN, 0.95);
-    box.position.z = 0.11;
-    g.add(box);
-    const lens = solid(new CylinderGeometry(0.12, 0.12, 0.09, 14), GREEN, 0.95, 30);
-    lens.rotation.x = Math.PI / 2;
-    lens.position.z = 0.24;
-    g.add(lens);
-    g.add(segs(circlePts(0.07, 16, 'xy', [0, 0, 0.285]), GREEN, 0.8));
-    g.add(segs(circlePts(0.03, 12, 'xy', [0, 0, 0.285]), GREEN, 0.8));
+    // À l'échelle 1 le barillet ne faisait que ~50 px de large à l'écran, sous le seuil de
+    // lisibilité du brief (60–120 px) : on l'agrandit d'un cinquième. L'ancre de légende est
+    // divisée par la même valeur pour rester au même point dans le monde.
+    g.scale.setScalar(PERCEIVE_SCALE);
+    // Collerette arrière : elle déborde largement du corps, pour que son annulaire avant reste
+    // lisible de trois quarts et porte un vrai cercle de vis (0.25 → 0.17 : 0.08 d'annulaire).
+    g.add(stageZ(0.25, 0, 0.055, 14));
+    g.add(segs(boltRing(6, 0.212, 0.026, 'xy', [0, 0, 0.058], 0.3), GREEN, 0.75));
+    // Bague principale, puis bague moletée (crans radiaux), puis bague de tête.
+    g.add(stageZ(0.172, 0.055, 0.21, 14));
+    g.add(stageZ(0.152, 0.21, 0.32, 14));
+    const knurl: Vector3[] = [];
+    for (let k = 0; k < 16; k++) {
+      const a = (k / 16) * TAU;
+      const kx = Math.cos(a) * 0.155;
+      const ky = Math.sin(a) * 0.155;
+      knurl.push(V(kx, ky, 0.222), V(kx, ky, 0.308));
+    }
+    g.add(segs(knurl, GREEN, 0.6));
+    g.add(stageZ(0.125, 0.32, 0.44, 12));
+    // Lentille : trois cercles concentriques + un éclat oblique.
+    const lens = [
+      ...circlePts(0.102, 12, 'xy', [0, 0, 0.446]),
+      ...circlePts(0.072, 10, 'xy', [0, 0, 0.448]),
+      ...circlePts(0.04, 8, 'xy', [0, 0, 0.45]),
+    ];
+    lens.push(V(-0.072, 0.042, 0.452), V(-0.028, 0.08, 0.452));
+    g.add(segs(lens, GREEN, 0.8));
     addModule(
       'perceive',
       g,
       [-0.2, 0.15, 1.9],
       3,
-      rectPts(gx - 0.2, gy - 0.16, gx + 0.2, gy + 0.16, gz + 0.004),
+      circlePts(0.25 * PERCEIVE_SCALE, 14, 'xy', [gx, gy, gz + 0.004]),
       V(gx, gy, gz + 0.004),
-      V(0, 0.25, 0.2),
+      V(0, 0.25 / PERCEIVE_SCALE, 0.2 / PERCEIVE_SCALE),
       [-0.1, r4.y, 0.08], // logé derrière le flanc de R4
     );
   }
-  // Bras articulé — sur R3 (central), flanc gauche.
+  // Agir — vérin articulé sur R3 (central), flanc gauche.
+  // Embase boulonnée → corps nervuré → tige coaxiale sortie → chape percée + axe traversant.
   {
     collect = []; // tout le vert créé ici appartient à cette pièce
     const r3 = RING_SPECS[2];
     const gx = -r3.r;
     const gy = r3.y;
     const gz = 0.1;
-    const shoulderR = 0.16;
     const g = new Group();
     g.position.set(gx, gy, gz);
-    const shoulder = solid(new CylinderGeometry(shoulderR, shoulderR, 0.18, 16), GREEN, 0.95, 30);
-    shoulder.rotation.z = Math.PI / 2;
-    shoulder.position.x = -0.09;
-    g.add(shoulder);
-    const p1 = new Group();
-    p1.position.x = -0.18;
-    p1.rotation.z = 0.5;
-    g.add(p1);
-    const upper = solid(new BoxGeometry(0.8, 0.11, 0.11), GREEN, 0.95);
-    upper.position.x = -0.4;
-    p1.add(upper);
-    const p2 = new Group();
-    p2.position.x = -0.8;
-    p2.rotation.z = 0.75;
-    p1.add(p2);
-    const elbow = solid(new CylinderGeometry(0.1, 0.1, 0.18, 14), GREEN, 0.95, 30);
-    elbow.rotation.x = Math.PI / 2;
-    p2.add(elbow);
-    const fore = solid(new BoxGeometry(0.62, 0.09, 0.09), GREEN, 0.95);
-    fore.position.x = -0.31;
-    p2.add(fore);
-    for (const s of [-1, 1]) {
-      const finger = solid(new BoxGeometry(0.18, 0.035, 0.08), GREEN, 0.95);
-      finger.position.set(-0.7, s * 0.05, 0);
-      p2.add(finger);
+    // Embase : elle déborde du corps, ses vis sont sur la face tournée vers le fût (donc vers l'œil).
+    g.add(stageX(0.195, 0, -0.06, 14));
+    g.add(segs(boltRing(6, 0.158, 0.022, 'yz', [0.006, 0, 0], 0.5), GREEN, 0.75));
+    // Corps du vérin : deux rainures tournées + six nervures longitudinales.
+    g.add(stageX(0.145, -0.06, -0.58, 14));
+    const body: Vector3[] = [];
+    for (const x of [-0.17, -0.45]) body.push(...circlePts(0.149, 12, 'yz', [x, 0, 0]));
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * TAU;
+      const ry = Math.sin(a) * 0.147;
+      const rz = Math.cos(a) * 0.147;
+      body.push(V(-0.075, ry, rz), V(-0.565, ry, rz));
     }
+    g.add(segs(body, GREEN, 0.55));
+    // Tige : second cylindre coaxial, plus fin, avec sa gorge de fin de course.
+    g.add(stageX(0.062, -0.58, -1.02, 12));
+    g.add(segs(circlePts(0.066, 10, 'yz', [-0.955, 0, 0]), GREEN, 0.6));
+    // Chape : deux joues percées de part et d'autre, traversées par un axe.
+    for (const s of [-1, 1]) {
+      const cheek = solid(new BoxGeometry(0.22, 0.19, 0.035), GREEN, 0.9);
+      cheek.position.set(-1.1, 0, s * 0.082);
+      g.add(cheek);
+    }
+    const clevis = circlePts(0.052, 10, 'xy', [-1.1, 0, 0.102]);
+    clevis.push(...circlePts(0.032, 6, 'xy', [-1.1, 0, 0.128]));
+    clevis.push(V(-1.1, -0.03, 0.13), V(-1.1, 0.03, 0.13));
+    g.add(segs(clevis, GREEN, 0.8));
     addModule(
       'act',
       g,
       [-1.7, 0.1, 0.3],
       2,
-      circlePts(shoulderR + 0.02, 16, 'yz', [gx - 0.004, gy, gz]),
+      circlePts(0.215, 14, 'yz', [gx - 0.004, gy, gz]),
       V(gx - 0.004, gy, gz),
       V(-0.6, 0.2, 0),
-      [0.46, r3.y, 0], // bras replié dans le fût, décalé pour que sa longueur y tienne
+      [0.46, r3.y, 0], // vérin rentré dans le fût, décalé pour que sa longueur y tienne
     );
   }
-  // Écran flottant — sur R4, flanc droit.
+  // Rendre compte — plaque à cadran sur R4, flanc droit.
+  // Plaque à coins coupés boulonnée aux 4 angles : cadran gradué + aiguille, lignes de repères,
+  // et la barre de valeurs d'avant, désormais alignée sur une grille.
   {
     collect = []; // tout le vert créé ici appartient à cette pièce
     const r4 = RING_SPECS[3];
@@ -582,37 +650,82 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const gz = 0.15;
     const g = new Group();
     g.position.set(gx, gy, gz);
-    const mount = solid(new CylinderGeometry(0.05, 0.05, 0.55, 14), GREEN, 0.8, 30);
+    // Bras de support : cylindre usiné + sa bague d'arrêt.
+    const mount = solid(new CylinderGeometry(0.052, 0.052, 0.5, 12), GREEN, 0.8, 30);
     mount.rotation.z = Math.PI / 2;
-    mount.position.x = 0.275;
+    mount.position.x = 0.25;
     g.add(mount);
-    const screen = new Group();
-    screen.position.x = 0.8;
-    screen.rotation.y = 0.35;
-    g.add(screen);
-    screen.add(solid(new BoxGeometry(1.0, 1.4, 0.05), GREEN, 0.95));
-    const z = 0.03;
-    const ui = rectPts(-0.42, -0.62, 0.42, 0.62, z);
-    ui.push(V(-0.34, 0.5, z), V(0.05, 0.5, z));
-    [0.34, 0.27, 0.19].forEach((y, i) => ui.push(V(-0.34, y, z), V(-0.34 + [0.6, 0.46, 0.53][i], y, z)));
-    [0.17, 0.29, 0.23, 0.4, 0.34, 0.48].forEach((h, i) => {
-      const x = -0.29 + i * 0.115;
-      ui.push(V(x, -0.48, z), V(x, -0.48 + h, z));
+    g.add(segs(circlePts(0.078, 10, 'yz', [0.14, 0, 0]), GREEN, 0.6));
+    const plate = new Group();
+    plate.position.x = 0.8;
+    plate.rotation.y = 0.35;
+    g.add(plate);
+    const hw = 0.5;
+    const hh = 0.64;
+    // Le volume plein ne sert qu'à masquer ce qui passe derrière : la silhouette (coins coupés)
+    // est tracée à la main, un BoxGeometry ne sait pas la donner.
+    plate.add(blank(new BoxGeometry(hw * 2 - 0.02, hh * 2 - 0.02, 0.05)));
+    const pz = 0.031;
+    /** contour rectangulaire à coins coupés */
+    const chamfered = (w: number, h: number, c: number): Vector3[] => {
+      const corners = [
+        V(-w + c, -h, pz), V(w - c, -h, pz), V(w, -h + c, pz), V(w, h - c, pz),
+        V(w - c, h, pz), V(-w + c, h, pz), V(-w, h - c, pz), V(-w, -h + c, pz),
+      ];
+      const out: Vector3[] = [];
+      for (let k = 0; k < corners.length; k++) out.push(corners[k], corners[(k + 1) % corners.length]);
+      return out;
+    };
+    const face = [...chamfered(hw, hh, 0.14), ...chamfered(hw - 0.05, hh - 0.05, 0.105)];
+    // Quatre boulons d'angle, tête fendue.
+    for (const sx of [-1, 1]) {
+      for (const sy of [-1, 1]) {
+        const bx = sx * (hw - 0.105);
+        const by = sy * (hh - 0.105);
+        face.push(...circlePts(0.032, 6, 'xy', [bx, by, pz + 0.002]));
+        face.push(V(bx - 0.023, by + 0.023, pz + 0.003), V(bx + 0.023, by - 0.023, pz + 0.003));
+      }
+    }
+    // Cadran gravé : arc gradué de 220°, aiguille fine, moyeu.
+    const cy = 0.24;
+    const a0 = Math.PI * 1.11;
+    const a1 = -Math.PI * 0.11;
+    const arcPt = (t: number, r: number) => {
+      const a = a0 + (a1 - a0) * t;
+      return V(Math.cos(a) * r, cy + Math.sin(a) * r, pz);
+    };
+    for (let k = 0; k < 14; k++) face.push(arcPt(k / 14, 0.3), arcPt((k + 1) / 14, 0.3));
+    for (let k = 0; k < 10; k++) face.push(arcPt(k / 10, 0.245), arcPt((k + 1) / 10, 0.245));
+    for (let k = 0; k <= 10; k++) face.push(arcPt(k / 10, 0.245), arcPt(k / 10, k % 5 === 0 ? 0.19 : 0.288));
+    face.push(V(0, cy, pz + 0.002), arcPt(0.7, 0.272));
+    face.push(...circlePts(0.036, 6, 'xy', [0, cy, pz + 0.003]));
+    // Trois lignes de repères sous le cadran, alignées à gauche sur la même marge.
+    [-0.09, -0.17, -0.25].forEach((y, i) => {
+      face.push(V(-0.34, y, pz), V(-0.34 + [0.56, 0.4, 0.49][i], y, pz));
+      face.push(V(-0.385, y, pz), V(-0.36, y, pz));
     });
-    ui.push(V(-0.34, -0.48, z), V(0.34, -0.48, z));
-    screen.add(segs(ui, GREEN, 0.7));
+    // Barre de valeurs : six barres sur une grille de deux lignes.
+    const b0 = -0.47;
+    face.push(V(-0.36, b0, pz), V(0.36, b0, pz));
+    face.push(V(-0.36, b0 + 0.13, pz), V(0.36, b0 + 0.13, pz));
+    [0.06, 0.13, 0.1, 0.19, 0.16, 0.23].forEach((h, i) => {
+      const x = -0.29 + i * 0.116;
+      face.push(V(x, b0, pz), V(x, b0 + h, pz));
+    });
+    plate.add(segs(face, GREEN, 0.85));
     addModule(
       'report',
       g,
       [1.5, 0.35, 0.2],
       3,
-      circlePts(0.1, 16, 'yz', [gx + 0.004, gy, gz]),
+      circlePts(0.1, 14, 'yz', [gx + 0.004, gy, gz]),
       V(gx + 0.004, gy, gz),
       V(1.15, 0.7, 0.2),
       [-0.38, r4.y - 0.12, -0.08], // plaque rangée à plat dans la colonne
     );
   }
-  // Couronne de connecteurs — sur R5, posée dessus.
+  // Se connecter — couronne d'accouplement sur R5, posée dessus.
+  // Plateau tourné + rainure de guidage, couronne de 10 embouts cylindriques, tige filetée.
   {
     collect = []; // tout le vert créé ici appartient à cette pièce
     const r5 = RING_SPECS[4];
@@ -621,31 +734,70 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const gz = 0;
     const g = new Group();
     g.position.set(gx, gy, gz);
-    const disc = solid(new CylinderGeometry(0.5, 0.5, 0.12, 20), GREEN, 0.95, 30);
-    disc.position.y = 0.06;
+    const disc = solid(new CylinderGeometry(0.48, 0.48, 0.11, 16), GREEN, 0.95, 30);
+    disc.position.y = 0.055;
     g.add(disc);
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * Math.PI * 2;
-      const port = solid(new BoxGeometry(0.1, 0.09, 0.1), GREEN, 0.9);
-      port.position.set(Math.cos(a) * 0.34, 0.16, Math.sin(a) * 0.34);
-      port.rotation.y = -a;
-      g.add(port);
+    const topFace = 0.113;
+    // Rainure de guidage : deux cercles rapprochés sur la face du plateau.
+    g.add(
+      segs(
+        [...circlePts(0.43, 14, 'xz', [0, topFace, 0]), ...circlePts(0.4, 14, 'xz', [0, topFace, 0])],
+        GREEN,
+        0.55,
+      ),
+    );
+    // Embouts : volume plein (masquage) + cercle de tête et deux génératrices tangentes.
+    // Vus de dessus (la bascule met le plateau presque à plat), ils doivent être assez hauts
+    // pour que leur paroi se lise — sinon il ne reste qu'une couronne de pastilles.
+    const ports: Vector3[] = [];
+    const portTop = 0.3;
+    for (let i = 0; i < 10; i++) {
+      const a = (i / 10) * TAU + 0.12;
+      const px = Math.cos(a) * 0.33;
+      const pz = Math.sin(a) * 0.33;
+      const fillPort = blank(new CylinderGeometry(0.052, 0.052, portTop - 0.1, 8));
+      fillPort.position.set(px, (portTop + 0.1) / 2, pz);
+      g.add(fillPort);
+      ports.push(...circlePts(0.052, 7, 'xz', [px, portTop, pz]));
+      const ox = -Math.sin(a) * 0.052;
+      const oz = Math.cos(a) * 0.052;
+      ports.push(V(px + ox, 0.105, pz + oz), V(px + ox, portTop, pz + oz));
+      ports.push(V(px - ox, 0.105, pz - oz), V(px - ox, portTop, pz - oz));
     }
-    const antenna = solid(new CylinderGeometry(0.018, 0.018, 0.65, 8), GREEN, 0.9, 30);
-    antenna.position.set(0.16, 0.44, -0.08);
-    g.add(antenna);
+    g.add(segs(ports, GREEN, 0.85));
+    // Tige filetée : en vue plongeante un filet en travers est sous le pixel — le pas est donc
+    // dessiné comme une pile de bagues régulières, qui se lit encore vue de dessus.
+    const rodX = 0.17;
+    const rodZ = -0.09;
+    const rodTop = 0.66;
+    const rodR = 0.036;
+    const rodFill = blank(new CylinderGeometry(rodR, rodR, rodTop - 0.11, 8));
+    rodFill.position.set(rodX, (rodTop + 0.11) / 2, rodZ);
+    g.add(rodFill);
+    const rod: Vector3[] = [
+      V(rodX - rodR, 0.11, rodZ), V(rodX - rodR, rodTop, rodZ),
+      V(rodX + rodR, 0.11, rodZ), V(rodX + rodR, rodTop, rodZ),
+    ];
+    for (let k = 0; k < 6; k++) rod.push(...circlePts(rodR, 6, 'xz', [rodX, 0.17 + k * 0.083, rodZ]));
+    // Embout : petite bague de plus grand diamètre au sommet.
+    rod.push(...circlePts(0.058, 8, 'xz', [rodX, rodTop + 0.06, rodZ]));
+    rod.push(V(rodX - 0.058, rodTop, rodZ), V(rodX - 0.058, rodTop + 0.06, rodZ));
+    rod.push(V(rodX + 0.058, rodTop, rodZ), V(rodX + 0.058, rodTop + 0.06, rodZ));
+    g.add(segs(rod, GREEN, 0.75));
     addModule(
       'connect',
       g,
       [0, 1.15, 0],
       4,
-      circlePts(0.5, 20, 'xz', [gx, gy + 0.004, gz]),
+      circlePts(0.48, 18, 'xz', [gx, gy + 0.004, gz]),
       V(gx, gy + 0.004, gz),
       V(0, 0.26, 0),
-      [0, 0.02, 0], // couronne rentrée dans la colonne, antenne comprise
+      [0, 0.02, 0], // couronne rentrée dans la colonne, tige comprise
     );
   }
-  // Haut-parleur — sur R1, devant.
+  // Répondre — membrane annelée sur R1, devant.
+  // Bague de serrage vissée, puis pavillon en trois anneaux de rayons décroissants (vraie
+  // profondeur, chacun est un volume), enfin la grille de fentes radiales sur la membrane.
   {
     collect = []; // tout le vert créé ici appartient à cette pièce
     const r1 = RING_SPECS[0];
@@ -654,19 +806,32 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const gz = r1.r;
     const g = new Group();
     g.position.set(gx, gy, gz);
-    const speaker = solid(new CylinderGeometry(0.18, 0.18, 0.08, 16), GREEN, 0.95, 30);
-    speaker.rotation.x = Math.PI / 2;
-    speaker.position.z = 0.04;
-    g.add(speaker);
-    for (const r of [0.13, 0.09, 0.05]) g.add(segs(circlePts(r, 16, 'xy', [0, 0, 0.082]), GREEN, 0.6));
+    // Même correction d'échelle que le barillet (cf. `PERCEIVE_SCALE`) : c'est la plus petite
+    // pièce à l'écran, elle passait sous les 60 px du brief.
+    g.scale.setScalar(REPLY_SCALE);
+    // Bague de serrage : large annulaire (0.26 → 0.19) pour que son cercle de vis se lise.
+    g.add(stageZ(0.26, 0, 0.07, 14));
+    g.add(segs(boltRing(8, 0.226, 0.022, 'xy', [0, 0, 0.073], 0.2), GREEN, 0.7));
+    // Pavillon : trois anneaux de rayon décroissant, chacun avec sa propre profondeur —
+    // les marches doivent être franches, sinon l'ensemble s'écrase en dôme vu de trois quarts.
+    g.add(stageZ(0.192, 0.07, 0.17, 14));
+    g.add(stageZ(0.142, 0.17, 0.25, 12));
+    g.add(stageZ(0.094, 0.25, 0.31, 12));
+    const grille: Vector3[] = [];
+    for (let k = 0; k < 14; k++) {
+      const a = (k / 14) * TAU;
+      grille.push(V(Math.cos(a) * 0.026, Math.sin(a) * 0.026, 0.313), V(Math.cos(a) * 0.085, Math.sin(a) * 0.085, 0.313));
+    }
+    grille.push(...circlePts(0.026, 8, 'xy', [0, 0, 0.314]));
+    g.add(segs(grille, GREEN, 0.65));
     addModule(
       'reply',
       g,
       [0.5, -0.35, 1.3],
       0,
-      circlePts(0.18, 16, 'xy', [gx, gy, gz + 0.004]),
+      circlePts(0.26 * REPLY_SCALE, 14, 'xy', [gx, gy, gz + 0.004]),
       V(gx, gy, gz + 0.004),
-      V(0, -0.08, 0.08),
+      V(0, -0.08 / REPLY_SCALE, 0.08 / REPLY_SCALE),
       [0.22, r1.y, 0.1], // membrane logée derrière le flanc de l'embase
     );
   }
