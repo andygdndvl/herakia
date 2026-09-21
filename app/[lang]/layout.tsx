@@ -31,7 +31,7 @@ const jetbrainsMono = JetBrains_Mono({
 const SITE = 'https://herakia.com';
 
 export const viewport: Viewport = {
-  themeColor: '#080808',
+  themeColor: '#0a0d0c',
   width: 'device-width',
   initialScale: 1,
 };

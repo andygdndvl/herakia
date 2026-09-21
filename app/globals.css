@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #080808;
-  --bg-secondary: #0f0f0f;
-  --bg-elevated: #161616;
+  --bg-primary: #0a0d0c;
+  --bg-secondary: #101513;
+  --bg-elevated: #171d1b;
   --green-primary: #3ecf8e;
   --green-dark: #2a9e6a;
   --green-glow: rgba(62, 207, 142, 0.15);

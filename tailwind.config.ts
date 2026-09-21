@@ -10,9 +10,9 @@ const config: Config = {
     extend: {
       colors: {
         // Fonds
-        'bg-primary': '#080808',
-        'bg-secondary': '#0f0f0f',
-        'bg-elevated': '#161616',
+        'bg-primary': '#0a0d0c',
+        'bg-secondary': '#101513',
+        'bg-elevated': '#171d1b',
         // Vert signature — unique accent, ~5 % de la surface
         'green-primary': '#3ecf8e',
         'green-dark': '#2a9e6a',

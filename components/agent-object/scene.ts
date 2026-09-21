@@ -25,7 +25,7 @@ import type { PartId, ScreenAnchor } from './layout';
 // Couleurs de la charte (three.js ne lit pas Tailwind) : green-primary, stroke-object, bg-primary.
 const GREEN = 0x3ecf8e;
 const WHITE = 0xdedede;
-const BG = 0x080808;
+const BG = 0x0a0d0c;
 
 // ── Hiérarchie des traits ──────────────────────────────────────────────────
 // Trois niveaux seulement : au-delà, la multiplication des valeurs intermédiaires
