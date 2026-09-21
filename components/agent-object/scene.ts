@@ -39,7 +39,7 @@ export interface SceneState {
 }
 
 export interface AgentScene {
-  resize(width: number, height: number): void;
+  resize(width: number, height: number, opts?: { reservedSide?: number }): void;
   render(state: SceneState): ScreenAnchor[];
   dispose(): void;
 }
@@ -339,13 +339,17 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   };
 
   return {
-    resize(width, height) {
+    resize(width, height, opts) {
       vw = Math.max(1, width);
       vh = Math.max(1, height);
       renderer.setSize(vw, vh, false);
       const aspect = vw / vh;
-      // Assez de champ pour la vue éclatée, en paysage comme en portrait
-      const half = Math.max(4.6, 4.4 / aspect);
+      // Assez de champ pour la vue éclatée, en paysage comme en portrait, borné par la largeur
+      // utilisable entre les colonnes de légendes (reservedSide de chaque côté) pour qu'aucune
+      // légende ne recouvre l'objet.
+      const reservedSide = opts?.reservedSide ?? 0;
+      const usable = Math.max(240, vw - 2 * reservedSide);
+      const half = Math.max(4.6, 4.4 / aspect, (4 * vh) / usable);
       camera.left = -half * aspect;
       camera.right = half * aspect;
       camera.top = half;

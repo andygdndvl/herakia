@@ -80,7 +80,7 @@ export function AgentObjectSection() {
 
   return (
     <section aria-labelledby="agent-title" className="relative">
-      <div ref={pinRef} className={pinned ? 'relative h-[300vh] md:h-[400vh]' : 'relative'}>
+      <div ref={pinRef} className={pinned ? 'relative h-[300vh] min-[1200px]:h-[400vh]' : 'relative'}>
         <div className={pinned ? 'sticky top-0 h-svh overflow-hidden' : 'relative overflow-hidden py-24'}>
           <div ref={introRef} className="relative z-10 max-w-xl px-6 pt-24 lg:px-12 lg:pt-28">
             <span className="eyebrow">{t.eyebrow}</span>
@@ -98,7 +98,7 @@ export function AgentObjectSection() {
             <div
               className={
                 pinned
-                  ? 'absolute inset-x-0 top-[30vh] h-[45vh] lg:bottom-[25vh] lg:left-1/2 lg:top-[14vh] lg:h-auto min-[1200px]:inset-0 min-[1200px]:h-auto'
+                  ? 'absolute inset-x-0 top-[30vh] h-[45vh] md:top-[36vh] md:h-[42vh] min-[1200px]:inset-0 min-[1200px]:h-auto'
                   : 'relative mx-auto mt-8 h-[70vh] max-w-6xl'
               }
             >

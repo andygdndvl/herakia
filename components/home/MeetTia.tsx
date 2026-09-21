@@ -83,7 +83,7 @@ export function MeetTia() {
           <span className="font-mono text-xs uppercase tracking-widest text-green-primary">
             {t.eyebrow}
           </span>
-          <h2 className="mt-3 font-display text-3xl font-bold leading-tight tracking-tight text-text-primary md:text-4xl text-balance">
+          <h2 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight text-text-primary md:text-4xl text-balance">
             {t.title}
           </h2>
         </div>

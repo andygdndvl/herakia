@@ -27,7 +27,7 @@ export function LegalShell({ title, lastUpdated, updatedLabel = 'Dernière mise 
       <Navbar />
       <main className="relative px-6 pt-40 pb-32 lg:px-8">
         <div className="mx-auto max-w-3xl">
-          <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-text-primary md:text-5xl text-balance">
+          <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-text-primary md:text-5xl text-balance">
             {title}
           </h1>
           <p className="mt-4 font-mono text-xs uppercase tracking-widest text-text-muted">

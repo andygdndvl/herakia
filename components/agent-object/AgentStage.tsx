@@ -67,7 +67,8 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
 
     const size = () => {
       width = wrap.clientWidth;
-      scene.resize(width, wrap.clientHeight);
+      const reservedSide = desktop.matches ? LABEL_WIDTH + 56 : 0;
+      scene.resize(width, wrap.clientHeight, { reservedSide });
       svg.setAttribute('viewBox', `0 0 ${width} ${wrap.clientHeight}`);
       // Mouvement réduit : pas de boucle rAF, on repeint explicitement au resize.
       if (reduced && visible) paint(0);
@@ -75,6 +76,8 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
     size();
     const ro = new ResizeObserver(size);
     ro.observe(wrap);
+    // La bascule légendes/liste mobile change la largeur réservée à la caméra : recalcule.
+    desktop.addEventListener('change', size);
 
     // Mouvement réduit : pas de boucle rAF continue — un rendu à l'apparition et à chaque resize.
     const frame = (t: number) => {
@@ -96,6 +99,7 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
       cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();
+      desktop.removeEventListener('change', size);
       drawAnim?.revert();
       scene.dispose();
     };

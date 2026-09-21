@@ -438,7 +438,7 @@ export function AgentDemos() {
           </motion.div>
           <motion.h2
             variants={fadeInUp}
-            className="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl text-balance"
+            className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl text-balance"
           >
             {t.title}
           </motion.h2>

@@ -184,7 +184,7 @@ export function HowItWorks() {
                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-border-green bg-bg-elevated">
                       <ActiveIcon className="h-8 w-8 text-green-primary" />
                     </div>
-                    <h3 className="mt-8 font-display text-4xl font-bold leading-tight text-text-primary lg:text-5xl">
+                    <h3 className="mt-8 font-display text-4xl font-semibold leading-tight text-text-primary lg:text-5xl">
                       {steps[activeStep].title}
                     </h3>
                     <p className="mt-6 font-sans text-lg leading-relaxed text-text-secondary lg:text-xl">
@@ -220,7 +220,7 @@ export function HowItWorks() {
                     </div>
                   </div>
                   <div className="flex-1 pt-2">
-                    <h3 className="font-display text-2xl font-bold text-text-primary md:text-3xl">{step.title}</h3>
+                    <h3 className="font-display text-2xl font-semibold text-text-primary md:text-3xl">{step.title}</h3>
                     <p className="mt-3 font-sans text-base leading-relaxed text-text-secondary md:text-lg">
                       {step.description}
                     </p>

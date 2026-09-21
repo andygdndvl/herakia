@@ -73,7 +73,7 @@ export function FAQ() {
           <span className="font-mono text-xs uppercase tracking-widest text-green-primary">
             {dict.faq.eyebrow}
           </span>
-          <h2 className="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl text-balance">
+          <h2 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl text-balance">
             {dict.faq.title}
           </h2>
           <p className="mt-6 font-sans text-lg leading-relaxed text-text-secondary md:text-xl">

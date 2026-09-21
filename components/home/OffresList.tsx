@@ -179,7 +179,7 @@ export function OffresList() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-8 font-display text-4xl font-bold leading-[1.05] tracking-tight text-text-primary md:text-6xl lg:text-7xl text-balance"
+            className="mt-8 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-text-primary md:text-6xl lg:text-7xl text-balance"
           >
             {t.titleLead}
             <span className="text-green-primary">{t.titleAccent}</span>

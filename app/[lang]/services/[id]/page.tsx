@@ -42,7 +42,7 @@ export default function ServiceDetailPage() {
               </Link>
             </div>
 
-            <h1 className="mt-6 font-display text-4xl font-bold md:text-6xl lg:text-7xl">
+            <h1 className="mt-6 font-display text-4xl font-semibold md:text-6xl lg:text-7xl">
               {service.heroTitleLead}
               <span className="text-green-primary">
                 {service.heroTitleAccent}
