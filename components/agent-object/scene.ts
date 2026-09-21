@@ -117,6 +117,15 @@ interface Module {
   tetherMat: LineDashedMaterial;
   /** traits verts de la pièce, avec leur opacité nominale : masqués à l'état fermé */
   greenMats: Array<{ mat: LineBasicMaterial; base: number }>;
+  /**
+   * Dévissage : la pièce est au repos tournée de `spin` radians autour de son propre axe, et
+   * revient à 0 en sortant. Dans ce sens, l'état éclaté final reste exactement celui qui a été
+   * résolu à la passe 4 (positions d'ancre comprises) — un dévissage qui finirait en biais
+   * déplacerait les points de rappel.
+   */
+  spin: number;
+  /** axe de dévissage, dans le repère de la pièce (cf. `rotation.order` posé à la construction) */
+  spinAxis: 'x' | 'y' | 'z';
 }
 
 interface RingSpec {
@@ -251,6 +260,29 @@ const RING_CENTER_INDEX = 2;
 const RING_OPEN_STEP = 0.52;
 /** décalage de départ d'une pièce verte à la suivante : la sortie ne part pas d'un bloc */
 const MODULE_STAGGER = 0.04;
+/**
+ * Décélération de la trajectoire de sortie : la pièce arrive en glissant, elle ne s'arrête pas net.
+ * Ease-out cubique dosé à 45 % (mélangé à la droite) : `explode` porte déjà un in-out cubique, et
+ * un ease-out cubique pur par-dessus avançait tellement les pièces que la vue était éclatée avant
+ * même que le bloc d'intro ait commencé à s'effacer. Au dosage retenu, la pièce part environ deux
+ * fois plus vite que la moyenne et arrive à 55 % de cette vitesse — ça se pose, ça ne cogne pas.
+ */
+const EASE_OUT_MIX = 0.45;
+const settle = (x: number) => x + (1 - (1 - x) ** 3 - x) * EASE_OUT_MIX;
+/**
+ * Tracé du lien pointillé : il se dessine de la collerette vers la pièce entre `t` = 0.15 et 0.65,
+ * puis suit la pièce. Il apparaît par la longueur, pas par un fondu.
+ */
+const TETHER_START = 0.15;
+const TETHER_SPAN = 0.5;
+const TETHER_OPACITY = 0.55;
+// Inertie : oscillateur amorti excité par la vitesse de rotation du scroll. Il ne se voit que
+// lorsque le défilement s'arrête — pas de flottement permanent, l'amplitude est bornée à 0.01 rad.
+const SWING_MAX = 0.01;
+const SWING_GAIN = 55;
+/** raideur (≈1.5 Hz) et amortissement sous-critique : deux allers-retours, puis plus rien */
+const SWING_K = 90;
+const SWING_C = 5.2;
 // Les deux pièces les plus petites (barillet d'objectif, membrane) sont dessinées à l'échelle 1
 // puis agrandies : à l'échelle 1 elles tombaient sous les 60 px de large à l'écran, le plancher de
 // lisibilité fixé par le brief. Les ancres de légende sont divisées par le même facteur, donc
@@ -587,6 +619,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     socketCenter: Vector3,
     anchor: Vector3,
     hidden: [number, number, number],
+    spin: { axis: 'x' | 'y' | 'z'; max: number },
   ) {
     const exploded = group.position.clone().add(V(...dir));
     const rest = V(...hidden);
@@ -618,6 +651,8 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       tether,
       tetherMat,
       greenMats,
+      spin: spin.max,
+      spinAxis: spin.axis,
     });
   }
 
@@ -669,6 +704,9 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       seat.center,
       V(0, 0.25 / PERCEIVE_SCALE, 0.2 / PERCEIVE_SCALE),
       [0.15, r4.y, 0], // logé dans l'empilement, l'axe couché vers son azimut de sortie
+      // Ordre d'Euler XYZ : `rotation.z` est la rotation la plus interne, donc bien l'axe du
+      // barillet, appliqué avant l'orientation d'azimut portée par `rotation.y`.
+      { axis: 'z', max: 0.34 },
     );
   }
   // 02 · Cœur — cage à facettes, sortie du haut du fût vers le HAUT-DROITE.
@@ -695,6 +733,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       // L'ancre est sur l'axe de rotation de la cage : sans ça le point de rappel tournerait avec elle.
       V(0, 0.3, 0),
       [0, 0.35, 0.05], // au cœur de l'empilement, masqué par les volumes pleins des étages
+      { axis: 'y', max: 0.25 }, // s'additionne à la rotation lente de la cage
     );
   }
   // 03 · Bras — vérin articulé sur R3 (central), flanc gauche.
@@ -707,6 +746,9 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     const g = new Group();
     g.position.copy(seat.center);
     // Le vérin est dessiné le long de -X : on le tourne pour qu'il vise son azimut de sortie.
+    // Ordre YXZ (et non XYZ) pour que le dévissage `rotation.x` reste INTERNE à l'azimut :
+    // en XYZ il tournerait autour de l'axe du monde et le vérin partirait de travers.
+    g.rotation.order = 'YXZ';
     g.rotation.y = Math.PI - az;
     // Embase : elle déborde du corps, ses vis sont sur la face tournée vers le fût (donc vers l'œil).
     g.add(stageX(0.195, 0, -0.06, 14));
@@ -744,6 +786,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       seat.center,
       V(-0.6, 0.2, 0),
       [0.46, r3.y, 0], // vérin rentré dans le fût, décalé pour que sa longueur y tienne
+      { axis: 'x', max: 0.4 },
     );
   }
   // 04 · Écran — plaque à cadran sur R4, flanc droit.
@@ -833,6 +876,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       V(gx + 0.004, gy, gz),
       V(1.15, 0.7, 0.2),
       [-0.38, r4.y - 0.12, -0.08], // plaque rangée à plat dans la colonne
+      { axis: 'x', max: 0.2 }, // la plaque pivote autour de son bras de support
     );
   }
   // 05 · Voix — membrane annelée sur R1, devant.
@@ -874,6 +918,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       seat.center,
       V(0, -0.08 / REPLY_SCALE, 0.08 / REPLY_SCALE),
       [0.22, r1.y, 0.1], // membrane logée derrière le flanc de l'embase
+      { axis: 'z', max: 0.3 },
     );
   }
   // 06 · Connecteurs — couronne d'accouplement EN EMBASE : elle quitte le fût par-dessous R1 et
@@ -934,6 +979,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       V(gx, gy - 0.004, gz),
       V(0.44, 0.12, 0.06),
       [0, -0.9, 0], // couronne rentrée dans la colonne, tige d'accouplement comprise
+      { axis: 'y', max: 0.3 },
     );
   }
 
@@ -941,6 +987,11 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
 
   let vw = 1;
   let vh = 1;
+  // État de l'inertie du fût (cf. `SWING_*`). Conservé d'une image à l'autre.
+  let prevRotation = 0;
+  let prevTime = 0;
+  let swing = 0;
+  let swingVel = 0;
   const tmp = new Vector3();
   const project = (id: PartId, v: Vector3): ScreenAnchor => {
     v.project(camera);
@@ -967,7 +1018,22 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
     },
 
     render({ explode, open, rotation, time, draw }) {
-      root.rotation.y = rotation + Math.sin(time / 2600) * 0.02;
+      // Inertie : quand la progression de scroll s'arrête, le fût finit sa course et revient.
+      // `time` vaut 0 en mouvement réduit (appel unique, hors rAF) : tout reste figé.
+      if (time > 0) {
+        const dt = prevTime ? Math.min(0.05, (time - prevTime) / 1000) : 0;
+        prevTime = time;
+        swingVel += (rotation - prevRotation) * SWING_GAIN;
+        swingVel += (-SWING_K * swing - SWING_C * swingVel) * dt;
+        swing = Math.max(-SWING_MAX, Math.min(SWING_MAX, swing + swingVel * dt));
+      } else {
+        swing = 0;
+        swingVel = 0;
+        prevTime = 0;
+      }
+      prevRotation = rotation;
+
+      root.rotation.y = rotation + swing + Math.sin(time / 2600) * 0.02;
       // Bascule : vue de face → trois quarts plongeante, on découvre les faces supérieures.
       // Elle suit `open` (et non `explode`) pour accompagner l'écartement des étages.
       root.rotation.x = -0.05 + open * 0.55;
@@ -977,8 +1043,6 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
         const shift = (i - RING_CENTER_INDEX) * RING_OPEN_STEP * open;
         rings[i].position.y = RING_SPECS[i].y + shift;
       }
-      if (coreGroup) coreGroup.rotation.y = time / 4000;
-
       for (const l of drawn) l.geometry.setDrawRange(0, Math.floor((l.userData.count * draw) / 2) * 2);
 
       // Les pièces vertes partent de l'intérieur de l'empilement et sortent une par une :
@@ -988,20 +1052,35 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       for (let mi = 0; mi < modules.length; mi++) {
         const m = modules[mi];
         const t = Math.max(0, Math.min(1, (explode - mi * MODULE_STAGGER) / span));
-        const reveal = Math.min(1, t / 0.25);
+        // Décélération : la pièce sort vite puis se pose. `e` vaut 1 à `t` = 1, donc la position
+        // éclatée finale est inchangée.
+        const e = settle(t);
+        const reveal = Math.min(1, e / 0.25);
         const shift = (m.ring - RING_CENTER_INDEX) * RING_OPEN_STEP * open;
         m.group.visible = reveal > 0.001;
         for (const { mat, base } of m.greenMats) mat.opacity = base * reveal;
-        m.group.position.copy(m.rest).addScaledVector(m.dir, t);
+        m.group.position.copy(m.rest).addScaledVector(m.dir, e);
         m.group.position.y += shift;
-        m.socketMat.opacity = t * 0.9;
+        // Dévissage : rangée, la pièce est tournée de `spin` ; elle se remet droite en sortant.
+        m.group.rotation[m.spinAxis] = m.spin * (1 - e);
+        m.socketMat.opacity = e * 0.9;
+        // Le lien se DESSINE : sa longueur croît de la collerette vers la pièce. Pas de fondu.
+        const trace = Math.max(0, Math.min(1, (t - TETHER_START) / TETHER_SPAN));
         const pos = m.tether.geometry.attributes.position as BufferAttribute;
-        pos.setXYZ(0, m.socketCenter.x, m.socketCenter.y + shift, m.socketCenter.z);
-        pos.setXYZ(1, m.group.position.x, m.group.position.y, m.group.position.z);
+        const sy = m.socketCenter.y + shift;
+        pos.setXYZ(0, m.socketCenter.x, sy, m.socketCenter.z);
+        pos.setXYZ(
+          1,
+          m.socketCenter.x + (m.group.position.x - m.socketCenter.x) * trace,
+          sy + (m.group.position.y - sy) * trace,
+          m.socketCenter.z + (m.group.position.z - m.socketCenter.z) * trace,
+        );
         pos.needsUpdate = true;
         m.tether.computeLineDistances();
-        m.tetherMat.opacity = t * 0.55;
+        m.tetherMat.opacity = trace > 0 ? TETHER_OPACITY : 0;
       }
+      // La cage du cœur tourne lentement en plus de son dévissage (même axe Y).
+      if (coreGroup) coreGroup.rotation.y += time / 4000;
 
       scene.updateMatrixWorld();
       const anchors = modules.map((m) => project(m.id, tmp.copy(m.anchor).applyMatrix4(m.group.matrixWorld)));
