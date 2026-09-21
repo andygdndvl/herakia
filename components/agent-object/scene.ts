@@ -49,6 +49,10 @@ const G3 = 0.42;
 const FOG_NEAR = 11.8;
 const FOG_FAR = 17.6;
 
+// ── Survol ─────────────────────────────────────────────────────────────────
+/** Grossissement de la pièce survolée. 8 % : assez pour se détacher, pas assez pour sortir du cadre. */
+const HOVER_SCALE = 0.08;
+
 export interface SceneState {
   explode: number;
   open: number;
@@ -57,6 +61,11 @@ export interface SceneState {
   time: number;
   /** 0→1 : tracé initial des traits */
   draw: number;
+  /**
+   * Intensité de survol par pièce (0→1), déjà interpolée par l'appelant : la scène n'a pas d'état
+   * de survol propre, elle applique ce qu'on lui donne (une seule source d'amortissement).
+   */
+  hover?: Partial<Record<PartId, number>>;
 }
 
 export interface AgentScene {
@@ -126,6 +135,11 @@ interface Module {
   spin: number;
   /** axe de dévissage, dans le repère de la pièce (cf. `rotation.order` posé à la construction) */
   spinAxis: 'x' | 'y' | 'z';
+  /**
+   * Échelle de dessin de la pièce (uniforme), relevée à la construction : le grossissement de
+   * survol s'y multiplie au lieu de l'écraser.
+   */
+  baseScale: number;
 }
 
 interface RingSpec {
@@ -657,6 +671,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       greenMats,
       spin: spin.max,
       spinAxis: spin.axis,
+      baseScale: group.scale.x,
     });
   }
 
@@ -997,6 +1012,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
   let swing = 0;
   let swingVel = 0;
   const tmp = new Vector3();
+  const pivot = new Vector3();
   const project = (id: PartId, v: Vector3): ScreenAnchor => {
     v.project(camera);
     return { id, x: ((v.x + 1) / 2) * vw, y: ((1 - v.y) / 2) * vh };
@@ -1021,7 +1037,7 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
       camera.updateProjectionMatrix();
     },
 
-    render({ explode, open, rotation, time, draw }) {
+    render({ explode, open, rotation, time, draw, hover }) {
       // Inertie : quand la progression de scroll s'arrête, le fût finit sa course et revient.
       // `time` vaut 0 en mouvement réduit (appel unique, hors rAF) : tout reste figé.
       if (time > 0) {
@@ -1067,7 +1083,20 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
         m.group.position.y += shift;
         // Dévissage : rangée, la pièce est tournée de `spin` ; elle se remet droite en sortant.
         m.group.rotation[m.spinAxis] = m.spin * (1 - e);
-        m.socketMat.opacity = e * 0.9;
+        // Survol : la pièce grossit AUTOUR DE SON ANCRE de légende, et non autour de son origine.
+        // Le point de rappel et la ligne de légende ne bougent donc pas d'un pixel pendant le zoom
+        // (une ancre excentrée dériverait sinon de plusieurs pixels, et la légende suivrait).
+        const h = hover?.[m.id] ?? 0;
+        const k = 1 + HOVER_SCALE * h;
+        m.group.scale.setScalar(m.baseScale * k);
+        if (h > 0.0005) {
+          pivot
+            .copy(m.anchor)
+            .multiplyScalar(m.baseScale * (1 - k))
+            .applyEuler(m.group.rotation);
+          m.group.position.add(pivot);
+        }
+        m.socketMat.opacity = e * (0.9 + 0.1 * h);
         // Le lien se DESSINE : sa longueur croît de la collerette vers la pièce. Pas de fondu.
         const trace = Math.max(0, Math.min(1, (t - TETHER_START) / TETHER_SPAN));
         const pos = m.tether.geometry.attributes.position as BufferAttribute;
@@ -1081,7 +1110,8 @@ export function createAgentScene(canvas: HTMLCanvasElement): AgentScene {
         );
         pos.needsUpdate = true;
         m.tether.computeLineDistances();
-        m.tetherMat.opacity = trace > 0 ? TETHER_OPACITY : 0;
+        // Au survol, le pointillé passe à pleine opacité (même isolement que la légende côté HTML).
+        m.tetherMat.opacity = trace > 0 ? TETHER_OPACITY + (1 - TETHER_OPACITY) * h : 0;
       }
       // La cage du cœur tourne lentement en plus de son dévissage (même axe Y).
       if (coreGroup) coreGroup.rotation.y += time / 4000;

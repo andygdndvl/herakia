@@ -46,7 +46,13 @@ export function AgentObjectSection() {
       // on n'écrit les styles d'animation que lorsque la section est réellement pilotée par le scroll.
       if (modeRef.current !== 'animated') return;
       const ph = phases(p);
-      if (introRef.current) introRef.current.style.opacity = String(ph.intro);
+      if (introRef.current) {
+        introRef.current.style.opacity = String(ph.intro);
+        // Une fois effacé, le bloc d'intro reste dans le flux en `z-10` et continue d'intercepter
+        // le pointeur au-dessus de la scène : il couvrirait la légende du capteur, qui doit être
+        // survolable. On le rend transparent aux clics dès qu'il n'est plus lisible.
+        introRef.current.style.pointerEvents = ph.intro < 0.05 ? 'none' : '';
+      }
       if (finaleRef.current) {
         finaleRef.current.style.opacity = String(ph.finale);
         finaleRef.current.style.transform = `translateY(${(1 - ph.finale) * 16}px)`;
