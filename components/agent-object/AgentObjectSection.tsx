@@ -98,7 +98,7 @@ export function AgentObjectSection() {
             <div
               className={
                 pinned
-                  ? 'absolute inset-x-0 top-[30vh] h-[45vh] md:top-[36vh] md:h-[42vh] min-[1200px]:inset-0 min-[1200px]:h-auto'
+                  ? 'absolute inset-x-0 top-[30vh] h-[45vh] md:top-[36vh] md:h-[42vh] min-[1200px]:inset-x-0 min-[1200px]:top-0 min-[1200px]:bottom-24 min-[1200px]:h-auto'
                   : 'relative mx-auto mt-8 h-[70vh] max-w-6xl'
               }
             >

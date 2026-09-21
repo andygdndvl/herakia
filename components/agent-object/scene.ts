@@ -91,11 +91,13 @@ interface RingSpec {
 
 // Pile d'anneaux mécaniques, bas → haut (voir shape-cylinder-brief.md).
 const RING_SPECS: RingSpec[] = [
-  { r: 0.78, h: 0.46, y: -1.24 }, // R1, bas
-  { r: 0.98, h: 0.42, y: -0.76 }, // R2
-  { r: 1.05, h: 0.46, y: -0.28 }, // R3, central (le plus large)
-  { r: 0.94, h: 0.42, y: 0.2 }, // R4
-  { r: 0.72, h: 0.28, y: 0.6 }, // R5, haut
+  // Diamètres alternés (large / étroit) : c'est ce qui fait lire « mécanique »
+  // plutôt que « tonneau », où les rayons croissent puis décroissent régulièrement.
+  { r: 0.92, h: 0.46, y: -1.24 }, // R1, embase
+  { r: 0.7, h: 0.42, y: -0.76 }, // R2, gorge
+  { r: 1.05, h: 0.46, y: -0.28 }, // R3, couronne centrale (la plus large)
+  { r: 0.78, h: 0.42, y: 0.2 }, // R4, gorge haute
+  { r: 0.6, h: 0.28, y: 0.6 }, // R5, tête
 ];
 const RING_CENTER_INDEX = 2;
 // Écart avec le brief (0.42) : à 0.42 la caméra (fixe, en plongée oblique) voit l'anneau du dessus
