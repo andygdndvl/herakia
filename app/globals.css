@@ -100,6 +100,45 @@ select:-webkit-autofill {
   border: 1px solid var(--border-subtle);
 }
 
+/* ─── Îlot clair ────────────────────────────────────────────────────────────
+   Un seul chapitre de la page bascule en ivoire chaud : il redéclare les mêmes
+   jetons, donc tous les composants qui s'en servent suivent sans être réécrits.
+   La règle porte elle-même son fond ET sa couleur de texte : `color` est une
+   valeur héritée, sans la poser ici les textes garderaient l'ivoire clair du
+   thème sombre. Le fond est opaque — le grain et le vignettage de
+   `AmbientBackground` (fixed, -z-10) ne traversent pas l'îlot.
+
+   Contrastes mesurés sur l'ivoire #f5f2ea (WCAG 2.1) :
+   texte principal 16,4:1 · secondaire 7,7:1 · discret 4,7:1 · vert 4,7:1.
+   Le vert de l'îlot descend d'un cran sous `green-dark` (#2a9e6a plafonne à
+   3,0:1 sur ivoire, insuffisant pour le texte courant) en gardant la teinte
+   de la charte (153°). */
+.surface-light {
+  /* Fonds : ivoire chaud, surfaces claires */
+  --bg-primary: 245 242 234; /* #f5f2ea */
+  --bg-secondary: 238 233 221; /* #eee9dd */
+  --bg-elevated: 255 255 255; /* #ffffff */
+  /* Vert : même teinte, registre foncé — les deux écritures vont de pair */
+  --green-primary: 31 122 82; /* #1f7a52 — 4,73:1 sur ivoire */
+  --green-primary-legacy: 31, 122, 82;
+  --green-dark: 23 92 62; /* #175c3e — survol */
+  --on-green: 245 242 234; /* ivoire sur pastille verte — 4,73:1 */
+  /* Textes */
+  --text-primary: 20 21 15; /* #14150f */
+  --text-secondary: 75 77 69; /* #4b4d45 */
+  --text-muted: 107 109 99; /* #6b6d63 */
+  /* Filets : encre à faible alpha au lieu de blanc */
+  --border-subtle: rgba(20, 21, 15, 0.12);
+  --border-strong: rgba(20, 21, 15, 0.22);
+  /* Le filet vert doit tenir sur clair : 0,3 s'y efface */
+  --border-green-alpha: 0.55;
+  /* Les cartes passent du voile blanc au blanc franc */
+  --glass-bg: #ffffff;
+
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+}
+
 .text-balance {
   text-wrap: balance;
 }

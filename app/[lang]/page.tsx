@@ -22,8 +22,14 @@ export default function HomePage() {
         <WhatIsAnAgent />
         <MeetTia />
         <WhatWeHandle />
-        <GoogleReviews />
-        <About />
+        {/* Îlot clair : les avis et « À propos » forment un chapitre ivoire au
+            milieu de la page sombre. La bascule est un changement net de fond
+            — pas de dégradé, pas de filet horizontal (cf. e4c64dd) — et l'îlot
+            ajoute sa propre respiration verticale à celle des deux sections. */}
+        <div className="surface-light relative py-16 md:py-24">
+          <GoogleReviews />
+          <About />
+        </div>
         <HowItWorks />
         <CTAFinal />
       </main>
