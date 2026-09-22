@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, type DependencyList } from 'react';
-import { animate, createDrawable, createScope, onScroll, splitText, stagger, utils } from 'animejs';
+import { useCallback, useEffect, useRef, type DependencyList } from 'react';
+import { animate, createScope, onScroll, scrambleText, splitText, stagger, utils } from 'animejs';
 
 type Anim = ReturnType<typeof animate>;
 
@@ -69,18 +69,31 @@ export function useReveal<T extends HTMLElement = HTMLElement>({
   return ref;
 }
 
-/** Découpe un titre `[data-split]` et fait monter lettres ou mots depuis un masque. */
+/**
+ * Découpe un titre `[data-split]` et fait monter lettres ou mots depuis un masque.
+ *
+ * `onSettled` : appelé quand le titre a atteint son état final. Fournir ce rappel fait *rendre* la
+ * découpe dès la fin de l'animation (balisage d'origine restauré, copie d'accessibilité et
+ * `ResizeObserver` de `splitText` retirés) — indispensable si un autre effet doit ensuite écrire
+ * dans ce titre : sans cela il écrirait dans des `<span>` que la découpe peut recomposer à tout
+ * moment, et un re-découpage figerait du texte brouillé. Visuellement c'est un non-événement :
+ * à ce stade les caractères sont déjà à leur place.
+ */
 export function useTextReveal<T extends HTMLElement = HTMLElement>({
   by = 'chars',
   delay = 0,
   onLoad = false,
-}: { by?: 'chars' | 'words'; delay?: number; onLoad?: boolean } = {}) {
+  onSettled,
+}: { by?: 'chars' | 'words'; delay?: number; onLoad?: boolean; onSettled?: () => void } = {}) {
   const ref = useRef<T>(null);
+  const settled = useRef(onSettled);
+  settled.current = onSettled;
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (prefersReducedMotion()) {
       el.style.visibility = 'visible';
+      settled.current?.();
       return;
     }
     const split = splitText(el, { words: { wrap: 'clip' }, chars: by === 'chars' });
@@ -88,17 +101,25 @@ export function useTextReveal<T extends HTMLElement = HTMLElement>({
     utils.set(parts, { y: '110%' });
     el.style.visibility = 'visible';
     let anim: Anim | undefined;
+    let done = false;
     const play = () => {
       anim = animate(parts, {
         y: ['110%', '0%'],
         duration: 1100,
         delay: stagger(by === 'chars' ? 22 : 60, { start: delay }),
         ease: EASE,
+        onComplete: () => {
+          if (!settled.current) return;
+          done = true;
+          split.revert();
+          settled.current();
+        },
       });
     };
     const stop = onLoad ? (play(), () => {}) : onceInView(el, play);
     return () => {
       stop();
+      if (done) return; // la découpe a déjà été rendue, il n'y a plus rien à annuler
       anim?.revert();
       split.revert();
     };
@@ -106,29 +127,106 @@ export function useTextReveal<T extends HTMLElement = HTMLElement>({
   return ref;
 }
 
-/** Trace un chemin SVG `[data-reveal]` (dessin du trait de 0 à 100 %). */
-export function useDrawPath<T extends SVGGeometryElement = SVGPathElement>({
-  delay = 0,
-  duration = 2000,
-  onLoad = false,
-}: { delay?: number; duration?: number; onLoad?: boolean } = {}) {
-  const ref = useRef<T>(null);
+/**
+ * Réécrit en boucle le texte d'un élément, chaque segment se décodant depuis un brouillage
+ * (`scrambleText`, comme les légendes de l'objet).
+ *
+ * La rotation ne démarre pas d'elle-même : `start()` l'arme. C'est ce qui permet de la séquencer
+ * *après* la révélation du titre, qui recompose le balisage sous elle — d'où `resolve`, rappelé au
+ * démarrage puis à chaque pas, la cible ayant pu être recréée entre-temps.
+ *
+ * Une seule animation à la fois ; elle est annulée (`revert`, qui remet le segment précédent, donc
+ * jamais de charabia résiduel) au démontage. La boucle s'interrompt hors écran et onglet caché.
+ */
+export function useScrambleRotate({
+  resolve,
+  segments,
+  interval = 3600,
+  duration = 700,
+  firstDelay = 1800,
+}: {
+  resolve: () => HTMLElement | null;
+  segments: string[];
+  /** Temps entre deux réécritures, décodage compris. */
+  interval?: number;
+  duration?: number;
+  /** Attente avant la toute première réécriture : le temps de lire la phrase une fois. */
+  firstDelay?: number;
+}) {
+  const find = useRef(resolve);
+  find.current = resolve;
+  const armed = useRef(false);
+  const begin = useRef<(() => void) | null>(null);
+  // Les segments sont une liste littérale recréée à chaque rendu : on la compare par sa valeur.
+  const key = JSON.stringify(segments);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el || prefersReducedMotion()) return;
-    const [drawable] = createDrawable(el);
+    const list = JSON.parse(key) as string[];
+    if (list.length < 2 || prefersReducedMotion()) return;
+
     let anim: Anim | undefined;
-    const play = () => {
-      utils.set(el, { opacity: 1 });
-      anim = animate(drawable, { draw: ['0 0', '0 1'], duration, delay, ease: 'inOutQuart' });
+    let timer = 0;
+    let running = false;
+    let inView = true;
+
+    const schedule = (wait = interval) => {
+      if (!running || !inView || document.hidden) return;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(step, wait);
     };
-    const stop = onLoad ? (play(), () => {}) : onceInView(el, play);
+
+    const step = () => {
+      const el = find.current();
+      if (!el) return;
+      // On repart du texte réellement affiché : la rotation reprend au bon segment après une pause.
+      const i = (Math.max(0, list.indexOf(el.textContent ?? '')) + 1) % list.length;
+      anim = animate(el, {
+        textContent: scrambleText({ text: list[i], chars: 'lowercase', from: 'left', duration }),
+        duration,
+        ease: 'linear',
+        onComplete: () => {
+          anim = undefined;
+        },
+      });
+      schedule();
+    };
+
+    let io: IntersectionObserver | null = null;
+    const onVisibility = () => (document.hidden ? window.clearTimeout(timer) : schedule());
+
+    begin.current = () => {
+      // Tout est branché au démarrage seulement : avant, l'élément résolu serait celui que la
+      // découpe du titre s'apprête à remplacer — un observateur posé sur un nœud détaché.
+      const el = find.current();
+      if (running || !el) return;
+      running = true;
+      io = new IntersectionObserver((entries) => {
+        const next = entries.some((e) => e.isIntersecting);
+        if (next === inView) return; // le premier rapport confirme l'état de départ : ne rien replanifier
+        inView = next;
+        if (inView) schedule();
+        else window.clearTimeout(timer);
+      });
+      io.observe(el);
+      document.addEventListener('visibilitychange', onVisibility);
+      schedule(firstDelay);
+    };
+    if (armed.current) begin.current();
+
     return () => {
-      stop();
+      begin.current = null;
+      running = false;
+      window.clearTimeout(timer);
+      io?.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
       anim?.revert();
     };
-  }, [delay, duration, onLoad]);
-  return ref;
+  }, [key, interval, duration, firstDelay]);
+
+  return useCallback(() => {
+    armed.current = true;
+    begin.current?.();
+  }, []);
 }
 
 /**

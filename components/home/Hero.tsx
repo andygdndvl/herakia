@@ -4,44 +4,38 @@ import { useRef } from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useDict, useLang, localize } from '@/components/i18n/LangProvider';
-import { useDrawPath, useReveal, useScrollProgress, useTextReveal } from '@/lib/anim';
-import { HERO_OBJECT } from './hero-object-paths';
-
-/** Opacité de repos du dessin : présent, jamais en concurrence avec le titre. */
-const OBJECT_OPACITY = 0.62;
+import { useReveal, useScrambleRotate, useScrollProgress, useTextReveal } from '@/lib/anim';
 
 export function Hero() {
   const dict = useDict();
   const lang = useLang();
-  const { titleLine1, titleLine2 } = dict.hero;
-  const lastWord = titleLine2[titleLine2.length - 1];
+  const { titleLine1, rotating } = dict.hero;
 
-  const titleRef = useTextReveal<HTMLHeadingElement>({ by: 'chars', onLoad: true, delay: 150 });
+  // Le dernier segment du titre se réécrit, mais seulement une fois la révélation terminée : c'est
+  // elle qui recompose le balisage du h1 (découpe en caractères), et on ne peut écrire dedans
+  // qu'après. La révélation rend sa découpe avant d'appeler `onSettled` ; la cible est donc
+  // retrouvée à ce moment-là par `querySelector` — une ref pointerait sur le <span> d'origine,
+  // remplacé entre-temps par la découpe.
+  const rotate = useRef<() => void>(() => {});
+  const titleRef = useTextReveal<HTMLHeadingElement>({
+    by: 'chars',
+    onLoad: true,
+    delay: 150,
+    onSettled: () => rotate.current(),
+  });
+  rotate.current = useScrambleRotate({
+    resolve: () => titleRef.current?.querySelector<HTMLElement>('[data-hero-rotating]') ?? null,
+    segments: rotating,
+  });
   const restRef = useReveal<HTMLDivElement>({ onLoad: true, delay: 900, stagger: 120 });
-  // Le fût se dessine niveau par niveau, une seule fois, derrière le titre : silhouettes,
-  // puis détails, puis textures, puis le filet de jointure. ~2 s en tout, ensuite immobile.
-  const edgesRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 600, duration: 1500 });
-  const detailsRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 1000, duration: 1300 });
-  const textureRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 1300, duration: 1200 });
-  const seamRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 1900, duration: 700 });
   const innerRef = useRef<HTMLDivElement>(null);
-  const objectRef = useRef<SVGSVGElement>(null);
 
   // Sortie : le bloc glisse vers le haut et s'estompe pendant que le hero quitte l'écran.
-  // Le dessin est posé sur la section (et non dans le bloc, qui est aligné en bas) : il reçoit
-  // donc le même traitement à la main, pour quitter l'écran exactement comme le texte.
   const sectionRef = useScrollProgress<HTMLElement>(
     (p) => {
-      const transform = `translate3d(0, ${-140 * p}px, 0)`;
-      const fade = 1 - 0.85 * p;
-      if (innerRef.current) {
-        innerRef.current.style.transform = transform;
-        innerRef.current.style.opacity = String(fade);
-      }
-      if (objectRef.current) {
-        objectRef.current.style.transform = transform;
-        objectRef.current.style.opacity = String(OBJECT_OPACITY * fade);
-      }
+      if (!innerRef.current) return;
+      innerRef.current.style.transform = `translate3d(0, ${-140 * p}px, 0)`;
+      innerRef.current.style.opacity = String(1 - 0.85 * p);
     },
     { enter: 'top top', leave: 'top bottom', sync: true },
   );
@@ -51,52 +45,6 @@ export function Hero() {
       ref={sectionRef}
       className="relative flex min-h-screen items-end overflow-hidden px-6 pb-16 pt-32 lg:px-8"
     >
-      {/* L'objet de l'agent, fermé, tracé au trait (cf. hero-object-paths.ts) : présence, pas
-          sujet. Il quitte l'écran avec le bloc de texte (cf. `useScrollProgress` ci-dessus). */}
-      <svg
-        ref={objectRef}
-        className="pointer-events-none absolute -right-[26%] top-1/2 hidden h-[min(155vh,1240px)] w-auto -translate-y-1/2 text-stroke-object opacity-60 [mask-image:linear-gradient(to_right,transparent_0%,black_38%)] lg:block"
-        style={{ opacity: OBJECT_OPACITY }}
-        viewBox={HERO_OBJECT.viewBox}
-        fill="none"
-        aria-hidden="true"
-      >
-        <path
-          ref={textureRef}
-          data-reveal
-          d={HERO_OBJECT.texture}
-          stroke="currentColor"
-          strokeOpacity="0.3"
-          strokeWidth="1.25"
-        />
-        <path
-          ref={detailsRef}
-          data-reveal
-          d={HERO_OBJECT.details}
-          stroke="currentColor"
-          strokeOpacity="0.55"
-          strokeWidth="1.4"
-        />
-        <path
-          ref={seamRef}
-          data-reveal
-          d={HERO_OBJECT.seam}
-          className="text-green-primary"
-          stroke="currentColor"
-          strokeOpacity="0.5"
-          strokeWidth="1.7"
-        />
-        <path
-          ref={edgesRef}
-          data-reveal
-          d={HERO_OBJECT.edges}
-          stroke="currentColor"
-          strokeOpacity="0.95"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-        />
-      </svg>
-
       <div ref={innerRef} className="relative z-10 mx-auto w-full max-w-7xl">
         <div ref={restRef}>
           <p data-reveal className="eyebrow">
@@ -110,7 +58,12 @@ export function Hero() {
           >
             {titleLine1.join(' ')}
             <br />
-            {titleLine2.slice(0, -1).join(' ')} <span className="text-green-primary">{lastWord}</span>
+            {/* Le segment tournant tient toujours sur une seule ligne (mesuré de 390 à 1920 px, le
+                plus long occupe au pire 94 % de la largeur disponible) : le titre fait donc deux
+                lignes quoi qu'il affiche, et rien ne bouge en dessous. */}
+            <span data-hero-rotating className="whitespace-nowrap text-green-primary">
+              {rotating[0]}
+            </span>
           </h1>
 
           <div className="mt-10 grid gap-8 border-t border-border-subtle pt-8 md:grid-cols-[1fr_auto] md:items-end">
