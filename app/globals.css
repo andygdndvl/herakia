@@ -44,6 +44,11 @@
      est donc neutre. L'îlot clair, lui, en a besoin pour décoller de l'ivoire. */
   --shadow-card: 0 0 0 0 rgba(0, 0, 0, 0);
   --shadow-card-hover: 0 0 0 0 rgba(0, 0, 0, 0);
+  /* Ivoire des îlots clairs. Déclaré ici, et pas seulement dans
+     `.surface-light`, parce que les bandes tramées des jointures vivent HORS
+     des îlots et ont besoin de la couleur d'arrivée : les deux la lisent au
+     même endroit. */
+  --surface-light-bg: 245 242 234; /* #f5f2ea */
 }
 
 * {
@@ -120,7 +125,7 @@ select:-webkit-autofill {
    de la charte (153°). */
 .surface-light {
   /* Fonds : ivoire chaud, surfaces claires */
-  --bg-primary: 245 242 234; /* #f5f2ea */
+  --bg-primary: var(--surface-light-bg); /* #f5f2ea */
   --bg-secondary: 238 233 221; /* #eee9dd */
   --bg-elevated: 255 255 255; /* #ffffff */
   /* Vert : même teinte, registre foncé — les deux écritures vont de pair */
@@ -146,6 +151,143 @@ select:-webkit-autofill {
 
   background-color: rgb(var(--bg-primary));
   color: rgb(var(--text-primary));
+}
+
+/* ─── Bande tramée (jointures sombre ↔ ivoire) ──────────────────────────────
+   Une trame d'imprimeur, pas un dégradé : demi-teinte à modulation
+   d'AMPLITUDE. Le pas de la trame reste constant (`--dither-pitch`) et c'est le
+   DIAMÈTRE des points qui croît, rangée après rangée, jusqu'à ce qu'ils se
+   recouvrent et forment l'aplat ivoire — le principe du similigravé. Une
+   modulation d'opacité (points de taille fixe sous un `mask` vertical) aurait
+   donné un voile flou, exactement ce qu'on ne veut pas ici.
+
+   Trame inclinée à 45°, l'angle d'écran usuel (le moins visible à l'œil) :
+   rangées espacées d'un demi-pas, une rangée sur deux décalée d'un demi-pas —
+   soit une maille carrée tournée à 45°, de pas pitch/√2 ≈ 5,7 px en desktop
+   (4,2 px en mobile, où le pas descend à 5 px pour tenir la bande en ~95 px).
+   Le plus gros point encore distinct fait 8 px de diamètre (il touche ses
+   voisins) ; ceux de la mi-bande font 4 à 5 px. Vérifié sans moiré à dpr 1,
+   1,5 et 3 : la trame est vectorielle, le
+   navigateur la dessine à la résolution de l'écran, il n'y a pas de
+   rééchantillonnage d'image.
+
+   Une couche de fond par rangée (38) : chaque couche est en
+   `background-repeat: repeat-x` avec sa position verticale propre, donc elle ne
+   dessine QU'UNE rangée et porte son propre rayon. `background-size` et
+   `-repeat` n'ont qu'une valeur : CSS la recycle sur les 38 couches.
+
+   Rampe : `smoothstep` sur la couverture. Plate aux deux extrémités, elle évite
+   la « première rangée » et la « dernière rangée » qui claquent comme un filet ;
+   le rayon de chaque rangée est ensuite l'inverse NUMÉRIQUE de la couverture
+   réelle du réseau, recouvrements compris — sans quoi la pente casse au moment
+   où les disques se touchent. Les deux dernières rangées débordent franchement
+   (r ≥ pitch/2 + 0,35 px, la demi-largeur du lissage) : l'aplat ivoire est
+   plein au raccord de l'îlot, y compris quand la bande tombe sur une position
+   fractionnaire.
+
+   La bande ne peint QUE l'ivoire ; côté sombre, entre les points, c'est le fond
+   ambiant lui-même (grain + vignettage de `AmbientBackground`) qui reste
+   visible. C'est la seule construction qui raccorde au pixel près des deux
+   côtés : le vignettage est `fixed` et varie de ±3/255 selon la position de
+   défilement, donc un aplat opaque `--bg-primary` aurait laissé un liseré plus
+   clair au bord sombre. Côté ivoire les points se recouvrent : la bande y est
+   pleinement opaque, comme l'îlot, et le grain ne la traverse pas. */
+.dither-band {
+  --dither-pitch: 8px;
+  --dither-ink: rgb(var(--surface-light-bg));
+  width: 100%;
+  height: calc(var(--dither-pitch) * 19); /* 38 rangées d'un demi-pas = 152 px */
+  background-repeat: repeat-x;
+  background-size: var(--dither-pitch) calc(var(--dither-pitch) * 2);
+  background-image:
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.0096 - 0.35px), transparent calc(var(--dither-pitch) * 0.0096 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.0285 - 0.35px), transparent calc(var(--dither-pitch) * 0.0285 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.0468 - 0.35px), transparent calc(var(--dither-pitch) * 0.0468 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.0650 - 0.35px), transparent calc(var(--dither-pitch) * 0.0650 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.0827 - 0.35px), transparent calc(var(--dither-pitch) * 0.0827 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.1000 - 0.35px), transparent calc(var(--dither-pitch) * 0.1000 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.1170 - 0.35px), transparent calc(var(--dither-pitch) * 0.1170 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.1336 - 0.35px), transparent calc(var(--dither-pitch) * 0.1336 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.1498 - 0.35px), transparent calc(var(--dither-pitch) * 0.1498 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.1656 - 0.35px), transparent calc(var(--dither-pitch) * 0.1656 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.1809 - 0.35px), transparent calc(var(--dither-pitch) * 0.1809 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.1958 - 0.35px), transparent calc(var(--dither-pitch) * 0.1958 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.2103 - 0.35px), transparent calc(var(--dither-pitch) * 0.2103 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.2244 - 0.35px), transparent calc(var(--dither-pitch) * 0.2244 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.2381 - 0.35px), transparent calc(var(--dither-pitch) * 0.2381 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.2512 - 0.35px), transparent calc(var(--dither-pitch) * 0.2512 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.2639 - 0.35px), transparent calc(var(--dither-pitch) * 0.2639 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.2762 - 0.35px), transparent calc(var(--dither-pitch) * 0.2762 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.2879 - 0.35px), transparent calc(var(--dither-pitch) * 0.2879 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.2992 - 0.35px), transparent calc(var(--dither-pitch) * 0.2992 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3099 - 0.35px), transparent calc(var(--dither-pitch) * 0.3099 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3201 - 0.35px), transparent calc(var(--dither-pitch) * 0.3201 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3298 - 0.35px), transparent calc(var(--dither-pitch) * 0.3298 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3390 - 0.35px), transparent calc(var(--dither-pitch) * 0.3390 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3476 - 0.35px), transparent calc(var(--dither-pitch) * 0.3476 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3558 - 0.35px), transparent calc(var(--dither-pitch) * 0.3558 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3656 - 0.35px), transparent calc(var(--dither-pitch) * 0.3656 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3766 - 0.35px), transparent calc(var(--dither-pitch) * 0.3766 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.3886 - 0.35px), transparent calc(var(--dither-pitch) * 0.3886 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.4013 - 0.35px), transparent calc(var(--dither-pitch) * 0.4013 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.4148 - 0.35px), transparent calc(var(--dither-pitch) * 0.4148 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.4290 - 0.35px), transparent calc(var(--dither-pitch) * 0.4290 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.4437 - 0.35px), transparent calc(var(--dither-pitch) * 0.4437 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.4591 - 0.35px), transparent calc(var(--dither-pitch) * 0.4591 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.4753 - 0.35px), transparent calc(var(--dither-pitch) * 0.4753 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.4920 - 0.35px), transparent calc(var(--dither-pitch) * 0.4920 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.6200 - 0.35px), transparent calc(var(--dither-pitch) * 0.6200 + 0.35px)),
+    radial-gradient(circle at 50% 50%, var(--dither-ink) calc(var(--dither-pitch) * 0.7000 - 0.35px), transparent calc(var(--dither-pitch) * 0.7000 + 0.35px));
+  background-position:
+    0 calc(var(--dither-pitch) * -0.75),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * -0.25),
+    0 calc(var(--dither-pitch) * 0.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 0.75),
+    0 calc(var(--dither-pitch) * 1.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 1.75),
+    0 calc(var(--dither-pitch) * 2.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 2.75),
+    0 calc(var(--dither-pitch) * 3.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 3.75),
+    0 calc(var(--dither-pitch) * 4.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 4.75),
+    0 calc(var(--dither-pitch) * 5.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 5.75),
+    0 calc(var(--dither-pitch) * 6.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 6.75),
+    0 calc(var(--dither-pitch) * 7.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 7.75),
+    0 calc(var(--dither-pitch) * 8.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 8.75),
+    0 calc(var(--dither-pitch) * 9.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 9.75),
+    0 calc(var(--dither-pitch) * 10.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 10.75),
+    0 calc(var(--dither-pitch) * 11.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 11.75),
+    0 calc(var(--dither-pitch) * 12.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 12.75),
+    0 calc(var(--dither-pitch) * 13.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 13.75),
+    0 calc(var(--dither-pitch) * 14.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 14.75),
+    0 calc(var(--dither-pitch) * 15.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 15.75),
+    0 calc(var(--dither-pitch) * 16.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 16.75),
+    0 calc(var(--dither-pitch) * 17.25),
+    calc(var(--dither-pitch) * 0.5) calc(var(--dither-pitch) * 17.75);
+}
+
+/* Sortie d'îlot : la même trame retournée — un seul jeu de rangées à maintenir. */
+.dither-band--to-dark {
+  transform: scaleY(-1);
+}
+
+@media (max-width: 767px) {
+  .dither-band {
+    --dither-pitch: 5px; /* 38 rangées = bande de 95 px */
+  }
 }
 
 .text-balance {
