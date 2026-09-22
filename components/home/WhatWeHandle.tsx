@@ -16,7 +16,7 @@ import {
   CheckCircle2,
   type LucideIcon,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { fadeInUp, staggerContainer, viewportSettings } from '@/lib/animations';
 import { Button } from '@/components/ui/Button';
 import { LogoMark } from '@/components/ui/Logo';
@@ -242,18 +242,130 @@ function TitleBadge() {
   }, [inView, reduced]);
 
   return (
+    // Posé DANS le flux de la ligne (align-middle, aucun décalage négatif) :
+    // sa boîte est réservée par la mise en ligne, il ne peut donc plus
+    // recouvrir le texte, quelle que soit la largeur.
     <motion.span
       ref={ref}
       initial={{ scale: 0, opacity: 0, y: -8 }}
       animate={inView ? { scale: 1, opacity: 1, y: 0 } : {}}
       transition={{ type: 'spring', stiffness: 300, damping: 13, delay: 0.35 }}
-      className="relative top-0 ml-2.5 inline-flex h-5 min-w-[2rem] items-center justify-center rounded-full bg-red-500 px-2 align-top font-sans text-xs font-bold tabular-nums text-white shadow-[0_6px_20px_rgba(239,68,68,0.6)] md:-top-7 md:h-14 md:min-w-[4.2rem] md:px-4 md:text-2xl"
+      className="ml-2.5 inline-flex h-5 min-w-[2rem] items-center justify-center rounded-full bg-red-500 px-2 align-middle font-sans text-xs font-bold tabular-nums text-white shadow-[0_6px_20px_rgba(239,68,68,0.6)] md:ml-3 md:h-11 md:min-w-[3.4rem] md:px-3.5 md:text-xl"
       aria-hidden="true"
     >
       {count > 99 ? '+99' : count}
     </motion.span>
   );
 }
+
+// Mur de bannières : 40 nœuds animés qui ne dépendent QUE de `inView`.
+// Isolé dans un composant mémoïsé pour qu'il ne soit plus re-rendu à chaque tick
+// du compteur des pastilles (avant : ~125 re-rendus de 45 nœuds Framer Motion).
+//
+// Deux points de coût mesurés à l'entrée en vue (cf. chantiers-report.md) :
+//  - `backdrop-blur-md` sur 40 cartes = 40 backdrop-filters recalculés dès que
+//    le mur bouge (tremblement). Le fond derrière est un dégradé quasi uniforme :
+//    on le remplace par des fonds plus opaques, l'effet visuel est le même.
+//  - chaque carte anime `transform` : sans `will-change`, elles partagent la
+//    couche du mur, qui est donc repeinte en entier à chaque image. Avec
+//    `will-change: transform` chacune a sa couche et le compositeur suffit.
+const NotifWall = memo(function NotifWall({
+  inView,
+  notifs,
+  times,
+}: {
+  inView: boolean;
+  notifs: readonly string[];
+  times: readonly string[];
+}) {
+  return (
+    <>
+      {NOTIFS.map((n, i) => {
+        const app = APPS[n.app];
+        const AIcon = app.Icon;
+        return (
+          <motion.div
+            key={`notif-${i}`}
+            initial={{ opacity: 0, scale: 0.5, y: 24 }}
+            animate={inView ? { opacity: 1, scale: n.scale, y: 0 } : {}}
+            transition={{ duration: 0.32, delay: 0.02 + i * 0.03, ease: [0.22, 1, 0.36, 1] }}
+            style={{ top: n.top, left: n.left, rotate: `${n.rot}deg`, transformOrigin: 'top left', willChange: 'transform' }}
+            className={`absolute w-[220px] rounded-2xl border p-2.5 shadow-2xl ${
+              n.urgent ? 'border-red-500/50 bg-red-950/85' : 'border-amber-500/50 bg-amber-950/80'
+            }`}
+          >
+            <div className="flex items-start gap-2.5">
+              <span
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                style={{ backgroundColor: n.urgent ? '#ef4444' : '#f59e0b' }}
+              >
+                <AIcon className="h-4 w-4 text-white" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="font-sans text-xs font-semibold text-text-primary">{app.name}</span>
+                  <span
+                    className={`shrink-0 font-sans text-[10px] font-medium ${
+                      n.urgent ? 'text-red-400' : 'text-amber-400'
+                    }`}
+                  >
+                    {times[i % times.length]}
+                  </span>
+                </div>
+                <p className="truncate font-sans text-[13px] leading-snug text-text-secondary">
+                  {notifs[i % notifs.length]}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        );
+      })}
+    </>
+  );
+});
+
+// Grosses icônes d'app + pastille rouge qui grimpe. Le compteur vit ici :
+// seuls ces 5 nœuds se re-rendent toutes les 45 ms (et plus les 40 bannières).
+const BadgeWall = memo(function BadgeWall({ inView }: { inView: boolean }) {
+  const [count, setCount] = useState(14);
+
+  useEffect(() => {
+    if (!inView) return;
+    const ct = setInterval(() => setCount((c) => (c < 140 ? c + 1 : c)), 45);
+    return () => clearInterval(ct);
+  }, [inView]);
+
+  return (
+    <>
+      {BADGE_APPS.map((b, i) => {
+        const app = APPS[b.app];
+        const AIcon = app.Icon;
+        return (
+          <motion.div
+            key={`badge-${i}`}
+            initial={{ opacity: 0, scale: 0.3, y: 20 }}
+            animate={inView ? { opacity: 1, scale: b.scale, y: 0 } : {}}
+            transition={{ duration: 0.4, delay: 0.05 + i * 0.08, type: 'spring', stiffness: 220, damping: 16 }}
+            style={{ top: b.top, left: b.left, transformOrigin: 'top left', willChange: 'transform' }}
+            className="absolute"
+          >
+            <div className="relative">
+              <div
+                className="flex h-14 w-14 items-center justify-center rounded-[16px] shadow-xl"
+                style={{ backgroundColor: b.urgent ? '#ef4444' : '#f59e0b' }}
+              >
+                <AIcon className="h-7 w-7 text-white" />
+              </div>
+              <span className="absolute -right-2 -top-2 flex h-6 min-w-[24px] items-center justify-center rounded-full border-2 border-bg-secondary bg-red-500 px-1 font-sans text-[11px] font-bold tabular-nums text-white shadow-lg">
+                {fmt(count * b.mult)}
+              </span>
+            </div>
+          </motion.div>
+        );
+      })}
+    </>
+  );
+});
 
 function ChaosBoard({
   notifs,
@@ -272,26 +384,24 @@ function ChaosBoard({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.35 });
-  const [count, setCount] = useState(14);
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     if (!inView) return;
     const bt = setTimeout(() => setShowButton(true), 850);
-    const ct = setInterval(() => setCount((c) => (c < 140 ? c + 1 : c)), 45);
-    return () => {
-      clearTimeout(bt);
-      clearInterval(ct);
-    };
+    return () => clearTimeout(bt);
   }, [inView]);
 
+  // `-mb-32` annule le `pb-32` de la section : comme la bande pleine largeur de
+  // TrustedBy, le mur borde directement la section suivante, qui apporte sa
+  // propre respiration (py-24). Sans ça : 128 px + 96 px = 224 px de vide.
   return (
     <motion.div
       ref={ref}
       key="chaos"
       exit={{ opacity: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className={`relative mt-16 ml-[calc(50%-50vw)] h-[600px] w-screen overflow-hidden border-y bg-bg-secondary/30 transition-colors duration-700 md:h-[560px] ${
+      className={`relative mt-16 ml-[calc(50%-50vw)] -mb-32 h-[600px] w-screen overflow-hidden border-y bg-bg-secondary/30 transition-colors duration-700 md:h-[560px] ${
         absorbing ? 'border-border-green' : 'border-red-500/25'
       }`}
     >
@@ -329,77 +439,11 @@ function ChaosBoard({
             : { duration: 0.5, repeat: Infinity, repeatDelay: 1.2 }
         }
       >
-        {/* Grosses icônes d'app + pastille rouge qui s'envole */}
-        {BADGE_APPS.map((b, i) => {
-          const app = APPS[b.app];
-          const AIcon = app.Icon;
-          return (
-            <motion.div
-              key={`badge-${i}`}
-              initial={{ opacity: 0, scale: 0.3, y: 20 }}
-              animate={inView ? { opacity: 1, scale: b.scale, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: 0.05 + i * 0.08, type: 'spring', stiffness: 220, damping: 16 }}
-              style={{ top: b.top, left: b.left, transformOrigin: 'top left' }}
-              className="absolute"
-            >
-              <div className="relative">
-                <div
-                  className="flex h-14 w-14 items-center justify-center rounded-[16px] shadow-xl"
-                  style={{ backgroundColor: b.urgent ? '#ef4444' : '#f59e0b' }}
-                >
-                  <AIcon className="h-7 w-7 text-white" />
-                </div>
-                <span className="absolute -right-2 -top-2 flex h-6 min-w-[24px] items-center justify-center rounded-full border-2 border-bg-secondary bg-red-500 px-1 font-sans text-[11px] font-bold tabular-nums text-white shadow-lg">
-                  {fmt(count * b.mult)}
-                </span>
-              </div>
-            </motion.div>
-          );
-        })}
+        {/* Grosses icônes d'app + pastille rouge qui grimpe */}
+        <BadgeWall inView={inView} />
 
         {/* Bannières de notification */}
-        {NOTIFS.map((n, i) => {
-          const app = APPS[n.app];
-          const AIcon = app.Icon;
-          return (
-            <motion.div
-              key={`notif-${i}`}
-              initial={{ opacity: 0, scale: 0.5, y: 24 }}
-              animate={inView ? { opacity: 1, scale: n.scale, y: 0 } : {}}
-              transition={{ duration: 0.32, delay: 0.02 + i * 0.03, ease: [0.22, 1, 0.36, 1] }}
-              style={{ top: n.top, left: n.left, rotate: `${n.rot}deg`, transformOrigin: 'top left' }}
-              className={`absolute w-[220px] rounded-2xl border p-2.5 shadow-2xl backdrop-blur-md ${
-                n.urgent
-                  ? 'border-red-500/50 bg-red-950/60'
-                  : 'border-amber-500/50 bg-amber-950/50'
-              }`}
-            >
-              <div className="flex items-start gap-2.5">
-                <span
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                  style={{ backgroundColor: n.urgent ? '#ef4444' : '#f59e0b' }}
-                >
-                  <AIcon className="h-4 w-4 text-white" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="font-sans text-xs font-semibold text-text-primary">{app.name}</span>
-                    <span
-                      className={`shrink-0 font-sans text-[10px] font-medium ${
-                        n.urgent ? 'text-red-400' : 'text-amber-400'
-                      }`}
-                    >
-                      {times[i % times.length]}
-                    </span>
-                  </div>
-                  <p className="truncate font-sans text-[13px] leading-snug text-text-secondary">
-                    {notifs[i % notifs.length]}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
+        <NotifWall inView={inView} notifs={notifs} times={times} />
       </motion.div>
 
       {/* Cœur Herakia : point d'aspiration */}
