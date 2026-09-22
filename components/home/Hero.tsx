@@ -55,7 +55,7 @@ export function Hero() {
           sujet. Il quitte l'écran avec le bloc de texte (cf. `useScrollProgress` ci-dessus). */}
       <svg
         ref={objectRef}
-        className="pointer-events-none absolute right-10 top-24 hidden h-[min(62vh,560px)] w-auto text-stroke-object lg:block"
+        className="pointer-events-none absolute -right-[26%] top-1/2 hidden h-[min(155vh,1240px)] w-auto -translate-y-1/2 text-stroke-object opacity-60 [mask-image:linear-gradient(to_right,transparent_0%,black_38%)] lg:block"
         style={{ opacity: OBJECT_OPACITY }}
         viewBox={HERO_OBJECT.viewBox}
         fill="none"
