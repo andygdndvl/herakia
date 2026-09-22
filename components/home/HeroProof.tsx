@@ -14,7 +14,7 @@ export function HeroProof() {
   const { hero } = useDict();
 
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-3" aria-label={hero.proofAria} role="group">
+    <div className="flex flex-col items-start gap-2" aria-label={hero.proofAria} role="group">
       <span className="flex items-center gap-2">
         <span className="flex gap-[3px]" aria-hidden="true">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -23,8 +23,6 @@ export function HeroProof() {
         </span>
         <span className="font-mono text-xs uppercase tracking-wider text-text-muted">{hero.proofRating}</span>
       </span>
-
-      <span className="hidden h-px w-10 bg-border-subtle sm:block" />
 
       <figure className="m-0 flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <blockquote className="m-0 font-sans text-sm text-text-secondary md:text-base">
