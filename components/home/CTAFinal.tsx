@@ -52,7 +52,7 @@ export function CTAFinal() {
             {t.badge}
           </div>
 
-          <h2 ref={titleRef} data-split className="h-display mt-8 text-[clamp(2.75rem,7vw,7rem)] [&_[data-word]]:whitespace-nowrap">
+          <h2 ref={titleRef} data-split className="h-display mt-8 text-[clamp(2rem,4.4vw,4.25rem)] [&_[data-word]]:whitespace-nowrap">
             {t.title}
           </h2>
 
