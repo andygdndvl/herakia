@@ -15,6 +15,13 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
+      {/* Rythme de la page : toute la page est sombre, le découpage vient de
+          paliers de valeur portés par les sections elles-mêmes (`.tier-1` /
+          `.tier-2`, cf. app/globals.css).
+            Hero 0 · TrustedBy 1 · Personae 1 · objet + métiers 0 · MeetTia 1 ·
+            WhatWeHandle 0 · GoogleReviews 1 · About 0 · HowItWorks 1 · CTAFinal 2
+          Deux voisines ne partagent un niveau que lorsqu'elles forment un seul
+          bloc de lecture (logos + personae, objet + métiers). */}
       <main>
         <Hero />
         <TrustedBy />

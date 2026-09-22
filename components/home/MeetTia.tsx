@@ -76,7 +76,8 @@ export function MeetTia() {
   const revealRef = useReveal<HTMLDivElement>({ stagger: 120 });
 
   return (
-    <section className="px-6 pb-24 lg:px-8">
+    // Palier 1, entre l'objet (0) et les chantiers (0)
+    <section className="tier-1 px-6 pb-24 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <div ref={revealRef}>
         <div data-reveal className="text-center">

@@ -31,7 +31,13 @@ export function CTAFinal() {
   const restRef = useReveal<HTMLDivElement>({ delay: 500, stagger: 110 });
 
   return (
-    <section className="relative overflow-hidden border-y border-border-subtle bg-bg-secondary px-6 py-40 lg:px-8">
+    // Palier 2, point le plus haut de la page : l'aplat opaque `bg-bg-secondary`
+    // est remplacé par le voile du palier, qui laisse passer grain et vignettage
+    // au lieu de poser un rectangle plat. Les deux filets neutres (`border-y`)
+    // sont retirés : c'était l'ancien encadrement du bloc, le palier fait
+    // désormais la séparation. Le filament vert du haut reste — c'est l'accent
+    // de section (le pied de page a le même), pas un trait de séparation.
+    <section className="tier-2 relative overflow-hidden px-6 py-40 lg:px-8">
       <div
         className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-primary to-transparent"
         aria-hidden="true"

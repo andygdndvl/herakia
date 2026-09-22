@@ -39,6 +39,9 @@
   --border-green-alpha: 0.3;
   /* Voile des cartes .glass-card */
   --glass-bg: rgba(255, 255, 255, 0.03);
+  /* Paliers de valeur — voir la règle `.tier-1` / `.tier-2` plus bas */
+  --tier-tint: 170, 213, 212;
+  --bg-section: transparent; /* niveau 0 : le fond de page lui-même */
   /* Relief des cartes (`shadow-card`, `shadow-card-hover`). Sur fond sombre une
      ombre portée ne se voit pas : les cartes s'y lisent par leur filet, le jeton
      est donc neutre — aucun pixel peint. Plus aucun composant ne s'en sert
@@ -107,10 +110,49 @@ select:-webkit-autofill {
   border: 1px solid var(--border-subtle);
 }
 
+/* ─── Paliers de valeur ─────────────────────────────────────────────────────
+   Le rythme de la page d'accueil vient de trois niveaux de fond, tous sombres,
+   posés section par section. Niveau 0 = le fond de page (`--bg-primary`,
+   #0a0d0c), aucune classe. Niveau 1 = #0e1211, niveau 2 = #121716 — valeurs
+   relevées au centre haut du cadre, là où le vignettage est nul.
+
+   Les paliers sont des VOILES TRANSLUCIDES, pas des aplats opaques, et c'est
+   mesuré : `AmbientBackground` est `fixed`, son vignettage fait déjà passer le
+   fond de (10,13,12) au centre haut à (6,9,8) sur les bords et en bas. Un palier
+   vaut +4/+5/+5 : exactement l'amplitude du vignettage. Un aplat opaque
+   effacerait ce vignettage à l'intérieur de la section, qui se lirait alors
+   comme un rectangle rapporté — c'est précisément ce que faisait l'ancien
+   `bg-bg-secondary` de CTAFinal. Le voile, lui, ajoute le même écart partout :
+   la section garde son grain et son vignettage, elle est juste d'un cran
+   au-dessus de sa voisine, à toute position de défilement.
+
+   Un seul ton (`--tier-tint`), deux alphas, choisis pour tomber exactement sur
+   les cibles au-dessus de #0a0d0c :
+     0,025 → +4/+5/+5  = #0e1211 (niveau 1)
+     0,050 → +8/+10/+10 = #121716 (niveau 2)
+   L'écart ne dépend quasiment pas du fond sous-jacent (±0,1/255 entre le centre
+   et les bords), donc un palier reste un palier même là où le vignettage mord.
+
+   Règle de pose : deux sections voisines ne portent jamais le même niveau, sauf
+   quand elles forment un seul bloc de lecture (le bandeau de logos avec les
+   personae, l'objet 3D avec ses métiers). La section de l'objet reste au niveau
+   0 : le fond de la scène three.js (`BG` dans components/agent-object/scene.ts)
+   est écrit en dur à #0a0d0c et doit rester égal au fond CSS derrière elle. */
+.tier-1 {
+  --bg-section: rgba(var(--tier-tint), 0.025);
+}
+.tier-2 {
+  --bg-section: rgba(var(--tier-tint), 0.05);
+}
+.tier-1,
+.tier-2 {
+  background-color: var(--bg-section);
+}
+
 /* ─── Surface claire ────────────────────────────────────────────────────────
    CLASSE CONSERVÉE MAIS INUTILISÉE. Les deux îlots ivoire de la page d'accueil
    ont été retirés : l'inversion clair/sombre ne se lisait pas comme un chapitre,
-   le rythme viendra de paliers de valeur entre sections, toutes sombres.
+   le rythme vient des paliers de valeur `.tier-1` / `.tier-2` ci-dessus.
    La règle reste ici, prête à servir, pour un éventuel mode clair — c'est la
    démonstration que les jetons suffisent à inverser une zone entière sans
    réécrire un seul composant.

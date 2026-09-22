@@ -104,7 +104,8 @@ export function Personae() {
   const closingRef = useReveal<HTMLParagraphElement>({ delay: 200 });
 
   return (
-    <section id="personae" className="relative overflow-hidden px-6 py-32 lg:px-8">
+    // Palier 1, dans la continuité du bandeau de logos
+    <section id="personae" className="tier-1 relative overflow-hidden px-6 py-32 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div ref={headRef} className="mx-auto max-w-3xl text-center">
           <span data-reveal className="eyebrow">

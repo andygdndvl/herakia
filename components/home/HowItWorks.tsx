@@ -87,7 +87,8 @@ export function HowItWorks() {
   const ActiveIcon = steps[activeStep].icon;
 
   return (
-    <section id="process" className="relative">
+    // Palier 1 : la méthode remonte d'un cran avant le palier 2 de l'appel final
+    <section id="process" className="tier-1 relative">
       <div className="px-6 pb-16 pt-32 lg:px-8">
         <div ref={headRef} className="mx-auto max-w-3xl text-center">
           <span data-reveal className="eyebrow">

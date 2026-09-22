@@ -74,7 +74,8 @@ export function GoogleReviews() {
   const gridRef = useReveal<HTMLDivElement>({ stagger: 110 });
 
   return (
-    <section className="relative px-6 py-24 lg:px-8" aria-label={t.eyebrow}>
+    // Palier 1, entre les chantiers (0) et « À propos » (0)
+    <section className="tier-1 relative px-6 py-24 lg:px-8" aria-label={t.eyebrow}>
       <div className="mx-auto max-w-6xl">
         <div ref={headRef} className="mb-14 text-center">
           <span data-reveal className="eyebrow inline-flex items-center gap-2">
