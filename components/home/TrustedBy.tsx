@@ -3,13 +3,8 @@
 import Image from 'next/image';
 import { useRef } from 'react';
 import { useLang } from '@/components/i18n/LangProvider';
+import { clientLogos as logos } from '@/components/home/clientLogos';
 import { useScrollProgress } from '@/lib/anim';
-
-const logos = [
-  { name: 'IPSSI', src: '/logos/ipssi.png', width: 592, height: 158, scale: 0.85 },
-  { name: 'Jean Louis David', src: '/logos/jean-louis-david.png', width: 1913, height: 228, scale: 1.15 },
-  { name: 'Privilux Riviera', src: '/logos/privilux-riviera.png', width: 788, height: 567, scale: 1 },
-];
 
 const REPEAT = 4;
 

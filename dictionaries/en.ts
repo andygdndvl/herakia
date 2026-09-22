@@ -49,6 +49,8 @@ const en: Dictionary = {
     ctaSecondary: 'Explore our solutions',
     chip1: 'Free assessment',
     chip2: '100% bespoke',
+    proofRating: '5.0 · Google reviews',
+    proofAria: 'Google rating and Herakia clients',
     scrollAria: 'Scroll to the next section',
   },
   meta: {

@@ -49,6 +49,11 @@ const fr = {
     ctaSecondary: 'Découvrir nos solutions',
     chip1: 'Diagnostic offert',
     chip2: '100 % sur-mesure',
+    // Bande de preuve sous les boutons. La note est celle des avis Google affichés
+    // plus bas (tous à 5 étoiles) : aucun nombre d'avis n'est annoncé, le site ne
+    // peut en justifier que ceux qu'il montre.
+    proofRating: '5,0 · avis Google',
+    proofAria: 'Note Google et clients de Herakia',
     scrollAria: 'Faire défiler vers la section suivante',
   },
   meta: {

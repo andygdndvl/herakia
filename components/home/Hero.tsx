@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { HeroProof } from '@/components/home/HeroProof';
 import { useDict, useLang, localize } from '@/components/i18n/LangProvider';
 import { useReveal, useScrambleRotate, useScrollProgress, useTextReveal } from '@/lib/anim';
 
@@ -81,9 +82,15 @@ export function Hero() {
             </div>
           </div>
 
+          {/* La preuve se range juste sous les boutons : elle appuie l'appel à
+              l'action, puis la ligne d'engagements ferme le hero. */}
+          <div data-reveal className="mt-8">
+            <HeroProof />
+          </div>
+
           <div
             data-reveal
-            className="mt-8 flex items-center gap-6 font-mono text-xs uppercase tracking-wider text-text-muted"
+            className="mt-6 flex items-center gap-6 font-mono text-xs uppercase tracking-wider text-text-muted"
           >
             <span className="flex items-center gap-2">
               <span className="h-1 w-1 rounded-full bg-green-primary" /> {dict.hero.chip1}
