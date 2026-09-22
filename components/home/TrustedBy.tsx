@@ -27,9 +27,7 @@ export function TrustedBy() {
   );
 
   return (
-    // Filet du bas retiré : l'îlot clair qui suit fait lui-même la séparation,
-    // et la ligne grise collée au bord ivoire se lisait comme une couture.
-    <section ref={sectionRef} className="relative border-t border-border-subtle py-12" aria-label={label}>
+    <section ref={sectionRef} className="relative border-y border-border-subtle py-12" aria-label={label}>
       <p className="mb-8 text-center font-mono text-xs uppercase tracking-widest text-text-muted">{label}</p>
       <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
         <div ref={trackRef} className="flex w-max items-center gap-20 will-change-transform">

@@ -58,7 +58,7 @@ const config: Config = {
         'glow-green': '0 0 24px rgba(var(--green-primary-legacy), 0.12)',
         'glow-green-lg': '0 0 48px rgba(var(--green-primary-legacy), 0.2)',
         'glow-green-sm': '0 0 12px rgba(var(--green-primary-legacy), 0.1)',
-        // Relief des cartes : neutre sur fond sombre, ombre encre dans l'îlot clair
+        // Relief des cartes : neutre sur fond sombre, ombre encre sur `.surface-light`
         card: 'var(--shadow-card)',
         'card-hover': 'var(--shadow-card-hover)',
       },
