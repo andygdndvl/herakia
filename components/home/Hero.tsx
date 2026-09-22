@@ -5,6 +5,10 @@ import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useDict, useLang, localize } from '@/components/i18n/LangProvider';
 import { useDrawPath, useReveal, useScrollProgress, useTextReveal } from '@/lib/anim';
+import { HERO_OBJECT } from './hero-object-paths';
+
+/** Opacité de repos du dessin : présent, jamais en concurrence avec le titre. */
+const OBJECT_OPACITY = 0.62;
 
 export function Hero() {
   const dict = useDict();
@@ -14,16 +18,30 @@ export function Hero() {
 
   const titleRef = useTextReveal<HTMLHeadingElement>({ by: 'chars', onLoad: true, delay: 150 });
   const restRef = useReveal<HTMLDivElement>({ onLoad: true, delay: 900, stagger: 120 });
-  const pathRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 400, duration: 2200 });
+  // Le fût se dessine niveau par niveau, une seule fois, derrière le titre : silhouettes,
+  // puis détails, puis textures, puis le filet de jointure. ~2 s en tout, ensuite immobile.
+  const edgesRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 600, duration: 1500 });
+  const detailsRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 1000, duration: 1300 });
+  const textureRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 1300, duration: 1200 });
+  const seamRef = useDrawPath<SVGPathElement>({ onLoad: true, delay: 1900, duration: 700 });
   const innerRef = useRef<HTMLDivElement>(null);
+  const objectRef = useRef<SVGSVGElement>(null);
 
-  // Sortie : le bloc glisse vers le haut et s'estompe pendant que le hero quitte l'écran
+  // Sortie : le bloc glisse vers le haut et s'estompe pendant que le hero quitte l'écran.
+  // Le dessin est posé sur la section (et non dans le bloc, qui est aligné en bas) : il reçoit
+  // donc le même traitement à la main, pour quitter l'écran exactement comme le texte.
   const sectionRef = useScrollProgress<HTMLElement>(
     (p) => {
-      const el = innerRef.current;
-      if (!el) return;
-      el.style.transform = `translate3d(0, ${-140 * p}px, 0)`;
-      el.style.opacity = String(1 - 0.85 * p);
+      const transform = `translate3d(0, ${-140 * p}px, 0)`;
+      const fade = 1 - 0.85 * p;
+      if (innerRef.current) {
+        innerRef.current.style.transform = transform;
+        innerRef.current.style.opacity = String(fade);
+      }
+      if (objectRef.current) {
+        objectRef.current.style.transform = transform;
+        objectRef.current.style.opacity = String(OBJECT_OPACITY * fade);
+      }
     },
     { enter: 'top top', leave: 'top bottom', sync: true },
   );
@@ -33,18 +51,49 @@ export function Hero() {
       ref={sectionRef}
       className="relative flex min-h-screen items-end overflow-hidden px-6 pb-16 pt-32 lg:px-8"
     >
+      {/* L'objet de l'agent, fermé, tracé au trait (cf. hero-object-paths.ts) : présence, pas
+          sujet. Il quitte l'écran avec le bloc de texte (cf. `useScrollProgress` ci-dessus). */}
       <svg
-        className="pointer-events-none absolute right-0 top-[14%] hidden w-[46vw] max-w-[680px] text-green-primary md:block"
-        viewBox="0 0 680 420"
+        ref={objectRef}
+        className="pointer-events-none absolute right-10 top-24 hidden h-[min(62vh,560px)] w-auto text-stroke-object lg:block"
+        style={{ opacity: OBJECT_OPACITY }}
+        viewBox={HERO_OBJECT.viewBox}
         fill="none"
         aria-hidden="true"
       >
         <path
-          ref={pathRef}
+          ref={textureRef}
           data-reveal
-          d="M10 380 C 120 380, 150 120, 280 120 S 440 300, 520 220 S 640 40, 675 20"
+          d={HERO_OBJECT.texture}
           stroke="currentColor"
+          strokeOpacity="0.3"
+          strokeWidth="1.25"
+        />
+        <path
+          ref={detailsRef}
+          data-reveal
+          d={HERO_OBJECT.details}
+          stroke="currentColor"
+          strokeOpacity="0.55"
           strokeWidth="1.4"
+        />
+        <path
+          ref={seamRef}
+          data-reveal
+          d={HERO_OBJECT.seam}
+          className="text-green-primary"
+          stroke="currentColor"
+          strokeOpacity="0.5"
+          strokeWidth="1.7"
+        />
+        <path
+          ref={edgesRef}
+          data-reveal
+          d={HERO_OBJECT.edges}
+          stroke="currentColor"
+          strokeOpacity="0.95"
+          strokeWidth="1.7"
+          strokeLinecap="round"
         />
       </svg>
 
