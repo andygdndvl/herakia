@@ -23,6 +23,7 @@ const config: Config = {
         'bg-elevated': 'rgb(var(--bg-elevated) / <alpha-value>)',
         // Vert signature — unique accent, ~5 % de la surface
         'green-primary': 'rgb(var(--green-primary) / <alpha-value>)',
+        'green-muted': 'rgb(var(--green-muted) / <alpha-value>)',
         'green-dark': 'rgb(var(--green-dark) / <alpha-value>)',
         'green-glow': 'rgba(var(--green-primary-legacy), 0.15)',
         'green-subtle': 'rgba(var(--green-primary-legacy), 0.08)',

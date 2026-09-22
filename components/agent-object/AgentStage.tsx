@@ -373,7 +373,7 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
               className="pointer-events-none absolute hidden min-[1200px]:block"
               style={{ opacity: 0, width: LABEL_WIDTH }}
             >
-              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-green-primary">{part.k}</p>
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-green-muted">{part.k}</p>
               <p className="mt-1.5 font-display text-[22px] font-bold tracking-tight text-text-primary">{part.title}</p>
               {/* Filet de cartouche sous le titre : il sépare l'identifiant du commentaire, comme sur un plan. */}
               <span className="mt-2 inline-block h-px w-12 bg-border-strong" />

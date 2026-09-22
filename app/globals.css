@@ -22,6 +22,9 @@
   /* Vert signature — unique accent. Les deux lignes sont le MÊME vert et
      doivent toujours être redéfinies ensemble. */
   --green-primary: 62 207 142;
+  /* Vert d'annotation : même teinte, désaturée — petites capitales, graduations, cartouche.
+     Le vert vif reste réservé à l'action (boutons, mots clés, pièces de l'objet). */
+  --green-muted: 122 158 142;
   --green-primary-legacy: 62, 207, 142;
   --green-dark: 42 158 106;
   --on-green: 4 18 10;
@@ -223,7 +226,8 @@ select:-webkit-autofill {
     overflow-wrap: break-word;
   }
   .eyebrow {
-    @apply block font-mono text-xs uppercase tracking-[0.14em] text-green-primary;
+    @apply block font-mono text-xs uppercase tracking-[0.14em];
+    color: rgb(var(--green-muted));
   }
 }
 
