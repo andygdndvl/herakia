@@ -53,7 +53,9 @@ const fr = {
     // plus bas (tous à 5 étoiles) : aucun nombre d'avis n'est annoncé, le site ne
     // peut en justifier que ceux qu'il montre.
     proofRating: '5,0 · avis Google',
-    proofAria: 'Note Google et clients de Herakia',
+    proofAria: 'Note Google et avis client',
+    proofQuote: 'Un vrai gain de temps et une très belle découverte.',
+    proofAuthor: 'Nadja Djordjevic · avis Google',
     scrollAria: 'Faire défiler vers la section suivante',
   },
   meta: {

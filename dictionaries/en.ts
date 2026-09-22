@@ -50,7 +50,9 @@ const en: Dictionary = {
     chip1: 'Free assessment',
     chip2: '100% bespoke',
     proofRating: '5.0 · Google reviews',
-    proofAria: 'Google rating and Herakia clients',
+    proofAria: 'Google rating and client review',
+    proofQuote: 'A real time-saver and a very fine discovery.',
+    proofAuthor: 'Nadja Djordjevic · Google review (translated)',
     scrollAria: 'Scroll to the next section',
   },
   meta: {
