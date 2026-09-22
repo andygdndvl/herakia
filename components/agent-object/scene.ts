@@ -25,10 +25,10 @@ import type { PartId, ScreenAnchor } from './layout';
 // Couleurs de la charte (three.js ne lit pas Tailwind) : green-primary, stroke-object, bg-primary.
 // EXCEPTION documentée aux jetons CSS : ces constantes doivent rester synchronisées
 // à la main avec `:root` dans app/globals.css. BG en particulier DOIT rester égal au
-// fond sombre de la page (--bg-primary: 10 13 12) : l'objet vit hors de l'îlot clair.
+// fond sombre de la page (--bg-primary: 12 12 11) : l'objet vit hors de l'îlot clair.
 const GREEN = 0x3ecf8e; // --green-primary: 62 207 142
 const WHITE = 0xdedede; // --stroke-object: 222 222 222
-const BG = 0x0a0d0c; // --bg-primary: 10 13 12
+const BG = 0x0c0c0b; // --bg-primary: 12 12 11
 
 // ── Hiérarchie des traits ──────────────────────────────────────────────────
 // Trois niveaux seulement : au-delà, la multiplication des valeurs intermédiaires

@@ -15,10 +15,14 @@
    (jusqu'à ±1/255) : chaque jeton conserve donc l'écriture qu'il avait avant le
    passage en variables, ce qui rend le thème sombre identique au pixel près. */
 :root {
-  /* Fonds */
-  --bg-primary: 10 13 12;
-  --bg-secondary: 16 21 19;
-  --bg-elevated: 23 29 27;
+  /* Fonds — noir tiède. Les trois valeurs suivent la même règle : R = G, B d'un
+     cran en dessous. C'est l'inverse exact de l'ancienne série (10 13 12,
+     16 21 19, 23 29 27), qui était verte — le vert de la marque s'y confondait
+     avec son propre fond. La luminance de chaque palier est inchangée à 2 %
+     près, donc aucun contraste de texte ne bouge (mesuré plus bas). */
+  --bg-primary: 12 12 11;
+  --bg-secondary: 20 20 18;
+  --bg-elevated: 28 28 26;
   /* Vert signature — unique accent. Les deux lignes sont le MÊME vert et
      doivent toujours être redéfinies ensemble. */
   --green-primary: 62 207 142;
@@ -27,6 +31,13 @@
   --green-muted: 122 158 142;
   --green-primary-legacy: 62, 207, 142;
   --green-dark: 42 158 106;
+  /* Bas du dégradé du bouton d'action — le même vert, 15 % de luminance en
+     moins et 3° de teinte en moins (vers le jaune, donc plus chaud). L'écart
+     est volontairement court : le bouton prend du relief, il ne change pas de
+     couleur. `--green-deep-hover` applique exactement le même rapport à
+     `--green-dark`, pour que le survol garde la même épaisseur de dégradé. */
+  --green-deep: 60 192 126;
+  --green-deep-hover: 41 147 94;
   --on-green: 4 18 10;
   /* Textes */
   --text-primary: 237 237 237;
@@ -43,7 +54,7 @@
   /* Voile des cartes .glass-card */
   --glass-bg: rgba(255, 255, 255, 0.03);
   /* Paliers de valeur — voir la règle `.tier-1` / `.tier-2` plus bas */
-  --tier-tint: 170, 213, 212;
+  --tier-tint: 212, 212, 211;
   --bg-section: transparent; /* niveau 0 : le fond de page lui-même */
   /* Relief des cartes (`shadow-card`, `shadow-card-hover`). Sur fond sombre une
      ombre portée ne se voit pas : les cartes s'y lisent par leur filet, le jeton
@@ -116,13 +127,13 @@ select:-webkit-autofill {
 /* ─── Paliers de valeur ─────────────────────────────────────────────────────
    Le rythme de la page d'accueil vient de trois niveaux de fond, tous sombres,
    posés section par section. Niveau 0 = le fond de page (`--bg-primary`,
-   #0a0d0c), aucune classe. Niveau 1 = #0e1211, niveau 2 = #121716 — valeurs
+   #0c0c0b), aucune classe. Niveau 1 = #111110, niveau 2 = #161615 — valeurs
    relevées au centre haut du cadre, là où le vignettage est nul.
 
    Les paliers sont des VOILES TRANSLUCIDES, pas des aplats opaques, et c'est
    mesuré : `AmbientBackground` est `fixed`, son vignettage fait déjà passer le
-   fond de (10,13,12) au centre haut à (6,9,8) sur les bords et en bas. Un palier
-   vaut +4/+5/+5 : exactement l'amplitude du vignettage. Un aplat opaque
+   fond de (12,12,11) au centre haut à (8,8,7) sur les bords et en bas. Un palier
+   vaut +5/+5/+5 : exactement l'amplitude du vignettage. Un aplat opaque
    effacerait ce vignettage à l'intérieur de la section, qui se lirait alors
    comme un rectangle rapporté — c'est précisément ce que faisait l'ancien
    `bg-bg-secondary` de CTAFinal. Le voile, lui, ajoute le même écart partout :
@@ -130,9 +141,11 @@ select:-webkit-autofill {
    au-dessus de sa voisine, à toute position de défilement.
 
    Un seul ton (`--tier-tint`), deux alphas, choisis pour tomber exactement sur
-   les cibles au-dessus de #0a0d0c :
-     0,025 → +4/+5/+5  = #0e1211 (niveau 1)
-     0,050 → +8/+10/+10 = #121716 (niveau 2)
+   les cibles au-dessus de #0c0c0b. Le ton a été recalculé quand le fond est
+   passé au noir tiède : un voile bleu-vert sur un fond tiède aurait ramené le
+   vert par la fenêtre, et les paliers auraient viré de teinte en montant.
+     0,025 → +5/+5/+5   = #111110 (niveau 1)
+     0,050 → +10/+10/+10 = #161615 (niveau 2)
    L'écart ne dépend quasiment pas du fond sous-jacent (±0,1/255 entre le centre
    et les bords), donc un palier reste un palier même là où le vignettage mord.
 
@@ -140,7 +153,7 @@ select:-webkit-autofill {
    quand elles forment un seul bloc de lecture (le bandeau de logos avec les
    personae, l'objet 3D avec ses métiers). La section de l'objet reste au niveau
    0 : le fond de la scène three.js (`BG` dans components/agent-object/scene.ts)
-   est écrit en dur à #0a0d0c et doit rester égal au fond CSS derrière elle. */
+   est écrit en dur à #0c0c0b et doit rester égal au fond CSS derrière elle. */
 .tier-1 {
   --bg-section: rgba(var(--tier-tint), 0.025);
 }
@@ -180,6 +193,11 @@ select:-webkit-autofill {
   --green-primary: 31 122 82; /* #1f7a52 — 4,73:1 sur ivoire */
   --green-primary-legacy: 31, 122, 82;
   --green-dark: 23 92 62; /* #175c3e — survol */
+  /* Bas du dégradé du bouton, même rapport que sur fond sombre. Sans ces deux
+     lignes, un bouton posé ici prendrait le vert clair en haut et le vert
+     SOMBRE du thème nuit en bas : le dégradé s'inverserait. */
+  --green-deep: 30 113 73; /* #1e7149 — 5,34:1 avec l'ivoire */
+  --green-deep-hover: 22 85 55; /* #165537 — 7,86:1 avec l'ivoire */
   --on-green: 245 242 234; /* ivoire sur pastille verte — 4,73:1 */
   /* Textes */
   --text-primary: 20 21 15; /* #14150f */

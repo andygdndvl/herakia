@@ -25,11 +25,12 @@ const config: Config = {
         'green-primary': 'rgb(var(--green-primary) / <alpha-value>)',
         'green-muted': 'rgb(var(--green-muted) / <alpha-value>)',
         'green-dark': 'rgb(var(--green-dark) / <alpha-value>)',
+        'green-deep': 'rgb(var(--green-deep) / <alpha-value>)',
         'green-glow': 'rgba(var(--green-primary-legacy), 0.15)',
         'green-subtle': 'rgba(var(--green-primary-legacy), 0.08)',
         'green-line': 'rgba(var(--green-primary-legacy), 0.55)',
         'on-green': 'rgb(var(--on-green) / <alpha-value>)',
-        // Textes (contrastes sur #0a0d0c : 17:1, 7,7:1, 5,8:1)
+        // Textes (contrastes sur #0c0c0b : 16,7:1, 7,5:1, 5,7:1)
         'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',
         'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)',
         'text-muted': 'rgb(var(--text-muted) / <alpha-value>)',
@@ -46,6 +47,12 @@ const config: Config = {
         mono: ['var(--font-jetbrains)', 'monospace'],
       },
       backgroundImage: {
+        // Bouton d'action : un dégradé vertical très court (15 % de luminance
+        // entre le haut et le bas), pas une lueur. Aucune ombre, aucun halo —
+        // le relief vient de la seule pente. Le survol reprend la même pente,
+        // un cran plus bas, pour que le bouton ne s'aplatisse pas au contact.
+        action: 'linear-gradient(180deg, rgb(var(--green-primary)), rgb(var(--green-deep)))',
+        'action-hover': 'linear-gradient(180deg, rgb(var(--green-dark)), rgb(var(--green-deep-hover)))',
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'grid-pattern':
           'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',

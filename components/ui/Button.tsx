@@ -23,14 +23,17 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-green-primary text-on-green font-semibold hover:bg-green-dark',
+  // `bg-green-primary` reste posé sous le dégradé : c'est le repli si
+  // l'image de fond ne peint pas (impression, forçage de couleurs), et le texte
+  // garde alors le contraste qu'il a toujours eu.
+  primary: 'bg-green-primary bg-action text-on-green font-semibold hover:bg-action-hover',
   secondary: 'bg-transparent text-text-primary border border-border-strong hover:border-green-primary/60 hover:bg-green-subtle',
   ghost: 'bg-transparent text-text-secondary hover:text-text-primary',
 };
 
 // Micro-interactions sobres : léger enfoncement au clic, l'icône glisse au survol
 const base =
-  'group inline-flex items-center justify-center gap-2 rounded-full font-medium font-sans transition-[background-color,border-color,color,transform] duration-300 motion-safe:active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:transition-transform [&_svg]:duration-300 motion-safe:group-hover:[&_svg]:translate-x-1';
+  'group inline-flex items-center justify-center gap-2 rounded-full font-medium font-sans transition-[background-color,background-image,border-color,color,transform] duration-300 motion-safe:active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:transition-transform [&_svg]:duration-300 motion-safe:group-hover:[&_svg]:translate-x-1';
 
 export function Button({
   children,
