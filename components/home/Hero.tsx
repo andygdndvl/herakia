@@ -10,13 +10,12 @@ import { useReveal, useScrambleRotate, useScrollProgress, useTextReveal } from '
 export function Hero() {
   const dict = useDict();
   const lang = useLang();
-  const { titleLine1, rotating } = dict.hero;
+  const { titleLead, titleAccent, means } = dict.hero;
 
-  // Le dernier segment du titre se réécrit, mais seulement une fois la révélation terminée : c'est
-  // elle qui recompose le balisage du h1 (découpe en caractères), et on ne peut écrire dedans
-  // qu'après. La révélation rend sa découpe avant d'appeler `onSettled` ; la cible est donc
-  // retrouvée à ce moment-là par `querySelector` — une ref pointerait sur le <span> d'origine,
-  // remplacé entre-temps par la découpe.
+  // La promesse, elle, ne bouge plus : c'est la ligne des moyens, sous le titre, qui se réécrit.
+  // Elle vit hors du h1 — la découpe en caractères de la révélation ne la touche donc jamais et
+  // une simple ref suffit à la désigner. Le départ reste séquencé sur `onSettled` : la rotation
+  // ne s'arme qu'une fois le titre posé, pour qu'on lise la promesse avant que rien ne bouge.
   const rotate = useRef<() => void>(() => {});
   const titleRef = useTextReveal<HTMLHeadingElement>({
     by: 'chars',
@@ -24,9 +23,10 @@ export function Hero() {
     delay: 150,
     onSettled: () => rotate.current(),
   });
+  const meansRef = useRef<HTMLSpanElement>(null);
   rotate.current = useScrambleRotate({
-    resolve: () => titleRef.current?.querySelector<HTMLElement>('[data-hero-rotating]') ?? null,
-    segments: rotating,
+    resolve: () => meansRef.current,
+    segments: means,
   });
   const restRef = useReveal<HTMLDivElement>({ onLoad: true, delay: 900, stagger: 120 });
   const innerRef = useRef<HTMLDivElement>(null);
@@ -57,15 +57,21 @@ export function Hero() {
             data-split
             className="h-display mt-6 text-[clamp(1.75rem,5.04vw,6.5rem)] [&_[data-word]]:whitespace-nowrap"
           >
-            {titleLine1.join(' ')}
-            <br />
-            {/* Le segment tournant tient toujours sur une seule ligne (mesuré de 390 à 1920 px, le
-                plus long occupe au pire 94 % de la largeur disponible) : le titre fait donc deux
-                lignes quoi qu'il affiche, et rien ne bouge en dessous. */}
-            <span data-hero-rotating className="whitespace-nowrap text-green-primary">
-              {rotating[0]}
-            </span>
+            {titleLead} <span className="text-green-primary">{titleAccent}</span>
           </h1>
+
+          {/* Les moyens, en petites capitales. Le segment est sur sa propre ligne et tient
+              d'un seul tenant (le plus long, « APPLICATIONS SUR-MESURE », occupe 65 % de la
+              largeur disponible à 390 px) : il peut changer de longueur sans que rien ne
+              bouge, ni autour ni en dessous. */}
+          <p
+            data-reveal
+            className="mt-5 font-mono text-xs uppercase tracking-[0.2em] text-green-muted sm:text-sm"
+          >
+            <span ref={meansRef} className="whitespace-nowrap">
+              {means[0]}
+            </span>
+          </p>
 
           <div className="mt-10 grid gap-8 border-t border-border-subtle pt-8 md:grid-cols-[1fr_auto] md:items-end">
             <p data-reveal className="max-w-xl font-sans text-lg leading-relaxed text-text-secondary md:text-xl">

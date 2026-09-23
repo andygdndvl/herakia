@@ -32,19 +32,15 @@ const fr = {
   },
   hero: {
     badge: 'Agence IA · France',
-    titleLine1: ['Automatisation', 'IA', 'pour'],
-    titleLine2: ['entreprises', 'ambitieuses.'],
-    // Fin de titre qui se réécrit. Le premier segment est celui rendu côté serveur : le titre
-    // complet a exactement le sens d'aujourd'hui avant même que le JavaScript ne s'exécute.
-    rotating: [
-      'entreprises ambitieuses.',
-      "cabinets d'expertise.",
-      'PME industrielles.',
-      'agences.',
-      'cliniques.',
-    ],
+    // Titre fixe, en deux morceaux : le second porte le vert de la marque. Les deux se lisent
+    // d'une traite — « On construit ce qui vous rend du temps. »
+    titleLead: 'On construit ce qui vous rend',
+    titleAccent: 'du temps.',
+    // Ligne en petites capitales sous le titre : les trois moyens, réécrits l'un après l'autre.
+    // Le premier est celui rendu côté serveur — la ligne a déjà du sens sans JavaScript.
+    means: ['Agents IA', 'Applications sur-mesure', 'Automatisations'],
     subtitleBody:
-      'Herakia déploie des agents IA qui prennent en charge le travail répétitif — vos équipes retrouvent du temps pour ce qui compte vraiment.',
+      "Agents IA, applications sur-mesure, automatisations : on part de vos process, pas d'un produit sur étagère.",
     ctaPrimary: 'Démarrer un projet',
     ctaSecondary: 'Découvrir nos solutions',
     chip1: 'Diagnostic offert',

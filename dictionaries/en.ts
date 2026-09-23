@@ -34,17 +34,11 @@ const en: Dictionary = {
   },
   hero: {
     badge: 'AI agency · France',
-    titleLine1: ['AI', 'automation', 'for'],
-    titleLine2: ['ambitious', 'companies.'],
-    rotating: [
-      'ambitious businesses.',
-      'accounting firms.',
-      'industrial SMEs.',
-      'agencies.',
-      'clinics.',
-    ],
+    titleLead: 'We build what gives you',
+    titleAccent: 'time back.',
+    means: ['AI agents', 'Bespoke apps', 'Automations'],
     subtitleBody:
-      'Herakia deploys AI agents that take over the repetitive work — so your teams get their time back for what truly matters.',
+      'AI agents, bespoke apps, automations: we start from your processes, not from an off-the-shelf product.',
     ctaPrimary: 'Start a project',
     ctaSecondary: 'Explore our solutions',
     chip1: 'Free assessment',
