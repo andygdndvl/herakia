@@ -40,7 +40,7 @@ const fr = {
     // Le premier est celui rendu côté serveur — la ligne a déjà du sens sans JavaScript.
     means: ['Agents IA', 'Applications sur-mesure', 'Automatisations'],
     subtitleBody:
-      "Agents IA, applications sur-mesure, automatisations : on part de vos process, pas d'un produit sur étagère.",
+      "On part de vos process, pas d'un produit sur étagère.",
     ctaPrimary: 'Démarrer un projet',
     ctaSecondary: 'Découvrir nos solutions',
     chip1: 'Diagnostic offert',

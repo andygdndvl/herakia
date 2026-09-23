@@ -38,7 +38,7 @@ const en: Dictionary = {
     titleAccent: 'time back.',
     means: ['AI agents', 'Bespoke apps', 'Automations'],
     subtitleBody:
-      'AI agents, bespoke apps, automations: we start from your processes, not from an off-the-shelf product.',
+      'We start from your processes, not from an off-the-shelf product.',
     ctaPrimary: 'Start a project',
     ctaSecondary: 'Explore our solutions',
     chip1: 'Free assessment',
