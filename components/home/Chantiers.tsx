@@ -85,26 +85,20 @@ const TEXT = {
   },
 } as const;
 
-/**
- * Un des deux temps du récit, sous le résultat : intitulé en petites capitales dans une
- * gouttière fixe, puis la phrase. Les deux temps s'alignent donc sur la même colonne de
- * libellés, et leur ordre se lit à la couleur : l'avant est en retrait (`text-text-muted`),
- * le livré revient au premier plan (`text-text-secondary`, libellé vert d'annotation).
- * Sous 640 px la gouttière passe au-dessus du texte — jamais deux colonnes serrées.
- */
-function Step({ label, text, done = false }: { label: string; text: string; done?: boolean }) {
+/** Un des trois temps du cas : intitulé en petites capitales, puis la phrase. */
+function Step({ label, text, accent = false }: { label: string; text: string; accent?: boolean }) {
   return (
-    <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
-      <span
-        className={`font-mono text-[10px] uppercase leading-5 tracking-[0.18em] sm:w-[5.5rem] sm:shrink-0 ${
-          done ? 'text-green-muted' : 'text-text-muted'
+    <div className="lg:border-l lg:border-border-subtle lg:pl-6">
+      <p
+        className={`font-mono text-[10px] uppercase tracking-[0.18em] ${
+          accent ? 'text-green-muted' : 'text-text-muted'
         }`}
       >
         {label}
-      </span>
+      </p>
       <p
-        className={`max-w-2xl font-sans text-sm leading-relaxed ${
-          done ? 'text-text-secondary' : 'text-text-muted'
+        className={`mt-2 font-sans text-sm leading-relaxed ${
+          accent ? 'text-text-primary' : 'text-text-secondary'
         }`}
       >
         {text}
@@ -134,49 +128,30 @@ export function Chantiers() {
         </div>
 
         {/* Une ligne par cas, filets horizontaux entre elles : le bloc se lit comme un relevé,
-            pas comme trois cartes de plaquette. Mais à l'intérieur d'une ligne, les trois temps
-            ne pèsent plus pareil : le RÉSULTAT est écrit en grand, la signature du client reste
-            petite à gauche, l'avant/livré passe en dessous, en petit. Les trois résultats
-            démarrent donc à la même abscisse, derrière le même filet vertical : on les lit en
-            balayant la colonne de droite, le détail n'arrive qu'ensuite. */}
+            pas comme trois cartes de plaquette. Les trois temps sont alignés en colonnes d'une
+            ligne à l'autre — c'est cet alignement qui fait la preuve. */}
         <ol className="mt-10 divide-y divide-border-subtle border-t border-border-subtle">
           {t.cases.map((c) => (
             <li
               key={c.num}
               data-reveal
-              className="grid gap-6 py-11 lg:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] lg:gap-12 lg:py-14"
+              className="grid gap-6 py-10 lg:grid-cols-[minmax(0,14rem)_repeat(3,minmax(0,1fr))] lg:gap-8"
             >
-              {/* Signature du cas : numéro, client, secteur. Délibérément au registre du corps
-                  de texte — c'est l'étiquette de la preuve, pas la preuve. */}
-              <div className="lg:pt-0.5">
+              <div>
                 <div className="flex items-baseline gap-3">
                   <span className="font-mono text-xs tracking-[0.2em] text-green-muted">{c.num}</span>
-                  <h3 className="font-display text-base font-semibold leading-snug text-text-primary">
+                  <h3 className="font-display text-lg font-semibold leading-tight text-text-primary">
                     {c.client}
                   </h3>
                 </div>
-                <p className="mt-1 pl-[2.1rem] font-sans text-sm text-text-muted lg:pl-0">
+                <p className="mt-1.5 pl-[2.1rem] font-sans text-sm text-text-muted lg:pl-0">
                   {c.sector}
                 </p>
               </div>
 
-              {/* Le filet vertical ne sert qu'à partir de lg : sous cette largeur les deux
-                  blocs sont empilés, un trait de gauche n'y séparerait plus rien. */}
-              <div className="lg:border-l lg:border-border-subtle lg:pl-12">
-                <p className="max-w-[26ch] font-display text-[1.375rem] font-semibold leading-[1.15] tracking-[-0.02em] text-text-primary sm:text-2xl lg:text-[1.75rem] xl:text-[2rem] [text-wrap:balance]">
-                  {/* Le libellé « Résultat » ne s'affiche plus : la taille le dit. Il reste pour
-                      les lecteurs d'écran, qui n'ont pas accès à la hiérarchie typographique. */}
-                  <span className="sr-only">{t.labelResult}. </span>
-                  {c.result}
-                </p>
-
-                {/* Le filet du détail s'arrête avec les phrases qu'il coiffe : tiré jusqu'au bord
-                    droit de la section, il soulignerait le vide plutôt que le texte. */}
-                <div className="mt-7 max-w-3xl space-y-3 border-t border-border-subtle pt-5">
-                  <Step label={t.labelBefore} text={c.before} />
-                  <Step label={t.labelDelivered} text={c.delivered} done />
-                </div>
-              </div>
+              <Step label={t.labelBefore} text={c.before} />
+              <Step label={t.labelDelivered} text={c.delivered} />
+              <Step label={t.labelResult} text={c.result} accent />
             </li>
           ))}
         </ol>
