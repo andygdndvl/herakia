@@ -165,6 +165,21 @@ select:-webkit-autofill {
   background-color: var(--bg-section);
 }
 
+/* ─── Lumière de studio ─────────────────────────────────────────────────────
+   Dérive des trois nappes de `AmbientBackground`. Cycles de 38, 46 et 52 s en
+   aller-retour : les durées décalées font que la composition ne revient à son
+   point de départ qu'au bout de plusieurs minutes. Amplitudes en unités d'écran, comme les
+   nappes. Figées par la règle `prefers-reduced-motion` plus haut. */
+@keyframes studio-drift-1 {
+  to { transform: translate(-12vw, 8vh) scale(1.08); }
+}
+@keyframes studio-drift-2 {
+  to { transform: translate(10vw, -7vh) scale(0.94); }
+}
+@keyframes studio-drift-3 {
+  to { transform: translate(-9vw, -10vh) scale(1.1); }
+}
+
 /* ─── Surface claire ────────────────────────────────────────────────────────
    CLASSE CONSERVÉE MAIS INUTILISÉE. Les deux îlots ivoire de la page d'accueil
    ont été retirés : l'inversion clair/sombre ne se lisait pas comme un chapitre,
