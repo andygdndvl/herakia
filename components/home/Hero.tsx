@@ -74,7 +74,10 @@ export function Hero() {
           </p>
 
           <div className="mt-10 grid gap-8 border-t border-border-subtle pt-8 md:grid-cols-[1fr_auto] md:items-end">
-            <p data-reveal className="max-w-xl font-sans text-lg leading-relaxed text-text-secondary md:text-xl">
+            {/* Hors de la cascade : c'est le plus grand bloc de texte de l'écran d'accueil, donc
+                l'élément LCP. Parti d'une opacité 0, il repoussait le LCP à la fin du fondu
+                (5,7 s en mobile Lighthouse) ; affiché d'emblée, il est peint avec la page. */}
+            <p className="max-w-xl font-sans text-lg leading-relaxed text-text-secondary md:text-xl">
               {dict.hero.subtitleBody}
             </p>
             <div data-reveal className="flex flex-col gap-3 sm:flex-row">

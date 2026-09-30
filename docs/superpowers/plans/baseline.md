@@ -20,3 +20,14 @@
 - Élément LCP : le sous-titre du hero (`p.max-w-xl`, « On part de vos process… »). Il part à
   opacité 0 (`data-reveal`) : le LCP attend la fin de l'animation d'entrée (délai de rendu de
   l'élément ≈ 1,25 s non throttlé), pas le réseau (TTFB 10 ms).
+
+# Après correctif LCP du hero (2026-09-30)
+
+Le sous-titre du hero sort de la cascade `data-reveal` : il est peint avec la page.
+
+- Lighthouse mobile performance : **0.89** (4 runs : 0.90, 0.89, 0.89, 0.89)
+- Lighthouse mobile accessibilité : 0.98
+- LCP 3,6–3,8 s (au lieu de 5,7 s) · FCP 1,2 s · TBT 10–60 ms · CLS 0
+- Délai de rendu de l'élément LCP non throttlé : 45 ms (au lieu de 1 250 ms). Les ~3,8 s restantes
+  sont la projection du 4G lent simulé (CSS bloquant ~0,4 s, polices, JS) — piste suivante si besoin :
+  alléger le chargement, pas l'animation.
