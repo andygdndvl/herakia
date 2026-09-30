@@ -22,8 +22,9 @@ export function TrustedBy() {
   );
 
   return (
-    // Palier 1 : le bandeau de logos ouvre le premier cran de valeur et le
-    // partage avec Personae — les deux se lisent comme un seul bloc.
+    // Palier 1 : le bandeau de logos ouvre le premier cran de valeur, juste
+    // sous le hero, et le partage avec Chantiers puis Personae — les trois
+    // se lisent comme un seul bloc de preuve.
     <section ref={sectionRef} className="tier-1 relative border-y border-border-subtle py-12" aria-label={label}>
       <p className="mb-8 text-center font-mono text-xs uppercase tracking-widest text-text-muted">{label}</p>
       <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">

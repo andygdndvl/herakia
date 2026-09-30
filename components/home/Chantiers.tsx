@@ -177,13 +177,14 @@ export function Chantiers() {
   };
 
   return (
-    // Palier 1, partagé avec le bandeau de logos qui suit : les trois cas nommés ici sont
+    // Palier 1, partagé avec le bandeau de logos qui précède : les trois cas racontés ici sont
     // exactement les trois logos de `TrustedBy` — les deux sections forment un seul bloc de
-    // preuve, d'où le même niveau de fond, séparé de la suite par les filets.
+    // preuve, d'où le même niveau de fond. Le filet du haut est celui du bandeau ; celui du bas
+    // ferme le bloc avant `Personae`.
     <section
       aria-labelledby="chantiers-title"
       aria-roledescription="carrousel"
-      className="tier-1 relative border-t border-border-subtle px-6 py-20 lg:px-8 lg:py-24"
+      className="tier-1 relative border-b border-border-subtle px-6 py-20 lg:px-8 lg:py-24"
     >
       <div ref={rootRef} className="mx-auto max-w-7xl">
         <div data-reveal className="flex items-center gap-5">
