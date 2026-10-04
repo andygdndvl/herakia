@@ -48,10 +48,10 @@ const fr = {
     // Bande de preuve sous les boutons. La note est celle des avis Google affichés
     // plus bas (tous à 5 étoiles) : aucun nombre d'avis n'est annoncé, le site ne
     // peut en justifier que ceux qu'il montre.
-    proofRating: '5,0 · avis Google',
+    proofRating: '5,0',
     proofAria: 'Note Google et avis client',
     proofQuote: 'Un vrai gain de temps et une très belle découverte.',
-    proofAuthor: 'Nadja Djordjevic · avis Google',
+    proofAuthor: 'Nadja Djordjevic',
     scrollAria: 'Faire défiler vers la section suivante',
   },
   meta: {

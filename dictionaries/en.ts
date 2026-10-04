@@ -43,10 +43,10 @@ const en: Dictionary = {
     ctaSecondary: 'Explore our solutions',
     chip1: 'Free assessment',
     chip2: '100% bespoke',
-    proofRating: '5.0 · Google reviews',
+    proofRating: '5.0',
     proofAria: 'Google rating and client review',
     proofQuote: 'A real time-saver and a very fine discovery.',
-    proofAuthor: 'Nadja Djordjevic · Google review (translated)',
+    proofAuthor: 'Nadja Djordjevic (translated)',
     scrollAria: 'Scroll to the next section',
   },
   meta: {
