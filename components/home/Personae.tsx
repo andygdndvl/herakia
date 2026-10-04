@@ -18,7 +18,8 @@ const IMAGES = ['/personae-1.png', '/personae-2.png', '/personae-3.png'];
 const TEXT = {
   fr: {
     eyebrow: 'Vous reconnaissez-vous ?',
-    title: "Si l'une de ces phrases résonne, vous êtes au bon endroit.",
+    // Espaces insécables dans « on les connaît » : la ligne se coupe à la virgule, jamais au milieu.
+    title: 'Vos maux, on les connaît.',
     subtitle:
       "Voici les 3 profils qu'on rencontre le plus souvent — et ce qu'ils nous disent avant qu'on déploie quoi que ce soit.",
     closing: 'Si vous vous êtes reconnu·e, lisez ce qui suit. La suite parle de vous.',
@@ -57,7 +58,7 @@ const TEXT = {
   },
   en: {
     eyebrow: 'Does this sound like you?',
-    title: 'If any of these lines rings true, you’re in the right place.',
+    title: 'We know where it hurts.',
     subtitle:
       'Here are the 3 profiles we meet most often — and what they tell us before we deploy anything.',
     closing: 'If you recognised yourself, read on. What follows is about you.',
