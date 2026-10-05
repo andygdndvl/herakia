@@ -176,6 +176,8 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
           label.style.left = `${box.left}px`;
           label.style.top = `${box.top}px`;
           label.style.textAlign = box.side === 'left' ? 'right' : 'left';
+          // Lu par `group-data-[side=left]` : le grand numéro passe du côté de la ligne de rappel.
+          label.dataset.side = box.side;
           label.style.opacity = String(o * iso);
           label.style.transform = `translateY(${(1 - o) * 12}px)`;
           // La légende elle-même est survolable (le brief : « au survol d'une pièce OU de sa
@@ -362,7 +364,7 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
             </div>
           </div>
         </div>
-        {PART_IDS.map((id) => {
+        {PART_IDS.map((id, i) => {
           const part = text.parts[id];
           return (
             <div
@@ -370,26 +372,44 @@ export default function AgentStage({ progress, reduced, text }: AgentStageProps)
               ref={(el) => {
                 labels.current[id] = el;
               }}
-              className="pointer-events-none absolute hidden min-[1200px]:block"
+              className="group pointer-events-none absolute hidden min-[1200px]:block"
               style={{ opacity: 0, width: LABEL_WIDTH }}
             >
-              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-green-muted">{part.k}</p>
-              <p className="mt-1.5 font-display text-[22px] font-bold tracking-tight text-text-primary">{part.title}</p>
-              {/* Filet de cartouche sous le titre : il sépare l'identifiant du commentaire, comme sur un plan. */}
-              <span className="mt-2 inline-block h-px w-12 bg-border-strong" />
-              {/* Description : masquée tant que rien n'est survolé (pointeur fin uniquement — voir
-                `applyMode`). Fondu + léger déplacement en CSS, décodage du texte en scramble. */}
-              <p
-                ref={(el) => {
-                  descs.current[id] = el;
-                }}
-                className="mt-1 text-[13px] leading-snug text-text-muted"
-                style={{
-                  transition: 'opacity 220ms ease, transform 220ms ease',
-                }}
-              >
-                {part.desc}
-              </p>
+              {/* Le numéro d'ordre, en grand : on lit le parcours 01 → 06 d'un coup d'œil. Il se tient
+                toujours contre la ligne de rappel — à gauche du texte dans la colonne de droite, à
+                droite dans la colonne de gauche (texte aligné à droite). Il couvre la hauteur du nom
+                d'organe et du titre réunis, si bien que le titre reste exactement où l'attend la
+                ligne de rappel (`top: y - 22`, layout.ts). */}
+              <div className="flex items-start gap-3 group-data-[side=left]:flex-row-reverse">
+                <span
+                  aria-hidden="true"
+                  className="w-[52px] shrink-0 text-left group-data-[side=left]:text-right font-display text-[44px] font-semibold leading-[0.9] tracking-[-0.04em] text-green-primary tabular-nums"
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div className="min-w-0">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-green-muted">
+                    <span className="sr-only">{i + 1}. </span>
+                    {part.k}
+                  </p>
+                  <p className="mt-1.5 font-display text-[22px] font-bold tracking-tight text-text-primary">{part.title}</p>
+                  {/* Filet de cartouche sous le titre : il sépare l'identifiant du commentaire, comme sur un plan. */}
+                  <span className="mt-2 inline-block h-px w-12 bg-border-strong" />
+                  {/* Description : masquée tant que rien n'est survolé (pointeur fin uniquement — voir
+                    `applyMode`). Fondu + léger déplacement en CSS, décodage du texte en scramble. */}
+                  <p
+                    ref={(el) => {
+                      descs.current[id] = el;
+                    }}
+                    className="mt-1 text-[13px] leading-snug text-text-muted"
+                    style={{
+                      transition: 'opacity 220ms ease, transform 220ms ease',
+                    }}
+                  >
+                    {part.desc}
+                  </p>
+                </div>
+              </div>
             </div>
           );
         })}
