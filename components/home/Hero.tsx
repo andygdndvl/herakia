@@ -46,6 +46,27 @@ export function Hero() {
       ref={sectionRef}
       className="relative flex min-h-screen items-end overflow-hidden px-6 pb-16 pt-32 lg:px-8"
     >
+      {/* Halo du hero (spec vert-nuit) : un grand halo vert et une trame de points lumineux,
+          dense derrière le titre, éteinte vers les bords. Statique, pur CSS ; il défile avec le
+          hero, contrairement aux nappes du fond global qui restent fixes. */}
+      <div aria-hidden="true" data-hero-halo className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute left-1/2 top-[-60px] h-[800px] w-[1300px] max-w-none -translate-x-1/2"
+          style={{
+            background:
+              'radial-gradient(closest-side, rgb(var(--green-primary) / 0.26), rgb(var(--green-primary) / 0.08) 60%, transparent)',
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-50"
+          style={{
+            backgroundImage: 'radial-gradient(rgb(var(--green-primary) / 0.55) 1px, transparent 1.4px)',
+            backgroundSize: '14px 14px',
+            maskImage: 'radial-gradient(ellipse 55% 46% at 50% 42%, #000, transparent 80%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 55% 46% at 50% 42%, #000, transparent 80%)',
+          }}
+        />
+      </div>
       <div ref={innerRef} className="relative z-10 mx-auto w-full max-w-7xl">
         <div ref={restRef}>
           <p data-reveal className="eyebrow">
