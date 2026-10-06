@@ -10,6 +10,8 @@ interface Formule {
   id: string;
   title: string;
   pitch: string;
+  /** Texte long de la formule. Plus affiché dans les cartes (accroche + liste suffisent) ;
+   *  conservé ici tant qu'Andy n'a pas tranché entre le supprimer et le replacer ailleurs. */
   description: string;
   features: string[];
   priceLines: string[];
@@ -46,7 +48,7 @@ const TEXT = {
           'Estimation chiffrée du gain, piste par piste',
           'Feuille de route priorisée, remise en main propre',
         ],
-        priceLines: ['Offert'],
+        priceLines: ['Offert', 'Sans engagement de la suite'],
         highlighted: false,
       },
       {
@@ -110,7 +112,7 @@ const TEXT = {
           'A costed estimate of the gain, avenue by avenue',
           'A prioritised roadmap, handed over to you',
         ],
-        priceLines: ['Free'],
+        priceLines: ['Free', 'No commitment to go further'],
         highlighted: false,
       },
       {
@@ -197,9 +199,12 @@ export function OffresList() {
         </div>
       </section>
 
-      {/* Cartes de formules */}
+      {/* Cartes de formules. La recommandée est plus grande et s'allume (lueur verte retenue,
+          liseré vert) ; les deux autres reculent en verre neutre. Le prix est le premier repère
+          sous l'accroche. Pas de décalage vertical en `transform` : l'animation d'entrée l'écrasait,
+          c'est la grille (`items-center`) et le rembourrage qui font dépasser la carte. */}
       <section className="relative px-6 pb-16 lg:px-8">
-        <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl items-center gap-6 md:grid-cols-[1fr_1.08fr_1fr]">
           {formules.map((formule, index) => (
             <motion.div
               key={formule.id}
@@ -207,46 +212,40 @@ export function OffresList() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`relative flex h-full flex-col rounded-2xl border px-6 pb-8 pt-8 shadow-lg transition-all duration-300 md:px-8 ${
+              className={`relative flex flex-col rounded-3xl border transition-colors duration-300 ${
                 formule.highlighted
-                  ? 'border-border-green bg-bg-elevated shadow-glow-green md:-translate-y-4'
-                  : 'border-border-subtle bg-bg-elevated hover:border-border-green hover:shadow-xl'
+                  ? 'border-green-primary/45 bg-bg-secondary bg-[radial-gradient(120%_70%_at_50%_0%,rgb(var(--green-primary)/0.16),rgb(var(--green-primary)/0.04)_60%)] px-7 py-10 shadow-[0_24px_60px_-28px_rgb(var(--green-primary)/0.35)] md:px-8'
+                  : 'border-border-subtle bg-white/[0.02] px-6 py-8 hover:border-border-strong md:px-7'
               }`}
             >
               {formule.highlighted && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge pulse>{t.highlightBadge}</Badge>
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-green-primary px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-on-green">
+                  {t.highlightBadge}
                 </span>
               )}
 
-              <h3 className="min-h-[56px] font-display text-xl font-bold leading-tight text-text-primary md:min-h-[72px] md:text-2xl">
+              <h3 className="font-display text-xl font-semibold leading-tight tracking-[-0.015em] text-text-primary md:min-h-[3.5rem] md:text-[1.375rem]">
                 {formule.title}
               </h3>
 
-              <p className="mt-3 min-h-[44px] font-display text-sm font-medium leading-snug text-green-primary md:min-h-[40px]">
+              <p className="mt-2.5 font-sans text-sm leading-snug text-green-primary md:min-h-[2.5rem]">
                 {formule.pitch}
               </p>
 
-              <p className="mt-4 font-sans text-sm leading-relaxed text-text-secondary">
-                {formule.description}
-              </p>
-
-              <div className="mt-6 min-h-[36px] space-y-1">
-                {formule.priceLines.map((line, i) => (
-                  <p
-                    key={line}
-                    className={
-                      i === 0
-                        ? 'font-mono text-xs uppercase tracking-wider text-green-primary'
-                        : 'font-sans text-xs text-text-muted'
-                    }
-                  >
-                    {line}
-                  </p>
-                ))}
+              <div className="mt-5 border-y border-border-subtle py-4">
+                <p
+                  className={`font-display text-[2rem] font-bold leading-none tracking-[-0.02em] ${
+                    formule.highlighted ? 'text-green-primary' : 'text-text-primary'
+                  }`}
+                >
+                  {formule.priceLines[0]}
+                </p>
+                {formule.priceLines[1] && (
+                  <p className="mt-1.5 font-sans text-xs text-text-muted">{formule.priceLines[1]}</p>
+                )}
               </div>
 
-              <ul className="mt-6 flex-1 space-y-3">
+              <ul className="mt-5 flex-1 space-y-3">
                 {formule.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-primary" />
