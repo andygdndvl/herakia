@@ -31,3 +31,9 @@ Le sous-titre du hero sort de la cascade `data-reveal` : il est peint avec la pa
 - Délai de rendu de l'élément LCP non throttlé : 45 ms (au lieu de 1 250 ms). Les ~3,8 s restantes
   sont la projection du 4G lent simulé (CSS bloquant ~0,4 s, polices, JS) — piste suivante si besoin :
   alléger le chargement, pas l'animation.
+
+# Vert nuit (2026-10-06)
+
+- Lighthouse mobile performance : 0.88 (3 runs : 0.88, 0.88, 0.88)
+- Lighthouse mobile accessibilité : 0.98
+- Contrastes sur #06100b : texte 16.51:1 · secondaire 7.39:1 · discret 5.60:1
