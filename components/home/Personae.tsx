@@ -125,10 +125,10 @@ function Avatar({ src, pos, size = 40 }: { src: string; pos?: string; size?: num
 function Typing({ me = false }: { me?: boolean }) {
   return (
     <span
-      className={`inline-flex gap-1 rounded-[20px] px-[18px] py-4 ${me ? 'rounded-br-md bg-green-primary/15' : 'rounded-bl-md bg-white/[0.06]'}`}
+      className={`inline-flex gap-1 rounded-[20px] px-[18px] py-4 ${me ? 'rounded-br-md bg-window-ok-soft' : 'rounded-bl-md bg-window-bubble'}`}
     >
       {[0, 200, 400].map((d) => (
-        <i key={d} className="h-[7px] w-[7px] animate-pulse rounded-full bg-text-muted" style={{ animationDelay: `${d}ms` }} />
+        <i key={d} className="h-[7px] w-[7px] animate-pulse rounded-full bg-window-muted" style={{ animationDelay: `${d}ms` }} />
       ))}
     </span>
   );
@@ -248,12 +248,14 @@ export function Personae() {
               })}
             </div>
 
-            {/* La conversation. Hauteur réservée : l'arrivée des messages ne fait rien bouger. */}
+            {/* La conversation, en fenêtre de messagerie claire posée sur le vert nuit : c'est le
+                point lumineux de la section. Hauteur réservée : l'arrivée des messages ne fait rien
+                bouger. */}
             <div
               aria-hidden="true"
-              className="flex min-h-[640px] flex-col gap-3 rounded-[28px] border border-border-subtle bg-bg-primary/50 p-5 sm:min-h-[520px] sm:p-7 lg:min-h-[470px]"
+              className="flex min-h-[640px] flex-col gap-3 rounded-[28px] bg-window p-5 text-window-ink shadow-[0_40px_90px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/5 sm:min-h-[520px] sm:p-7 lg:min-h-[470px]"
             >
-              <p className="ml-[52px] font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted">{p.role}</p>
+              <p className="ml-[52px] font-mono text-[10px] uppercase tracking-[0.12em] text-window-muted">{p.role}</p>
               {step === 1 && (
                 <Line>
                   <Avatar src={face.src} pos={face.pos} />
@@ -263,8 +265,7 @@ export function Personae() {
               {step >= 2 && (
                 <Line>
                   <Avatar src={face.src} pos={face.pos} />
-                  {/* Bulle sombre (verre) et non claire : elle reste dans la charte du site. */}
-                  <p className="max-w-[78%] rounded-[20px] rounded-bl-md border border-border-strong bg-white/[0.05] px-[18px] py-3.5 font-display text-lg font-semibold leading-snug tracking-[-0.01em] text-text-primary sm:text-xl">
+                  <p className="max-w-[78%] rounded-[20px] rounded-bl-md bg-window-bubble px-[18px] py-3.5 font-display text-lg font-semibold leading-snug tracking-[-0.01em] sm:text-xl">
                     {`« ${p.quote} »`}
                   </p>
                 </Line>
@@ -273,8 +274,8 @@ export function Personae() {
                 step >= 3 + i ? (
                   <Line key={pain}>
                     <Avatar src={face.src} pos={face.pos} />
-                    <p className="flex max-w-[78%] items-start gap-2 rounded-[20px] rounded-bl-md border border-signal-late/35 bg-signal-late/[0.12] px-4 py-3 text-sm leading-snug text-text-primary sm:text-[15px]">
-                      <span className="mt-px grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-signal-late text-[11px] font-bold text-bg-primary">
+                    <p className="flex max-w-[78%] items-start gap-2 rounded-[20px] rounded-bl-md border border-signal-late/40 bg-signal-late/[0.12] px-4 py-3 text-sm leading-snug sm:text-[15px]">
+                      <span className="mt-px grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-signal-late text-[11px] font-bold text-window-ink">
                         !
                       </span>
                       {pain}
@@ -283,7 +284,7 @@ export function Personae() {
                 ) : null,
               )}
               {step >= 6 && (
-                <p className="mr-[52px] mt-1 text-right font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted">
+                <p className="mr-[52px] mt-1 text-right font-mono text-[10px] uppercase tracking-[0.12em] text-window-muted">
                   {ANDY.name}
                 </p>
               )}
