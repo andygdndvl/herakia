@@ -10,7 +10,9 @@ import { useReveal } from '@/lib/anim';
  * aucun chiffre ni lien n'est inventé.
  */
 const GOOGLE_REVIEWS_COUNT: number | null = null;
-const GOOGLE_REVIEWS_URL: string | null = null;
+// Adresse Google Maps officielle et stable (API « Maps URLs ») : ouvre la fiche et ses avis chez
+// n'importe quel visiteur, contrairement à une URL de recherche copiée, liée à une session.
+const GOOGLE_REVIEWS_URL: string | null = 'https://www.google.com/maps/search/?api=1&query=Herakia';
 
 const TEXT = {
   fr: {
