@@ -21,7 +21,8 @@ const config: Config = {
         'bg-primary': 'rgb(var(--bg-primary) / <alpha-value>)',
         'bg-secondary': 'rgb(var(--bg-secondary) / <alpha-value>)',
         'bg-elevated': 'rgb(var(--bg-elevated) / <alpha-value>)',
-        // Vert signature — unique accent, ~5 % de la surface
+        // Vert signature = couleur de la marque ; il rayonne (fond, halo, nappes) depuis le
+        // spec vert-nuit. Le seul autre accent est le jaune Google (--google-star).
         'green-primary': 'rgb(var(--green-primary) / <alpha-value>)',
         'green-muted': 'rgb(var(--green-muted) / <alpha-value>)',
         'green-dark': 'rgb(var(--green-dark) / <alpha-value>)',
@@ -66,10 +67,10 @@ const config: Config = {
         'glow-green': '0 0 24px rgba(var(--green-primary-legacy), 0.12)',
         'glow-green-lg': '0 0 48px rgba(var(--green-primary-legacy), 0.2)',
         'glow-green-sm': '0 0 12px rgba(var(--green-primary-legacy), 0.1)',
-        // Relief des cartes : neutre sur fond sombre, ombre encre sur `.surface-light`
         // Lueur du bouton d'action (spec vert-nuit) : le vert rayonne sous le bouton.
         action: '0 10px 40px -4px rgba(var(--green-primary-legacy), 0.7)',
         'action-hover': '0 12px 46px -2px rgba(var(--green-primary-legacy), 0.8)',
+        // Relief des cartes : neutre sur fond sombre, ombre encre sur `.surface-light`
         card: 'var(--shadow-card)',
         'card-hover': 'var(--shadow-card-hover)',
       },

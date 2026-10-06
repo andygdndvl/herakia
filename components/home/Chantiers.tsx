@@ -216,11 +216,13 @@ export function Chantiers() {
         >
           {t.cases.map((c, i) => {
             const logo = clientLogos[c.logo];
+            // backdrop-filter neutralisé sur la carte : fond fixe plat derrière, le flou est
+            // invisible et ajouterait des couches composées dans le défileur horizontal.
             return (
               <li
                 key={c.num}
                 aria-label={`${c.num} / ${String(t.cases.length).padStart(2, '0')} — ${c.client}`}
-                className={`flex shrink-0 basis-[88%] snap-start flex-col overflow-hidden glass-card rounded-3xl transition-opacity duration-300 sm:basis-[75%] ${
+                className={`flex shrink-0 basis-[88%] snap-start flex-col overflow-hidden glass-card ![backdrop-filter:none] rounded-3xl transition-opacity duration-300 sm:basis-[75%] ${
                   i === active ? '' : 'opacity-[0.45]'
                 }`}
               >

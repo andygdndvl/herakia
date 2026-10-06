@@ -16,17 +16,17 @@ export function HeroProof() {
 
   return (
     <div
-      className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-3xl border border-border-subtle bg-white/[0.03] px-4 py-2.5 sm:rounded-full"
+      className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-3xl border border-border-subtle bg-white/[0.03] px-4 py-2.5 md:rounded-full"
       aria-label={hero.proofAria}
       role="group"
     >
       <span className="flex items-center gap-2">
         <GoogleG className="h-4 w-4" />
-        {/* Jaune des étoiles Google (#FBBC04), pas le vert de la charte : à côté du « G »,
+        {/* Jaune des étoiles Google (token `--google-star`), pas le vert de la charte : à côté du « G »,
             c'est la note telle qu'on la voit sur Google qui fait foi. */}
         <span className="flex gap-[3px]" aria-hidden="true">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className="h-3.5 w-3.5 fill-[#FBBC04] text-[#FBBC04]" />
+            <Star key={i} className="h-3.5 w-3.5 fill-[rgb(var(--google-star))] text-[rgb(var(--google-star))]" />
           ))}
         </span>
         <span className="font-mono text-xs uppercase tracking-wider text-text-muted">{hero.proofRating}</span>

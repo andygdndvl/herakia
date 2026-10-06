@@ -23,7 +23,7 @@ const POOLS = [
   // Petite nappe jaune très discrète, en bas à droite : rappel des étoiles Google.
   {
     className: 'left-[70%] top-[55%] h-[55vh] w-[40vw] animate-[studio-drift-3_52s_ease-in-out_infinite_alternate]',
-    background: 'radial-gradient(closest-side, rgb(251 188 4 / 0.06), transparent)',
+    background: 'radial-gradient(closest-side, rgb(var(--google-star) / 0.06), transparent)',
   },
 ] as const;
 
