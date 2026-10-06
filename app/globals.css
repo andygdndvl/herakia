@@ -194,6 +194,12 @@ select:-webkit-autofill {
   to { transform: translate(-9vw, -10vh) scale(1.1); }
 }
 
+/* Arrivée d'un message dans la conversation des profils (Personae). */
+@keyframes chat-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
 /* ─── Surface claire ────────────────────────────────────────────────────────
    CLASSE CONSERVÉE MAIS INUTILISÉE. Les deux îlots ivoire de la page d'accueil
    ont été retirés : l'inversion clair/sombre ne se lisait pas comme un chapitre,
