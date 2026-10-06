@@ -15,14 +15,12 @@
    (jusqu'à ±1/255) : chaque jeton conserve donc l'écriture qu'il avait avant le
    passage en variables, ce qui rend le thème sombre identique au pixel près. */
 :root {
-  /* Fonds — noir tiède. Les trois valeurs suivent la même règle : R = G, B d'un
-     cran en dessous. C'est l'inverse exact de l'ancienne série (10 13 12,
-     16 21 19, 23 29 27), qui était verte — le vert de la marque s'y confondait
-     avec son propre fond. La luminance de chaque palier est inchangée à 2 %
-     près, donc aucun contraste de texte ne bouge (mesuré plus bas). */
-  --bg-primary: 12 12 11;
-  --bg-secondary: 20 20 18;
-  --bg-elevated: 28 28 26;
+  /* Fonds — vert nuit (2026-10-06, spec vert-nuit). Le vert de la marque doit
+     rayonner : le fond lui-même en prend la teinte, très sombre. Contrastes
+     mesurés sur #06100b : texte 16:1, secondaire 7,4:1, discret 5,6:1. */
+  --bg-primary: 6 16 11;
+  --bg-secondary: 11 24 17;
+  --bg-elevated: 17 32 24;
   /* Vert signature — unique accent. Les deux lignes sont le MÊME vert et
      doivent toujours être redéfinies ensemble. */
   --green-primary: 62 207 142;
@@ -54,7 +52,7 @@
   /* Voile des cartes .glass-card */
   --glass-bg: rgba(255, 255, 255, 0.03);
   /* Paliers de valeur — voir la règle `.tier-1` / `.tier-2` plus bas */
-  --tier-tint: 212, 212, 211;
+  --tier-tint: 150, 230, 190;
   --bg-section: transparent; /* niveau 0 : le fond de page lui-même */
   /* Relief des cartes (`shadow-card`, `shadow-card-hover`). Sur fond sombre une
      ombre portée ne se voit pas : les cartes s'y lisent par leur filet, le jeton
@@ -127,13 +125,13 @@ select:-webkit-autofill {
 /* ─── Paliers de valeur ─────────────────────────────────────────────────────
    Le rythme de la page d'accueil vient de trois niveaux de fond, tous sombres,
    posés section par section. Niveau 0 = le fond de page (`--bg-primary`,
-   #0c0c0b), aucune classe. Niveau 1 = #111110, niveau 2 = #161615 — valeurs
+   #06100b), aucune classe. Niveau 1 = #0a150f, niveau 2 = #0d1b14 — valeurs
    relevées au centre haut du cadre, là où le vignettage est nul.
 
    Les paliers sont des VOILES TRANSLUCIDES, pas des aplats opaques, et c'est
    mesuré : `AmbientBackground` est `fixed`, son vignettage fait déjà passer le
-   fond de (12,12,11) au centre haut à (8,8,7) sur les bords et en bas. Un palier
-   vaut +5/+5/+5 : exactement l'amplitude du vignettage. Un aplat opaque
+   fond de (6,16,11) au centre haut à (2,12,7) sur les bords et en bas. Un palier
+   vaut +4/+5/+5 : exactement l'amplitude du vignettage. Un aplat opaque
    effacerait ce vignettage à l'intérieur de la section, qui se lirait alors
    comme un rectangle rapporté — c'est précisément ce que faisait l'ancien
    `bg-bg-secondary` de CTAFinal. Le voile, lui, ajoute le même écart partout :
@@ -141,11 +139,9 @@ select:-webkit-autofill {
    au-dessus de sa voisine, à toute position de défilement.
 
    Un seul ton (`--tier-tint`), deux alphas, choisis pour tomber exactement sur
-   les cibles au-dessus de #0c0c0b. Le ton a été recalculé quand le fond est
-   passé au noir tiède : un voile bleu-vert sur un fond tiède aurait ramené le
-   vert par la fenêtre, et les paliers auraient viré de teinte en montant.
-     0,025 → +5/+5/+5   = #111110 (niveau 1)
-     0,050 → +10/+10/+10 = #161615 (niveau 2)
+   les cibles au-dessus de #06100b. Le ton est teinté vert depuis le passage au vert nuit : un voile gris aurait grisé les sections.
+     0,025 → +4/+5/+5   = #0a150f (niveau 1)
+     0,050 → +7/+11/+9 = #0d1b14 (niveau 2)
    L'écart ne dépend quasiment pas du fond sous-jacent (±0,1/255 entre le centre
    et les bords), donc un palier reste un palier même là où le vignettage mord.
 
@@ -153,7 +149,7 @@ select:-webkit-autofill {
    quand elles forment un seul bloc de lecture (le bandeau de logos avec les
    personae, l'objet 3D avec ses métiers). La section de l'objet reste au niveau
    0 : le fond de la scène three.js (`BG` dans components/agent-object/scene.ts)
-   est écrit en dur à #0c0c0b et doit rester égal au fond CSS derrière elle. */
+   est écrit en dur à #06100b et doit rester égal au fond CSS derrière elle. */
 .tier-1 {
   --bg-section: rgba(var(--tier-tint), 0.025);
 }

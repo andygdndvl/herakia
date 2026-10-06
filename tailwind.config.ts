@@ -30,7 +30,7 @@ const config: Config = {
         'green-subtle': 'rgba(var(--green-primary-legacy), 0.08)',
         'green-line': 'rgba(var(--green-primary-legacy), 0.55)',
         'on-green': 'rgb(var(--on-green) / <alpha-value>)',
-        // Textes (contrastes sur #0c0c0b : 16,7:1, 7,5:1, 5,7:1)
+        // Textes (contrastes sur #06100b : 16:1, 7,4:1, 5,6:1)
         'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',
         'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)',
         'text-muted': 'rgb(var(--text-muted) / <alpha-value>)',

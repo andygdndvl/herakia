@@ -28,7 +28,7 @@ import type { PartId, ScreenAnchor } from './layout';
 // fond sombre de la page (--bg-primary: 12 12 11) : l'objet vit hors de l'îlot clair.
 const GREEN = 0x3ecf8e; // --green-primary: 62 207 142
 const WHITE = 0xdedede; // --stroke-object: 222 222 222
-const BG = 0x0c0c0b; // --bg-primary: 12 12 11
+const BG = 0x06100b; // --bg-primary: 6 16 11
 
 // ── Hiérarchie des traits ──────────────────────────────────────────────────
 // Trois niveaux seulement : au-delà, la multiplication des valeurs intermédiaires

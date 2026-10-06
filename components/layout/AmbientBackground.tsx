@@ -46,10 +46,9 @@ export function AmbientBackground() {
         className="absolute inset-0"
         style={{
           background:
-            // Noir du vignettage = `--bg-primary` moins 4 par canal, comme avant
-            // le passage au noir tiède (c'était (6,9,8) sous (10,13,12)) : même
+            // Noir du vignettage = `--bg-primary` moins 4 par canal : même
             // amplitude, même teinte que le fond qu'il assombrit.
-            'radial-gradient(ellipse 90% 70% at 50% 0%, transparent 0%, rgba(8,8,7,0.4) 60%, rgba(8,8,7,0.85) 100%)',
+            'radial-gradient(ellipse 90% 70% at 50% 0%, transparent 0%, rgba(2,12,7,0.4) 60%, rgba(2,12,7,0.85) 100%)',
         }}
       />
     </div>
