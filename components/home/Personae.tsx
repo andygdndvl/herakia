@@ -31,7 +31,7 @@ const TEXT = {
     personae: [
       {
         role: 'Dirigeant·e',
-        quote: 'Ma boîte grandit, mais je passe mon énergie à faire tourner la machine au lieu de la faire grandir.',
+        quote: 'Ma boîte grandit, mais je passe mon énergie à faire tourner la machine au lieu de la développer.',
         pains: [
           'Chaque palier de croissance ajoute de la charge, pas de la valeur',
           'Je ne veux pas empiler les recrutements pour absorber du répétitif',
@@ -68,7 +68,7 @@ const TEXT = {
     personae: [
       {
         role: 'Founder / CEO',
-        quote: 'My company is growing, but I spend my energy keeping the machine running instead of growing it.',
+        quote: 'My company is growing, but I spend my energy keeping the machine running instead of moving it forward.',
         pains: [
           'Every growth milestone adds workload, not value',
           'I don’t want to stack up hires just to absorb repetitive work',
