@@ -220,7 +220,7 @@ export function Chantiers() {
               <li
                 key={c.num}
                 aria-label={`${c.num} / ${String(t.cases.length).padStart(2, '0')} — ${c.client}`}
-                className={`flex shrink-0 basis-[88%] snap-start flex-col overflow-hidden rounded border border-border-subtle transition-opacity duration-300 sm:basis-[75%] ${
+                className={`flex shrink-0 basis-[88%] snap-start flex-col overflow-hidden glass-card rounded-3xl transition-opacity duration-300 sm:basis-[75%] ${
                   i === active ? '' : 'opacity-[0.45]'
                 }`}
               >

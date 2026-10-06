@@ -124,7 +124,7 @@ export function Personae() {
           {personae.map((persona) => (
             // data-reveal sur un wrapper : anime y laisse une transform inline qui écraserait le hover de l'article
             <div key={persona.role} data-reveal>
-              <article className="group relative h-full overflow-hidden rounded-2xl border border-border-subtle bg-bg-secondary/60 backdrop-blur-md transition-[transform,border-color] duration-300 hover:border-border-green motion-safe:hover:-translate-y-1.5">
+              <article className="group relative h-full overflow-hidden glass-card rounded-3xl transition-[transform,border-color] duration-300 hover:border-border-green motion-safe:hover:-translate-y-1.5">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
                     <Image

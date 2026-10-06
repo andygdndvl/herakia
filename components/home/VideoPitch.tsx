@@ -97,7 +97,7 @@ export function VideoPitch() {
 
         <div
           data-reveal
-          className="relative aspect-video overflow-hidden rounded-2xl border border-border-subtle bg-bg-secondary"
+          className="relative aspect-video overflow-hidden rounded-[28px] border border-green-primary/15 bg-bg-secondary"
         >
           <video
             ref={videoRef}

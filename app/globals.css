@@ -49,8 +49,9 @@
   --border-strong: rgba(255, 255, 255, 0.14);
   /* Filet vert — alpha modulé (`border-border-green/40`) : alpha isolé */
   --border-green-alpha: 0.3;
-  /* Voile des cartes .glass-card */
-  --glass-bg: rgba(255, 255, 255, 0.03);
+  /* Verre teinté des cartes .glass-card : un dégradé vertical vert, plus dense en haut. */
+  --glass-bg: linear-gradient(180deg, rgb(var(--green-primary) / 0.08), rgb(var(--green-primary) / 0.02));
+  --glass-border: rgb(var(--green-primary) / 0.16);
   /* Paliers de valeur — voir la règle `.tier-1` / `.tier-2` plus bas */
   --tier-tint: 150, 230, 190;
   --bg-section: transparent; /* niveau 0 : le fond de page lui-même */
@@ -119,7 +120,7 @@ select:-webkit-autofill {
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--glass-border);
 }
 
 /* ─── Paliers de valeur ─────────────────────────────────────────────────────
@@ -222,6 +223,7 @@ select:-webkit-autofill {
   --border-green-alpha: 0.55;
   /* Les cartes passent du voile blanc au blanc franc */
   --glass-bg: #ffffff;
+  --glass-border: var(--border-subtle);
   /* Sur ivoire, le filet seul ne suffit plus à poser une carte blanche : une
      ombre encre très diffuse lui rend le relief que le fond sombre donnait. */
   --shadow-card: 0 1px 2px rgba(20, 21, 15, 0.05), 0 10px 26px -14px rgba(20, 21, 15, 0.22);

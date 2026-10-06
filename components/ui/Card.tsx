@@ -12,7 +12,7 @@ export function Card({ children, className = '', hoverable = false, glow = false
   const glowClass = glow ? 'shadow-glow-green-sm hover:shadow-glow-green' : '';
   return (
     <div
-      className={`glass-card rounded-2xl p-8 transition-[transform,border-color,box-shadow] duration-300 hover:border-green-primary/30 ${hoverClass} ${glowClass} ${className}`}
+      className={`glass-card rounded-3xl p-8 transition-[transform,border-color,box-shadow] duration-300 hover:border-green-primary/30 ${hoverClass} ${glowClass} ${className}`}
     >
       {children}
     </div>

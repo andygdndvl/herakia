@@ -48,8 +48,8 @@ const config: Config = {
       },
       backgroundImage: {
         // Bouton d'action : un dégradé vertical très court (15 % de luminance
-        // entre le haut et le bas), pas une lueur. Aucune ombre, aucun halo —
-        // le relief vient de la seule pente. Le survol reprend la même pente,
+        // entre le haut et le bas), pas une lueur. La lueur, elle, est portée
+        // par `shadow-action` (spec vert-nuit). Le survol reprend la même pente,
         // un cran plus bas, pour que le bouton ne s'aplatisse pas au contact.
         action: 'linear-gradient(180deg, rgb(var(--green-primary)), rgb(var(--green-deep)))',
         'action-hover': 'linear-gradient(180deg, rgb(var(--green-dark)), rgb(var(--green-deep-hover)))',
@@ -67,6 +67,9 @@ const config: Config = {
         'glow-green-lg': '0 0 48px rgba(var(--green-primary-legacy), 0.2)',
         'glow-green-sm': '0 0 12px rgba(var(--green-primary-legacy), 0.1)',
         // Relief des cartes : neutre sur fond sombre, ombre encre sur `.surface-light`
+        // Lueur du bouton d'action (spec vert-nuit) : le vert rayonne sous le bouton.
+        action: '0 10px 40px -4px rgba(var(--green-primary-legacy), 0.7)',
+        'action-hover': '0 12px 46px -2px rgba(var(--green-primary-legacy), 0.8)',
         card: 'var(--shadow-card)',
         'card-hover': 'var(--shadow-card-hover)',
       },
