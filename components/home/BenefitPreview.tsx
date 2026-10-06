@@ -3,13 +3,14 @@
 import { Check } from 'lucide-react';
 import { useLang } from '@/components/i18n/LangProvider';
 import { AppWindow } from '@/components/ui/AppWindow';
+import { ExcelIcon, PhoneAppIcon, WhatsAppIcon } from '@/components/ui/AppIcons';
 
 export type BenefitPreviewKind = 'sent' | 'calls' | 'chat';
 
 const TEXT = {
   fr: {
     sent: { window: 'Devis #0912 · Atelier Brun', doc: 'Devis', tag: 'Envoyé · il y a 2 min' },
-    calls: { window: 'Téléphonie · Journal d’appels', done: 'Rappelé' },
+    calls: { window: 'Téléphone · Récents', done: 'Rappelé' },
     chat: {
       window: 'WhatsApp · Julie Renard',
       client: 'Bonjour, où en est ma commande ?',
@@ -18,7 +19,7 @@ const TEXT = {
   },
   en: {
     sent: { window: 'Quote #0912 · Atelier Brun', doc: 'Quote', tag: 'Sent · 2 min ago' },
-    calls: { window: 'Phone · Call log', done: 'Called back' },
+    calls: { window: 'Phone · Recents', done: 'Called back' },
     chat: {
       window: 'WhatsApp · Julie Renard',
       client: 'Hi, where is my order?',
@@ -42,7 +43,7 @@ export function BenefitPreview({ kind }: { kind: BenefitPreviewKind }) {
 
   if (kind === 'sent') {
     return (
-      <AppWindow title={t.sent.window}>
+      <AppWindow title={t.sent.window} icon={<ExcelIcon />}>
         <div className="px-4 py-3.5">
           <div className="flex items-center justify-between gap-3">
             <span className="font-display text-base font-semibold">{t.sent.doc}</span>
@@ -61,7 +62,7 @@ export function BenefitPreview({ kind }: { kind: BenefitPreviewKind }) {
 
   if (kind === 'calls') {
     return (
-      <AppWindow title={t.calls.window}>
+      <AppWindow title={t.calls.window} icon={<PhoneAppIcon />}>
         <div className="px-4 py-1.5 text-[13px]">
           {CALLS.map((c) => (
             <div
@@ -84,7 +85,7 @@ export function BenefitPreview({ kind }: { kind: BenefitPreviewKind }) {
   }
 
   return (
-    <AppWindow title={t.chat.window}>
+    <AppWindow title={t.chat.window} icon={<WhatsAppIcon />}>
       <div className="px-4 py-3.5 text-[13px] leading-snug">
         <p className="max-w-[82%] rounded-xl bg-window-bubble px-3 py-2">{t.chat.client}</p>
         <p className="ml-auto mt-2 max-w-[82%] rounded-xl bg-window-ok-soft px-3 py-2">{t.chat.agent}</p>
