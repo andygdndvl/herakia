@@ -102,7 +102,7 @@ export function VideoPitch() {
           <video
             ref={videoRef}
             className="h-full w-full object-cover"
-            poster="/videos/herakia-poster.jpg"
+            poster="/videos/herakia-v12-poster.jpg"
             muted
             loop
             playsInline
@@ -110,8 +110,8 @@ export function VideoPitch() {
             aria-label={t.videoLabel}
           >
             {/* Le navigateur prend la première source dont la condition est remplie. */}
-            <source src="/videos/herakia-720.mp4" type="video/mp4" media="(max-width: 767px)" />
-            <source src="/videos/herakia-1080.mp4" type="video/mp4" />
+            <source src="/videos/herakia-v12-720.mp4" type="video/mp4" media="(max-width: 767px)" />
+            <source src="/videos/herakia-v12-1080.mp4" type="video/mp4" />
           </video>
 
           {reduced && !started ? (
