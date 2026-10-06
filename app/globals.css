@@ -18,11 +18,24 @@
   /* Fonds — vert nuit (2026-10-06, spec vert-nuit). Le vert de la marque doit
      rayonner : le fond lui-même en prend la teinte, très sombre. Contrastes
      mesurés sur #06100b : texte 16:1, secondaire 7,4:1, discret 5,6:1. */
-  /* Jaune des étoiles Google : seul accent hors vert (étoiles de la note). */
-  --google-star: 251 188 4;
   --bg-primary: 6 16 11;
   --bg-secondary: 11 24 17;
   --bg-elevated: 17 32 24;
+  /* Jaune des étoiles Google : seul accent hors vert (étoiles de la note). */
+  --google-star: 251 188 4;
+  /* Orange « problème » repris du film de présentation : ce qui coince, avant l'agent.
+     Réservé à cet usage (le vert reste la solution). Un cran plus profond que l'orange du
+     film (#f07a1a, 2,8:1 avec le blanc) pour porter du texte blanc : 4,8:1. */
+  --signal-late: 184 86 11;
+  /* Fenêtres d'application claires (AppWindow), au style des écrans du film : fond crème,
+     encre presque noire, vert foncé pour « fait » (5,1:1 sur crème, 5,3:1 sous texte blanc). */
+  --window-bg: 251 251 248;
+  --window-ink: 20 21 15;
+  --window-muted: 107 109 99;
+  --window-line: 236 234 226;
+  --window-ok: 31 122 82;
+  --window-ok-soft: 227 243 234;
+  --window-bubble: 240 238 231;
   /* Vert signature = couleur de la marque. Depuis le spec vert-nuit il rayonne
      (fond, halo du hero) ; le seul autre accent est le jaune Google.
      Les deux lignes sont le MÊME vert et doivent toujours être redéfinies ensemble. */

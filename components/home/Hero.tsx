@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { HeroProof } from '@/components/home/HeroProof';
+import { LiveDevis } from '@/components/home/LiveDevis';
 import { useDict, useLang, localize } from '@/components/i18n/LangProvider';
 import { useReveal, useScrambleRotate, useScrollProgress, useTextReveal } from '@/lib/anim';
 
@@ -108,6 +109,10 @@ export function Hero() {
               <Button href={localize(lang, '/services')} variant="secondary" size="lg">
                 {dict.hero.ctaSecondary}
               </Button>
+            </div>
+            {/* Le produit montré : un devis en retard que l'agent rédige et envoie, en boucle. */}
+            <div data-reveal className="w-full">
+              <LiveDevis />
             </div>
           </div>
 

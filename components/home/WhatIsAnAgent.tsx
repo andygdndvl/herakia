@@ -1,19 +1,15 @@
 'use client';
 
 import { useReveal } from '@/lib/anim';
-import {
-  Clock,
-  Users,
-  UserPlus,
-  type LucideIcon,
-} from 'lucide-react';
 import { ArrowRight } from 'lucide-react';
 import { AgentObjectSection } from '@/components/agent-object/AgentObjectSection';
+import { BenefitPreview, type BenefitPreviewKind } from '@/components/home/BenefitPreview';
 import { Button } from '@/components/ui/Button';
 import { useLang, localize } from '@/components/i18n/LangProvider';
 
 interface Benefit {
-  icon: LucideIcon;
+  /** Aperçu d'interface qui montre le bénéfice (remplace l'ancienne icône). */
+  preview: BenefitPreviewKind;
   title: string;
   desc: string;
 }
@@ -22,18 +18,18 @@ const TEXT = {
   fr: {
     benefitsIntro: 'Concrètement, pour vous',
     benefits: [
-      { icon: Clock, title: 'Du temps rendu', desc: 'Des heures rendues à vos équipes, chaque semaine.' },
-      { icon: Users, title: 'Vos équipes déchargées', desc: 'Le répétitif quitte leur assiette — place à ce qui compte.' },
-      { icon: UserPlus, title: 'Sans recruter', desc: 'De la capacité en plus, sans embaucher ni charges.' },
+      { preview: 'sent', title: 'Du temps rendu', desc: 'Des heures rendues à vos équipes, chaque semaine.' },
+      { preview: 'calls', title: 'Vos équipes déchargées', desc: 'Le répétitif quitte leur assiette — place à ce qui compte.' },
+      { preview: 'chat', title: 'Sans recruter', desc: 'De la capacité en plus, sans embaucher ni charges.' },
     ] as Benefit[],
     demoCta: 'Voir un agent en action',
   },
   en: {
     benefitsIntro: 'Concretely, for you',
     benefits: [
-      { icon: Clock, title: 'Time given back', desc: 'Hours returned to your teams, every week.' },
-      { icon: Users, title: 'Teams offloaded', desc: 'The repetitive work leaves their plate — room for what matters.' },
-      { icon: UserPlus, title: 'No hiring needed', desc: 'Extra capacity, without recruiting or payroll.' },
+      { preview: 'sent', title: 'Time given back', desc: 'Hours returned to your teams, every week.' },
+      { preview: 'calls', title: 'Teams offloaded', desc: 'The repetitive work leaves their plate — room for what matters.' },
+      { preview: 'chat', title: 'No hiring needed', desc: 'Extra capacity, without recruiting or payroll.' },
     ] as Benefit[],
     demoCta: 'See an agent in action',
   },
@@ -58,16 +54,13 @@ export function WhatIsAnAgent() {
           </p>
           <div className="mt-8 grid gap-5 sm:grid-cols-3">
             {t.benefits.map((benefit) => {
-              const Icon = benefit.icon;
               return (
                 <div
                   key={benefit.title}
                   className="rounded-2xl border border-border-subtle bg-bg-secondary/40 p-6 backdrop-blur-md transition-colors duration-300 hover:border-border-green"
                 >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-border-green bg-green-subtle">
-                    <Icon className="h-5 w-5 text-green-primary" aria-hidden="true" />
-                  </span>
-                  <h3 className="mt-4 font-display text-lg font-semibold text-text-primary">
+                  <BenefitPreview kind={benefit.preview} />
+                  <h3 className="mt-5 font-display text-lg font-semibold text-text-primary">
                     {benefit.title}
                   </h3>
                   <p className="mt-1 font-sans text-sm leading-relaxed text-text-secondary">
