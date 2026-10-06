@@ -9,7 +9,6 @@ import { WhatIsAnAgent } from '@/components/home/WhatIsAnAgent';
 import { WhatWeHandle } from '@/components/home/WhatWeHandle';
 import { About } from '@/components/home/About';
 import { GoogleReviews } from '@/components/home/GoogleReviews';
-import { HowItWorks } from '@/components/home/HowItWorks';
 import { CTAFinal } from '@/components/home/CTAFinal';
 import { MeetTia } from '@/components/home/MeetTia';
 
@@ -21,7 +20,7 @@ export default function HomePage() {
           paliers de valeur portés par les sections elles-mêmes (`.tier-1` /
           `.tier-2`, cf. app/globals.css).
             Hero 0 · VideoPitch 0 · TrustedBy 1 · Chantiers 1 · Personae 1 · objet + métiers 0 ·
-            MeetTia 1 · WhatWeHandle 0 · GoogleReviews 1 · About 0 · HowItWorks 1 ·
+            MeetTia 1 · WhatWeHandle 0 · GoogleReviews 1 · About 0 ·
             CTAFinal 2
           Deux voisines ne partagent un niveau que lorsqu'elles forment un seul
           bloc de lecture (hero + film, logos + chantiers + personae, objet + métiers) : les
@@ -39,7 +38,6 @@ export default function HomePage() {
         <WhatWeHandle />
         <GoogleReviews />
         <About />
-        <HowItWorks />
         <CTAFinal />
       </main>
       <Footer />
