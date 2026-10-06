@@ -21,7 +21,7 @@ const config: Config = {
         'bg-primary': 'rgb(var(--bg-primary) / <alpha-value>)',
         'bg-secondary': 'rgb(var(--bg-secondary) / <alpha-value>)',
         'bg-elevated': 'rgb(var(--bg-elevated) / <alpha-value>)',
-        // Vert signature = couleur de la marque ; il rayonne (fond, halo, nappes) depuis le
+        // Vert signature = couleur de la marque ; il rayonne (fond, halo du hero) depuis le
         // spec vert-nuit. Le seul autre accent est le jaune Google (--google-star).
         'green-primary': 'rgb(var(--green-primary) / <alpha-value>)',
         'green-muted': 'rgb(var(--green-muted) / <alpha-value>)',

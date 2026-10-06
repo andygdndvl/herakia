@@ -2,28 +2,29 @@ const NOISE_URL =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E";
 
 /**
- * Lumière verte : trois nappes très douces dérivent sous le grain, comme un fond de studio
- * photo éclairé en douce. Aucun motif, seulement du volume. Tailles en unités d'écran pour tenir
+ * Lumière de studio neutre : trois nappes très douces dérivent sous le grain. Elles sont fixes à
+ * l'écran, donc visibles sur toute la page : elles restent grises et discrètes. Le vert rayonne
+ * seulement dans le hero (halo tramé de `Hero.tsx`) — des nappes vertes partout fatiguaient l'œil. Aucun motif, seulement du volume. Tailles en unités d'écran pour tenir
  * du mobile au grand écran. Les dégradés radiaux (`closest-side`) sont déjà flous par nature :
  * pas de `filter: blur`, qui coûterait cher sur un calque fixe plein écran. Seul `transform` est
  * animé (keyframes `studio-drift-*` dans app/globals.css), donc tout reste sur le compositeur.
  * En mouvement réduit, la règle globale fige les animations : la lumière reste, immobile.
  */
 const POOLS = [
-  // Grande nappe verte, en haut à droite : la source principale.
+  // Grande nappe, en haut à droite : la source principale.
   {
     className: 'left-[42%] top-[-34%] h-[80vh] w-[70vw] animate-[studio-drift-1_38s_ease-in-out_infinite_alternate]',
-    background: 'radial-gradient(closest-side, rgb(var(--green-primary) / 0.12), transparent)',
+    background: 'radial-gradient(closest-side, rgb(var(--text-primary) / 0.06), transparent)',
   },
-  // Nappe verte au milieu à gauche.
+  // Nappe au milieu à gauche.
   {
     className: 'left-[-12%] top-[30%] h-[65vh] w-[55vw] animate-[studio-drift-2_46s_ease-in-out_infinite_alternate]',
-    background: 'radial-gradient(closest-side, rgb(var(--green-primary) / 0.09), transparent)',
+    background: 'radial-gradient(closest-side, rgb(var(--text-primary) / 0.04), transparent)',
   },
-  // Petite nappe jaune très discrète, en bas à droite : rappel des étoiles Google.
+  // Petite nappe de rappel, en bas à droite.
   {
     className: 'left-[70%] top-[55%] h-[55vh] w-[40vw] animate-[studio-drift-3_52s_ease-in-out_infinite_alternate]',
-    background: 'radial-gradient(closest-side, rgb(var(--google-star) / 0.06), transparent)',
+    background: 'radial-gradient(closest-side, rgb(var(--text-primary) / 0.03), transparent)',
   },
 ] as const;
 
