@@ -247,9 +247,11 @@ export function Chantiers() {
                 {/* `flex-1` : la carte s'étire à la hauteur de la plus haute de la piste, les deux
                     temps (et les hachures de l'avant) doivent descendre jusqu'en bas. */}
                 <div className="grid flex-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
-                  <div className="border-b border-border-subtle bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.012)_0_6px,transparent_6px_12px)] px-5 py-6 sm:border-b-0 sm:border-r sm:px-6">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-muted">{t.labelBefore}</p>
-                    <p className="mt-2.5 font-sans text-sm leading-relaxed text-text-muted line-through decoration-white/20">
+                  {/* L'avant porte l'orange « problème » (libellé, biffure, hachures teintées) ; la
+                      charnière et l'après restent verts : on lit problème → solution. */}
+                  <div className="border-b border-border-subtle bg-[repeating-linear-gradient(135deg,rgb(var(--signal-late)/0.035)_0_6px,transparent_6px_12px)] px-5 py-6 sm:border-b-0 sm:border-r sm:px-6">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal-late">{t.labelBefore}</p>
+                    <p className="mt-2.5 font-sans text-sm leading-relaxed text-text-muted line-through decoration-signal-late/50">
                       {c.before}
                     </p>
                   </div>

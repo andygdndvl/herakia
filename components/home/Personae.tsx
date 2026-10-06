@@ -147,7 +147,7 @@ export function Personae() {
                 </div>
 
                 <div className="relative p-6 md:p-7">
-                  <Quote className="absolute right-5 top-5 h-12 w-12 text-green-primary/10" aria-hidden="true" />
+                  <Quote className="absolute right-5 top-5 h-12 w-12 text-signal-late/15" aria-hidden="true" />
                   <p className="font-display text-lg font-semibold leading-snug text-text-primary md:text-xl text-balance">
                     « {persona.quote} »
                   </p>
@@ -157,7 +157,8 @@ export function Personae() {
                         key={pain}
                         className="flex items-start gap-2.5 font-sans text-sm leading-relaxed text-text-secondary"
                       >
-                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-green-primary/60" />
+                        {/* Puce orange « problème » : ce sont les douleurs, le vert est réservé à la solution. */}
+                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-signal-late/80" />
                         <span>{pain}</span>
                       </li>
                     ))}

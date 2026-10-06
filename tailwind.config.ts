@@ -22,7 +22,7 @@ const config: Config = {
         'bg-secondary': 'rgb(var(--bg-secondary) / <alpha-value>)',
         'bg-elevated': 'rgb(var(--bg-elevated) / <alpha-value>)',
         // Vert signature = couleur de la marque ; il rayonne (fond, halo du hero) depuis le
-        // spec vert-nuit. Le seul autre accent est le jaune Google (--google-star).
+        // spec vert-nuit. Autres accents : le jaune Google (--google-star) et l'orange « problème » (--signal-late).
         'green-primary': 'rgb(var(--green-primary) / <alpha-value>)',
         'green-muted': 'rgb(var(--green-muted) / <alpha-value>)',
         'green-dark': 'rgb(var(--green-dark) / <alpha-value>)',
@@ -31,7 +31,8 @@ const config: Config = {
         'green-subtle': 'rgba(var(--green-primary-legacy), 0.08)',
         'green-line': 'rgba(var(--green-primary-legacy), 0.55)',
         'on-green': 'rgb(var(--on-green) / <alpha-value>)',
-        // Fenêtres d'application claires (AppWindow)
+        // Orange « problème » (touches seulement) et fenêtres d'application claires (AppWindow)
+        'signal-late': 'rgb(var(--signal-late) / <alpha-value>)',
         window: 'rgb(var(--window-bg) / <alpha-value>)',
         'window-ink': 'rgb(var(--window-ink) / <alpha-value>)',
         'window-muted': 'rgb(var(--window-muted) / <alpha-value>)',
