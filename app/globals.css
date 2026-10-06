@@ -139,7 +139,8 @@ select:-webkit-autofill {
    au-dessus de sa voisine, à toute position de défilement.
 
    Un seul ton (`--tier-tint`), deux alphas, choisis pour tomber exactement sur
-   les cibles au-dessus de #06100b. Le ton est teinté vert depuis le passage au vert nuit : un voile gris aurait grisé les sections.
+   les cibles au-dessus de #06100b. Le ton est teinté vert depuis le passage au vert nuit : un voile
+   gris aurait grisé les sections.
      0,025 → +4/+5/+5   = #0a150f (niveau 1)
      0,050 → +7/+11/+9 = #0d1b14 (niveau 2)
    L'écart ne dépend quasiment pas du fond sous-jacent (±0,1/255 entre le centre
