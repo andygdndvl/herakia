@@ -44,7 +44,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-screen items-end overflow-hidden px-6 pb-16 pt-32 lg:px-8"
+      className="relative flex min-h-screen items-center overflow-hidden px-6 pb-16 pt-32 lg:px-8"
     >
       {/* Halo du hero (spec vert-nuit) : un grand halo vert et une trame de points lumineux,
           dense derrière le titre, éteinte vers les bords. Statique, pur CSS ; il défile avec le
@@ -67,16 +67,16 @@ export function Hero() {
           }}
         />
       </div>
-      <div ref={innerRef} className="relative z-10 mx-auto w-full max-w-7xl">
+      <div ref={innerRef} className="relative z-10 mx-auto w-full max-w-7xl text-center">
         <div ref={restRef}>
-          <p data-reveal className="eyebrow">
-            — {dict.hero.badge}
+          <p data-reveal className="eyebrow-pill">
+            {dict.hero.badge}
           </p>
 
           <h1
             ref={titleRef}
             data-split
-            className="h-display mt-6 text-[clamp(1.75rem,5.04vw,6.5rem)] [&_[data-word]]:whitespace-nowrap"
+            className="h-display mx-auto mt-6 max-w-6xl text-[clamp(1.75rem,5.04vw,6.5rem)] [&_[data-word]]:whitespace-nowrap"
           >
             {titleLead} <span className="text-green-primary">{titleAccent}</span>
           </h1>
@@ -94,14 +94,13 @@ export function Hero() {
             </span>
           </p>
 
-          <div className="mt-10 grid gap-8 border-t border-border-subtle pt-8 md:grid-cols-[1fr_auto] md:items-end">
+          <div className="mt-8 flex flex-col items-center gap-8">
             {/* Hors de la cascade : c'est le plus grand bloc de texte de l'écran d'accueil, donc
-                l'élément LCP. Parti d'une opacité 0, il repoussait le LCP à la fin du fondu
-                (5,7 s en mobile Lighthouse) ; affiché d'emblée, il est peint avec la page. */}
-            <p className="max-w-xl font-sans text-lg leading-relaxed text-text-secondary md:text-xl">
+                l'élément LCP. Affiché d'emblée, il est peint avec la page. */}
+            <p className="mx-auto max-w-xl font-sans text-lg leading-relaxed text-text-secondary md:text-xl">
               {dict.hero.subtitleBody}
             </p>
-            <div data-reveal className="flex flex-col gap-3 sm:flex-row">
+            <div data-reveal className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Button href={localize(lang, '/contact')} variant="primary" size="lg">
                 {dict.hero.ctaPrimary}
                 <ArrowRight className="h-5 w-5" />
@@ -120,7 +119,7 @@ export function Hero() {
 
           <div
             data-reveal
-            className="mt-6 flex items-center gap-6 font-mono text-xs uppercase tracking-wider text-text-muted"
+            className="mt-6 flex items-center justify-center gap-6 font-mono text-xs uppercase tracking-wider text-text-muted"
           >
             <span className="flex items-center gap-2">
               <span className="h-1 w-1 rounded-full bg-green-primary" /> {dict.hero.chip1}

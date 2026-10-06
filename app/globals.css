@@ -259,6 +259,20 @@ select:-webkit-autofill {
     @apply block font-mono text-xs uppercase tracking-[0.14em];
     color: rgb(var(--green-muted));
   }
+
+  /* Surtitre en pastille (hero) : fond et filet verts, point lumineux. */
+  .eyebrow-pill {
+    @apply inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em];
+    color: rgb(var(--green-primary));
+    background: rgb(var(--green-primary) / 0.08);
+    border: 1px solid rgb(var(--green-primary) / 0.22);
+  }
+  .eyebrow-pill::before {
+    content: '';
+    @apply h-1.5 w-1.5 rounded-full;
+    background: rgb(var(--green-primary));
+    box-shadow: 0 0 10px rgb(var(--green-primary));
+  }
 }
 
 /* Éléments animés par lib/anim : masqués uniquement si JS actif et mouvement autorisé,
