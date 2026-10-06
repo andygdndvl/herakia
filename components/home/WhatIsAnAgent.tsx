@@ -3,16 +3,9 @@
 import { useReveal } from '@/lib/anim';
 import { ArrowRight } from 'lucide-react';
 import { AgentObjectSection } from '@/components/agent-object/AgentObjectSection';
-import { BenefitPreview, type BenefitPreviewKind } from '@/components/home/BenefitPreview';
+import { BenefitsScene, type Benefit } from '@/components/home/BenefitsScene';
 import { Button } from '@/components/ui/Button';
 import { useLang, localize } from '@/components/i18n/LangProvider';
-
-interface Benefit {
-  /** Aperçu d'interface qui montre le bénéfice (remplace l'ancienne icône). */
-  preview: BenefitPreviewKind;
-  title: string;
-  desc: string;
-}
 
 const TEXT = {
   fr: {
@@ -44,32 +37,9 @@ export function WhatIsAnAgent() {
     <AgentObjectSection />
     <section className="relative overflow-hidden px-6 pb-32 lg:px-8">
       <div ref={revealRef} className="mx-auto max-w-6xl">
-        {/* Bénéfices concrets pour le client */}
-        <div
-          data-reveal
-          className="mt-16 border-t border-border-subtle pt-10"
-        >
-          <p className="text-center font-mono text-xs uppercase tracking-widest text-green-primary">
-            {t.benefitsIntro}
-          </p>
-          <div className="mt-8 grid gap-5 sm:grid-cols-3">
-            {t.benefits.map((benefit) => {
-              return (
-                <div
-                  key={benefit.title}
-                  className="rounded-2xl border border-border-subtle bg-bg-secondary/40 p-6 backdrop-blur-md transition-colors duration-300 hover:border-border-green"
-                >
-                  <BenefitPreview kind={benefit.preview} />
-                  <h3 className="mt-5 font-display text-lg font-semibold text-text-primary">
-                    {benefit.title}
-                  </h3>
-                  <p className="mt-1 font-sans text-sm leading-relaxed text-text-secondary">
-                    {benefit.desc}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+        {/* Bénéfices concrets pour le client : une scène, trois bénéfices */}
+        <div data-reveal className="mt-16 border-t border-border-subtle pt-12">
+          <BenefitsScene intro={t.benefitsIntro} benefits={t.benefits} />
         </div>
 
         {/* Renvoi vers la page démo */}

@@ -31,8 +31,7 @@ const config: Config = {
         'green-subtle': 'rgba(var(--green-primary-legacy), 0.08)',
         'green-line': 'rgba(var(--green-primary-legacy), 0.55)',
         'on-green': 'rgb(var(--on-green) / <alpha-value>)',
-        // Orange « problème » et fenêtres d'application claires (AppWindow)
-        'signal-late': 'rgb(var(--signal-late) / <alpha-value>)',
+        // Fenêtres d'application claires (AppWindow)
         window: 'rgb(var(--window-bg) / <alpha-value>)',
         'window-ink': 'rgb(var(--window-ink) / <alpha-value>)',
         'window-muted': 'rgb(var(--window-muted) / <alpha-value>)',

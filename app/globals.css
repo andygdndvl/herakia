@@ -23,10 +23,6 @@
   --bg-elevated: 17 32 24;
   /* Jaune des étoiles Google : seul accent hors vert (étoiles de la note). */
   --google-star: 251 188 4;
-  /* Orange « problème » repris du film de présentation : ce qui coince, avant l'agent.
-     Réservé à cet usage (le vert reste la solution). Un cran plus profond que l'orange du
-     film (#f07a1a, 2,8:1 avec le blanc) pour porter du texte blanc : 4,8:1. */
-  --signal-late: 184 86 11;
   /* Fenêtres d'application claires (AppWindow), au style des écrans du film : fond crème,
      encre presque noire, vert foncé pour « fait » (5,1:1 sur crème, 5,3:1 sous texte blanc). */
   --window-bg: 251 251 248;
