@@ -147,7 +147,7 @@ export function Personae() {
                 </div>
 
                 <div className="relative p-6 md:p-7">
-                  <Quote className="absolute right-5 top-5 h-12 w-12 text-signal-late/15" aria-hidden="true" />
+                  <Quote className="absolute right-5 top-5 h-12 w-12 text-green-primary/10" aria-hidden="true" />
                   <p className="font-display text-lg font-semibold leading-snug text-text-primary md:text-xl text-balance">
                     « {persona.quote} »
                   </p>

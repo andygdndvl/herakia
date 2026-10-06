@@ -242,6 +242,8 @@ function TitleBadge() {
   }, [inView, reduced]);
 
   return (
+    // Orange « problème » (--signal-late), le même que l'« Avant » des chantiers : c'est le
+    // compteur des corvées. Texte vert nuit : le blanc sur cet orange tomberait à 2,8:1.
     // Posé DANS le flux de la ligne (align-middle, aucun décalage négatif) :
     // sa boîte est réservée par la mise en ligne, il ne peut donc plus
     // recouvrir le texte, quelle que soit la largeur.
@@ -250,7 +252,7 @@ function TitleBadge() {
       initial={{ scale: 0, opacity: 0, y: -8 }}
       animate={inView ? { scale: 1, opacity: 1, y: 0 } : {}}
       transition={{ type: 'spring', stiffness: 300, damping: 13, delay: 0.35 }}
-      className="ml-2.5 inline-flex h-5 min-w-[2rem] items-center justify-center rounded-full bg-red-500 px-2 align-middle font-sans text-xs font-bold tabular-nums text-white shadow-[0_6px_20px_rgba(239,68,68,0.6)] md:ml-3 md:h-11 md:min-w-[3.4rem] md:px-3.5 md:text-xl"
+      className="ml-2.5 inline-flex h-5 min-w-[2rem] items-center justify-center rounded-full bg-signal-late px-2 align-middle font-sans text-xs font-bold tabular-nums text-bg-primary shadow-[0_6px_20px_rgb(var(--signal-late)/0.55)] md:ml-3 md:h-11 md:min-w-[3.4rem] md:px-3.5 md:text-xl"
       aria-hidden="true"
     >
       {count > 99 ? '+99' : count}
