@@ -39,8 +39,6 @@ const fr = {
     // Ligne en petites capitales sous le titre : les trois moyens, réécrits l'un après l'autre.
     // Le premier est celui rendu côté serveur — la ligne a déjà du sens sans JavaScript.
     means: ['Agents IA', 'Applications sur-mesure', 'Automatisations'],
-    subtitleBody:
-      "On part de vos process, pas d'un produit sur étagère.",
     ctaPrimary: 'Démarrer un projet',
     ctaSecondary: 'Découvrir nos solutions',
     chip1: 'Diagnostic offert',

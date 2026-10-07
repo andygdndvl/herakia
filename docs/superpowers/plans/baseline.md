@@ -37,3 +37,11 @@ Le sous-titre du hero sort de la cascade `data-reveal` : il est peint avec la pa
 - Lighthouse mobile performance : 0.88 (3 runs : 0.88, 0.88, 0.88)
 - Lighthouse mobile accessibilité : 0.98
 - Contrastes sur #06100b : texte 16.51:1 · secondaire 7.39:1 · discret 5.60:1
+
+# Après la journée du 2026-10-06/07 (commit du retrait du sous-titre du hero)
+
+- Lighthouse mobile performance : 0.88 (3 runs : 0.88, 0.88, 0.88) · accessibilité 0.98
+- LCP 3,9 s · TBT 20–40 ms · CLS 0 · First Load JS `/[lang]` : 254 kB
+- Élément LCP : la citation de l'avis Google du hero (`HeroProof`), sortie de la cascade
+  `data-reveal`. Avec le fondu, le retrait du sous-titre faisait tomber le score à 0.78
+  (LCP 5,9 s) : tout futur « plus grand texte » du hero doit rester hors `data-reveal`.

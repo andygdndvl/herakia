@@ -95,11 +95,6 @@ export function Hero() {
           </p>
 
           <div className="mt-8 flex flex-col items-center gap-8">
-            {/* Hors de la cascade : c'est le plus grand bloc de texte de l'écran d'accueil, donc
-                l'élément LCP. Affiché d'emblée, il est peint avec la page. */}
-            <p className="mx-auto max-w-xl font-sans text-lg leading-relaxed text-text-secondary md:text-xl">
-              {dict.hero.subtitleBody}
-            </p>
             <div data-reveal className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Button href={localize(lang, '/contact')} variant="primary" size="lg">
                 {dict.hero.ctaPrimary}
@@ -112,8 +107,10 @@ export function Hero() {
           </div>
 
           {/* La preuve se range juste sous les boutons : elle appuie l'appel à
-              l'action, puis la ligne d'engagements ferme le hero. */}
-          <div data-reveal className="mt-8">
+              l'action, puis la ligne d'engagements ferme le hero. Hors de la cascade
+              `data-reveal` : sa citation est le plus grand bloc de texte de l'écran, donc
+              l'élément LCP — en fondu, elle repoussait le LCP à 5,9 s (Lighthouse mobile). */}
+          <div className="mt-8">
             <HeroProof />
           </div>
 
