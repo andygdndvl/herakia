@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Play, Volume2, VolumeX } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { useLang } from '@/components/i18n/LangProvider';
 import { prefersReducedMotion, useReveal } from '@/lib/anim';
 
@@ -12,6 +12,7 @@ const TEXT = {
     unmute: 'Activer le son',
     mute: 'Couper le son',
     play: 'Lire la vidéo',
+    restart: 'Recommencer',
   },
   en: {
     eyebrow: 'Herakia in one minute (in French)',
@@ -19,8 +20,13 @@ const TEXT = {
     unmute: 'Turn sound on',
     mute: 'Mute',
     play: 'Play video',
+    restart: 'Restart',
   },
 } as const;
+
+/** Pastille des commandes posées sur le film (recommencer, son). */
+const PILL =
+  'flex items-center gap-2 rounded-full border border-border-strong bg-bg-primary/70 p-2.5 font-mono text-xs uppercase tracking-[0.12em] text-text-primary backdrop-blur-md transition-colors hover:border-green-line hover:text-green-primary focus:outline-none focus-visible:border-green-line focus-visible:text-green-primary sm:px-4 sm:py-2';
 
 /** Part de la vidéo qui doit être à l'écran pour qu'elle joue. */
 const VISIBLE_RATIO = 0.35;
@@ -77,6 +83,14 @@ export function VideoPitch() {
     setMuted(!muted);
   };
 
+  // Repart du début sans toucher au son : muet si le film était muet, sonore sinon.
+  const restart = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  };
+
   const playWithSound = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -126,20 +140,26 @@ export function VideoPitch() {
               </span>
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={toggleSound}
-              aria-pressed={!muted}
-              className="absolute bottom-3 right-3 flex items-center gap-2 rounded-full border border-border-strong bg-bg-primary/70 p-2.5 font-mono text-xs uppercase tracking-[0.12em] text-text-primary backdrop-blur-md transition-colors hover:border-green-line hover:text-green-primary focus:outline-none focus-visible:border-green-line focus-visible:text-green-primary sm:bottom-5 sm:right-5 sm:px-4 sm:py-2"
-            >
-              {muted ? (
-                <VolumeX className="h-4 w-4" aria-hidden="true" />
-              ) : (
-                <Volume2 className="h-4 w-4" aria-hidden="true" />
-              )}
-              {/* Sous 640 px la vidéo est petite : l'icône seule, le libellé reste pour les lecteurs d'écran. */}
-              <span className="sr-only sm:not-sr-only">{muted ? t.unmute : t.mute}</span>
-            </button>
+            <div className="absolute bottom-3 right-3 flex gap-2 sm:bottom-5 sm:right-5">
+              <button type="button" onClick={restart} className={PILL}>
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only sm:not-sr-only">{t.restart}</span>
+              </button>
+              <button
+                type="button"
+                onClick={toggleSound}
+                aria-pressed={!muted}
+                className={PILL}
+              >
+                {muted ? (
+                  <VolumeX className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Volume2 className="h-4 w-4" aria-hidden="true" />
+                )}
+                {/* Sous 640 px la vidéo est petite : l'icône seule, le libellé reste pour les lecteurs d'écran. */}
+                <span className="sr-only sm:not-sr-only">{muted ? t.unmute : t.mute}</span>
+              </button>
+            </div>
           )}
         </div>
       </div>
