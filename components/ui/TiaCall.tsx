@@ -20,6 +20,8 @@ const TEXT = {
     intro:
       'Parlez à Tia comme à une vraie interlocutrice. Elle cerne votre besoin, vous oriente, et peut caler un échange.',
     micHint: 'Tia a besoin de votre micro.',
+    recorded: 'L’échange est enregistré et transcrit.',
+    privacy: 'En savoir plus',
     start: 'Parler à Tia',
     connecting: 'Connexion à Tia…',
     listening: 'Tia vous écoute…',
@@ -43,6 +45,8 @@ const TEXT = {
     intro:
       'Talk to Tia like a real person. She scopes your need, points you in the right direction, and can book a call.',
     micHint: 'Tia needs your microphone.',
+    recorded: 'The conversation is recorded and transcribed.',
+    privacy: 'Learn more',
     start: 'Talk to Tia',
     connecting: 'Connecting to Tia…',
     listening: 'Tia is listening…',
@@ -265,6 +269,17 @@ export function TiaCall({
                     <p className="mt-2 flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-text-muted">
                       <Mic className="h-3 w-3" />
                       {t.micHint}
+                    </p>
+                    <p className="mt-1.5 font-sans text-xs text-text-muted">
+                      {t.recorded}{' '}
+                      <a
+                        href={`/${lang}/confidentialite`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline underline-offset-4 hover:text-green-primary"
+                      >
+                        {t.privacy}
+                      </a>
                     </p>
                   </>
                 )}

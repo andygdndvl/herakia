@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { LegalShell, Fill } from '@/components/layout/LegalShell';
+import { LegalShell } from '@/components/layout/LegalShell';
 import { isLocale, defaultLocale, type Locale } from '@/dictionaries';
 
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
@@ -23,28 +23,28 @@ export default function MentionsLegalesPage({ params }: { params: { lang: string
 
   if (lang === 'en') {
     return (
-      <LegalShell title="Legal notice" lastUpdated="TO BE COMPLETED" updatedLabel="Last updated">
+      <LegalShell title="Legal notice" lastUpdated="8 October 2026" updatedLabel="Last updated">
         <h2>Publisher</h2>
         <p>
           The <strong>herakia.com</strong> website is published by:
         </p>
         <ul>
-          <li>Company name: <Fill>company name</Fill></li>
-          <li>Legal form: <Fill>SASU / sole trader…</Fill></li>
-          <li>Share capital: <Fill>amount, if any</Fill></li>
-          <li>Registered office: <Fill>full address</Fill></li>
-          <li>Company registration no.: <Fill>SIRET number</Fill></li>
-          <li>VAT number: <Fill>VAT no., if any</Fill></li>
-          <li>Publication director: <Fill>name of the person responsible (e.g. Andy …)</Fill></li>
+          <li>Company name: HERAKIA</li>
+          <li>Legal form: SAS (French simplified joint-stock company)</li>
+          <li>Share capital: €40,000</li>
+          <li>Registered office: 156 boulevard Raymond Poincaré, 06160 Antibes, France</li>
+          <li>Company registration no.: 130 678 162 R.C.S. Antibes — SIRET 130 678 162 00012</li>
+          <li>VAT number: FR74130678162</li>
+          <li>Publication director: Andy Gondouin-Duval</li>
           <li>Contact: <a href="mailto:contact@herakia.com">contact@herakia.com</a></li>
         </ul>
 
         <h2>Hosting</h2>
         <p>The website is hosted by:</p>
         <ul>
-          <li>Name: <Fill>e.g. Vercel Inc.</Fill></li>
-          <li>Address: <Fill>host address (e.g. 340 S Lemon Ave #4133, Walnut, CA 91789, USA)</Fill></li>
-          <li>Website: <Fill>e.g. vercel.com</Fill></li>
+          <li>Name: Vercel Inc.</li>
+          <li>Address: 440 N Barranca Avenue #4133, Covina, CA 91723, USA</li>
+          <li>Website: <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">vercel.com</a></li>
         </ul>
 
         <h2>Intellectual property</h2>
@@ -72,28 +72,28 @@ export default function MentionsLegalesPage({ params }: { params: { lang: string
   }
 
   return (
-    <LegalShell title="Mentions légales" lastUpdated="À COMPLÉTER">
+    <LegalShell title="Mentions légales" lastUpdated="8 octobre 2026">
       <h2>Éditeur du site</h2>
       <p>
         Le site <strong>herakia.com</strong> est édité par&nbsp;:
       </p>
       <ul>
-        <li>Raison sociale&nbsp;: <Fill>raison sociale</Fill></li>
-        <li>Forme juridique&nbsp;: <Fill>SASU / EI / auto-entrepreneur…</Fill></li>
-        <li>Capital social&nbsp;: <Fill>montant, le cas échéant</Fill></li>
-        <li>Siège social&nbsp;: <Fill>adresse complète</Fill></li>
-        <li>SIRET&nbsp;: <Fill>numéro SIRET</Fill></li>
-        <li>Numéro de TVA intracommunautaire&nbsp;: <Fill>n° TVA, le cas échéant</Fill></li>
-        <li>Directeur de la publication&nbsp;: <Fill>nom du responsable (ex. Andy …)</Fill></li>
+        <li>Raison sociale&nbsp;: HERAKIA</li>
+        <li>Forme juridique&nbsp;: SAS, société par actions simplifiée</li>
+        <li>Capital social&nbsp;: 40&nbsp;000&nbsp;€</li>
+        <li>Siège social&nbsp;: 156 boulevard Raymond Poincaré, 06160 Antibes</li>
+        <li>Immatriculation&nbsp;: 130&nbsp;678&nbsp;162 R.C.S. Antibes — SIRET 130&nbsp;678&nbsp;162&nbsp;00012</li>
+        <li>Numéro de TVA intracommunautaire&nbsp;: FR74130678162</li>
+        <li>Directeur de la publication&nbsp;: Andy Gondouin-Duval</li>
         <li>Contact&nbsp;: <a href="mailto:contact@herakia.com">contact@herakia.com</a></li>
       </ul>
 
       <h2>Hébergeur</h2>
       <p>Le site est hébergé par&nbsp;:</p>
       <ul>
-        <li>Nom&nbsp;: <Fill>ex. Vercel Inc.</Fill></li>
-        <li>Adresse&nbsp;: <Fill>adresse de l’hébergeur (ex. 340 S Lemon Ave #4133, Walnut, CA 91789, USA)</Fill></li>
-        <li>Site&nbsp;: <Fill>ex. vercel.com</Fill></li>
+        <li>Nom&nbsp;: Vercel Inc.</li>
+        <li>Adresse&nbsp;: 440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis</li>
+        <li>Site&nbsp;: <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">vercel.com</a></li>
       </ul>
 
       <h2>Propriété intellectuelle</h2>

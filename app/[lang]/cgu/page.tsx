@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { LegalShell, Fill } from '@/components/layout/LegalShell';
+import { LegalShell } from '@/components/layout/LegalShell';
 import { isLocale, defaultLocale, type Locale } from '@/dictionaries';
 
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
@@ -23,11 +23,11 @@ export default function CguPage({ params }: { params: { lang: string } }) {
 
   if (lang === 'en') {
     return (
-      <LegalShell title="Terms of use" lastUpdated="TO BE COMPLETED" updatedLabel="Last updated">
+      <LegalShell title="Terms of use" lastUpdated="8 October 2026" updatedLabel="Last updated">
         <h2>1. Purpose</h2>
         <p>
           These terms of use govern access to and use of the <strong>herakia.com</strong>{' '}
-          website, published by <Fill>company name</Fill>. By browsing the site, you accept these terms
+          website, published by HERAKIA, a French SAS with a share capital of €40,000 (130 678 162 R.C.S. Antibes). By browsing the site, you accept these terms
           without reservation.
         </p>
 
@@ -42,8 +42,8 @@ export default function CguPage({ params }: { params: { lang: string } }) {
         <p>
           The site presents Herakia’s services in automation and artificial intelligence solutions. The
           information provided is indicative and does not constitute a contractual offer. Every
-          engagement is subject to a quote and specific terms: <Fill>link to your terms of sale if they
-          exist, or specify the contractual arrangements</Fill>.
+          engagement is subject to a quote and a specific contract, agreed with the client before any
+          work starts.
         </p>
 
         <h2>4. Intellectual property</h2>
@@ -68,19 +68,19 @@ export default function CguPage({ params }: { params: { lang: string } }) {
         <h2>7. Governing law</h2>
         <p>
           These terms are governed by French law. In the event of a dispute, and failing an amicable
-          resolution, jurisdiction is granted to the courts of{' '}
-          <Fill>city of the registered office’s jurisdiction</Fill>.
+          resolution, jurisdiction is granted to the competent courts
+          of Antibes (France).
         </p>
       </LegalShell>
     );
   }
 
   return (
-    <LegalShell title="Conditions générales d’utilisation" lastUpdated="À COMPLÉTER">
+    <LegalShell title="Conditions générales d’utilisation" lastUpdated="8 octobre 2026">
       <h2>1. Objet</h2>
       <p>
         Les présentes conditions générales d’utilisation (CGU) encadrent l’accès et l’utilisation du
-        site <strong>herakia.com</strong>, édité par <Fill>raison sociale</Fill>. En naviguant sur le
+        site <strong>herakia.com</strong>, édité par HERAKIA, SAS au capital de 40&nbsp;000&nbsp;€ (130&nbsp;678&nbsp;162 R.C.S. Antibes). En naviguant sur le
         site, vous acceptez sans réserve les présentes CGU.
       </p>
 
@@ -96,9 +96,8 @@ export default function CguPage({ params }: { params: { lang: string } }) {
       <p>
         Le site présente les prestations d’Herakia en matière d’automatisation et de solutions
         d’intelligence artificielle. Les informations diffusées ont une valeur indicative et ne
-        constituent pas une offre contractuelle. Toute prestation fait l’objet d’un devis et de
-        conditions spécifiques&nbsp;: <Fill>renvoyer vers vos CGV si elles existent, ou préciser les
-        modalités contractuelles</Fill>.
+        constituent pas une offre contractuelle. Toute prestation fait l’objet d’un devis et d’un
+        contrat spécifiques, convenus avec le client avant le début de la mission.
       </p>
 
       <h2>4. Propriété intellectuelle</h2>
@@ -124,8 +123,8 @@ export default function CguPage({ params }: { params: { lang: string } }) {
       <h2>7. Droit applicable</h2>
       <p>
         Les présentes CGU sont régies par le droit français. En cas de litige, et à défaut de
-        résolution amiable, compétence est attribuée aux tribunaux de{' '}
-        <Fill>ville du ressort du siège social</Fill>.
+        résolution amiable, compétence est attribuée aux tribunaux compétents
+        d’Antibes.
       </p>
     </LegalShell>
   );

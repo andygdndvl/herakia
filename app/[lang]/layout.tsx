@@ -3,9 +3,9 @@ import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import '../globals.css';
 import { getDictionary, locales, isLocale, defaultLocale, type Locale } from '@/dictionaries';
 import { LangProvider } from '@/components/i18n/LangProvider';
+import { CookieConsent } from '@/components/layout/CookieConsent';
 import { AmbientBackground } from '@/components/layout/AmbientBackground';
 import { notFound } from 'next/navigation';
-import Script from 'next/script';
 
 const syne = Syne({
   subsets: ['latin'],
@@ -181,21 +181,13 @@ export default async function LangLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google tag (gtag.js) */}
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-B1VYENR8Q6" strategy="afterInteractive" />
-        <Script id="google-tag-gtag" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-B1VYENR8Q6');
-          `}
-        </Script>
       </head>
       <body>
         <AmbientBackground />
         <LangProvider lang={lang} dict={dict}>
           {children}
+          {/* Google Analytics n'est chargé qu'après accord (bandeau de consentement) */}
+          <CookieConsent />
         </LangProvider>
       </body>
     </html>

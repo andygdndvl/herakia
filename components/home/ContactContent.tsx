@@ -58,6 +58,7 @@ const TEXT = {
     submit: 'Envoyer le message',
     submitting: 'Envoi en cours…',
     disclaimer: 'En envoyant ce formulaire, vous acceptez d’être recontacté par Herakia.',
+    privacy: 'Politique de confidentialité',
     genericError: 'Une erreur est survenue. Réessayez ou écrivez-nous par email.',
     successTitle: 'Message envoyé.',
     successBody: (name: string) => `Merci ${name}, nous revenons vers vous sous 24h ouvrées.`,
@@ -105,6 +106,7 @@ const TEXT = {
     submit: 'Send message',
     submitting: 'Sending…',
     disclaimer: 'By submitting this form, you agree to be contacted by Herakia.',
+    privacy: 'Privacy policy',
     genericError: 'Something went wrong. Try again or email us.',
     successTitle: 'Message sent.',
     successBody: (name: string) => `Thanks ${name}, we’ll get back to you within 24 business hours.`,
@@ -346,7 +348,8 @@ function SelectField({
 
 export function ContactContent() {
   const prefersReducedMotion = useReducedMotion();
-  const t = TEXT[useLang()];
+  const lang = useLang();
+  const t = TEXT[lang];
   const [values, setValues] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Record<keyof FormState, boolean>>({
@@ -631,7 +634,12 @@ export function ContactContent() {
                     )}
                   </motion.button>
 
-                  <p className="text-center font-mono text-xs text-text-muted">{t.disclaimer}</p>
+                  <p className="text-center font-mono text-xs text-text-muted">
+                    {t.disclaimer}{' '}
+                    <a href={`/${lang}/confidentialite`} className="underline underline-offset-4 hover:text-green-primary">
+                      {t.privacy}
+                    </a>
+                  </p>
                 </motion.form>
               ) : (
                 <motion.div

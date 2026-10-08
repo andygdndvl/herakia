@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { useDict, useLang, localize } from '@/components/i18n/LangProvider';
 import { Logo } from '@/components/ui/Logo';
+import { ManageCookiesButton } from '@/components/layout/CookieConsent';
 
 export function Footer() {
   const dict = useDict();
@@ -117,6 +118,9 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <ManageCookiesButton variant="footer" />
+              </li>
             </ul>
           </div>
         </div>

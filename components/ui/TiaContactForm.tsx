@@ -28,6 +28,8 @@ const TEXT: Record<Locale, {
   phonePlaceholder: string;
   companyPlaceholder: string;
   submit: string;
+  disclaimer: string;
+  privacy: string;
   submitting: string;
   successTitle: string;
   successBody: string;
@@ -46,6 +48,8 @@ const TEXT: Record<Locale, {
     phonePlaceholder: '06 12 34 56 78',
     companyPlaceholder: 'Acme Industries (optionnel)',
     submit: 'Envoyer mes coordonnées',
+    disclaimer: 'Vos coordonnées servent uniquement à vous recontacter.',
+    privacy: 'Politique de confidentialité',
     submitting: 'Envoi en cours…',
     successTitle: 'Merci !',
     successBody: 'Un membre de l’équipe vous recontacte sous 24h ouvrées.',
@@ -69,6 +73,8 @@ const TEXT: Record<Locale, {
     phonePlaceholder: '+1 555 123 4567',
     companyPlaceholder: 'Acme Industries (optional)',
     submit: 'Send my details',
+    disclaimer: 'Your details are only used to contact you back.',
+    privacy: 'Privacy policy',
     submitting: 'Sending…',
     successTitle: 'Thank you!',
     successBody: 'A team member will get back to you within 24 business hours.',
@@ -298,6 +304,13 @@ export function TiaContactForm({ lang, initialName }: { lang: Locale; initialNam
               </>
             )}
           </button>
+
+          <p className="text-center font-mono text-[10px] text-text-muted">
+            {t.disclaimer}{' '}
+            <a href={`/${lang}/confidentialite`} className="underline underline-offset-4 hover:text-green-primary">
+              {t.privacy}
+            </a>
+          </p>
         </motion.form>
       ) : (
         <motion.div
