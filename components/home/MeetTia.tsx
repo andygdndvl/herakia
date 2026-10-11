@@ -96,11 +96,11 @@ export function MeetTia() {
           {/* Image à droite (desktop) / en haut (mobile), sans cadre */}
           <div className="relative h-56 w-full sm:h-64 md:absolute md:inset-y-0 md:right-0 md:h-full md:w-[54%]">
             <Image
-              src="/agent-ia-vocal.png"
+              src="/tia-avatar.png"
               alt="Tia, agent d’accueil vocal Herakia"
               fill
               sizes="(max-width: 768px) 100vw, 55vw"
-              className="object-cover object-center"
+              className="object-cover object-top"
             />
             {/* dégradé noir fort et court, pile sur la couture, pour cacher la démarcation (desktop) */}
             <div

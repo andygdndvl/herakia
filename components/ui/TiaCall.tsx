@@ -247,11 +247,11 @@ export function TiaCall({
                   transition={{ duration: 0.9, repeat: Infinity, ease: 'easeInOut' }}
                 >
                   <Image
-                    src="/agent-ia-vocal.png"
+                    src="/tia-avatar.png"
                     alt="Tia, agent d’accueil vocal Herakia"
                     fill
                     sizes="112px"
-                    className="scale-125 object-cover"
+                    className="origin-[50%_35%] scale-150 object-cover"
                   />
                   {phase === 'connecting' && (
                     <span className="absolute inset-0 flex items-center justify-center bg-bg-primary/60">
