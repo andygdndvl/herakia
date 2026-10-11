@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Play } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -43,7 +44,7 @@ const TEXT = {
 /**
  * Les vidéos verticales tournées pour la publicité, entre les chantiers et les profils : après la
  * preuve écrite, quelqu'un le dit de vive voix. Rien ne se télécharge tant qu'on n'a pas cliqué
- * (`preload="none"`, l'aperçu seul) : la section ne pèse que ses trois images.
+ * (`preload="none"`), et les aperçus ne se chargent qu'à l'approche de la section.
  *
  * Une seule vidéo joue à la fois, avec le son. Elle se met en pause en sortant de l'écran.
  */
@@ -111,13 +112,23 @@ export function Reels() {
                   }}
                   className="h-full w-full object-cover"
                   src={`/videos/${reel.id}.mp4`}
-                  poster={`/videos/${reel.id}-poster.jpg`}
                   playsInline
                   preload="none"
                   controls={!!started[reel.id]}
                   aria-label={reel.title}
                   onPlay={() => pauseOthers(i)}
                 />
+                {/* L'aperçu est une image paresseuse, pas l'attribut `poster` : celui-ci se télécharge
+                    dès l'ouverture de la page, en concurrence avec le haut de page. */}
+                {!started[reel.id] && (
+                  <Image
+                    src={`/videos/${reel.id}-poster.jpg`}
+                    alt=""
+                    fill
+                    sizes="(max-width: 767px) 72vw, 280px"
+                    className="object-cover"
+                  />
+                )}
                 {!started[reel.id] && (
                   // Bouton décalé sous le centre (`pt-[45%]`) : au centre, il masquerait le visage.
                   <button

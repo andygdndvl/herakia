@@ -14,6 +14,9 @@ const COOKIE_MAX_AGE_SECONDS = 34_128_000;
 // 6 mois : au-delà, la CNIL recommande de redemander le choix (accord comme refus).
 const CHOICE_MAX_AGE_MS = 182 * 24 * 60 * 60 * 1000;
 
+// Posé sur <html> avant le premier affichage quand un choix valide est déjà mémorisé.
+const CHOSEN_ATTR = 'data-cookie-choice';
+
 type Choice = 'granted' | 'denied';
 
 const copy = {
@@ -48,6 +51,11 @@ function readChoice(): Choice | null {
   }
 }
 
+// Même lecture que `readChoice`, mais exécutée avant le premier affichage : le bandeau est dans le
+// HTML servi (il s'affiche avec la page, pas après le chargement du JavaScript) et ce script le
+// masque aussitôt chez ceux qui ont déjà choisi, sans clignotement.
+const HIDE_IF_CHOSEN = `try{var s=JSON.parse(localStorage.getItem('${STORAGE_KEY}')||'null');if(s&&(s.choice==='granted'||s.choice==='denied')&&typeof s.at==='number'&&Date.now()-s.at<=${CHOICE_MAX_AGE_MS})document.documentElement.setAttribute('${CHOSEN_ATTR}','')}catch(e){}`;
+
 function writeChoice(choice: Choice | null) {
   try {
     if (choice) window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ choice, at: Date.now() }));
@@ -77,14 +85,13 @@ export function CookieConsent() {
   const { lang } = useI18n();
   const t = copy[lang];
   const [choice, setChoice] = useState<Choice | null>(null);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setChoice(readChoice());
-    setReady(true);
     const reset = () => {
       writeChoice(null);
       disableAnalytics();
+      document.documentElement.removeAttribute(CHOSEN_ATTR);
       setChoice(null);
     };
     window.addEventListener(RESET_EVENT, reset);
@@ -114,11 +121,13 @@ export function CookieConsent() {
         </>
       )}
 
-      {ready && choice === null && (
+      <script dangerouslySetInnerHTML={{ __html: HIDE_IF_CHOSEN }} />
+
+      {choice === null && (
         <div
           role="region"
           aria-label={t.label}
-          className="fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-2xl flex-col gap-4 rounded-2xl border border-border-strong bg-bg-elevated p-5 shadow-2xl sm:flex-row sm:items-center sm:gap-6"
+          className="[[data-cookie-choice]_&]:hidden fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-2xl flex-col gap-4 rounded-2xl border border-border-strong bg-bg-elevated p-5 shadow-2xl sm:flex-row sm:items-center sm:gap-6"
         >
           <p className="font-sans text-sm leading-relaxed text-text-secondary">
             {t.text}{' '}
