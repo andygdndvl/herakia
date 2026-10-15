@@ -56,9 +56,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Message trop long.' }, { status: 400 });
   }
 
-  // 1. Persistance en DB d'abord — c'est la source de vérité.
-  // Si ça échoue, on arrête là : pas la peine d'envoyer un email qu'on ne pourra pas retrouver.
-  let submissionId: string;
+  // Deux voies indépendantes : la base (consultable dans l'admin) et l'e-mail. La demande est
+  // reçue si l'une des deux aboutit : une base en pause (offre gratuite Supabase) ne doit plus
+  // faire perdre de demande, comme entre fin août et le 15 octobre 2026.
+  let submissionId: string | null = null;
   try {
     const submission = await prisma.contactSubmission.create({
       data: { name, email, phone, company: company || null, need, message },
@@ -66,34 +67,60 @@ export async function POST(request: Request) {
     submissionId = submission.id;
   } catch (err) {
     console.error('[contact] Échec écriture DB :', err);
+  }
+
+  const emailSent = await sendEmail({ name, email, phone, company, need, message });
+
+  if (!submissionId && !emailSent) {
     return NextResponse.json(
       { error: 'Une erreur est survenue. Réessayez.' },
       { status: 500 },
     );
   }
 
+  if (submissionId && emailSent) {
+    try {
+      await prisma.contactSubmission.update({
+        where: { id: submissionId },
+        data: { emailSent: true },
+      });
+    } catch (err) {
+      console.error('[contact] Échec mise à jour emailSent :', err);
+    }
+  }
+
+  return NextResponse.json({ ok: true });
+}
+
+/** Envoie la demande par e-mail via Resend. Renvoie `true` seulement si Resend l'a acceptée. */
+async function sendEmail(c: {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  need: string;
+  message: string;
+}): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.CONTACT_TO_EMAIL || 'contact@herakia.com';
   // Doit être un expéditeur sur un domaine vérifié chez Resend.
   // Avant vérification du domaine herakia.com, utiliser 'onboarding@resend.dev'.
   const fromEmail = process.env.CONTACT_FROM_EMAIL || 'Herakia <onboarding@resend.dev>';
 
-  // 2. Envoi de l'email — best effort, ne bloque pas la réussite si ça échoue
-  // (les données sont déjà en DB, consultables via l'admin).
   if (!apiKey) {
-    console.error('[contact] RESEND_API_KEY manquante — email non envoyé, mais données enregistrées.');
-    return NextResponse.json({ ok: true });
+    console.error('[contact] RESEND_API_KEY manquante — email non envoyé.');
+    return false;
   }
 
   const html = `
     <h2>Nouveau message — formulaire Herakia</h2>
-    <p><strong>Nom :</strong> ${escapeHtml(name)}</p>
-    <p><strong>Email :</strong> ${escapeHtml(email)}</p>
-    <p><strong>Téléphone :</strong> ${escapeHtml(phone)}</p>
-    <p><strong>Entreprise :</strong> ${company ? escapeHtml(company) : '—'}</p>
-    <p><strong>Offre souhaitée :</strong> ${escapeHtml(need)}</p>
+    <p><strong>Nom :</strong> ${escapeHtml(c.name)}</p>
+    <p><strong>Email :</strong> ${escapeHtml(c.email)}</p>
+    <p><strong>Téléphone :</strong> ${escapeHtml(c.phone)}</p>
+    <p><strong>Entreprise :</strong> ${c.company ? escapeHtml(c.company) : '—'}</p>
+    <p><strong>Offre souhaitée :</strong> ${escapeHtml(c.need)}</p>
     <p><strong>Message :</strong></p>
-    <p style="white-space:pre-wrap">${escapeHtml(message)}</p>
+    <p style="white-space:pre-wrap">${escapeHtml(c.message)}</p>
   `;
 
   try {
@@ -106,25 +133,15 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         from: fromEmail,
         to: [toEmail],
-        reply_to: email,
-        subject: `Contact Herakia — ${name}${company ? ` (${company})` : ''}`,
+        reply_to: c.email,
+        subject: `Contact Herakia — ${c.name}${c.company ? ` (${c.company})` : ''}`,
         html,
       }),
     });
-
-    if (res.ok) {
-      await prisma.contactSubmission.update({
-        where: { id: submissionId },
-        data: { emailSent: true },
-      });
-    } else {
-      const detail = await res.text();
-      console.error('[contact] Échec Resend :', res.status, detail);
-    }
+    if (res.ok) return true;
+    console.error('[contact] Échec Resend :', res.status, await res.text());
   } catch (err) {
     console.error('[contact] Erreur réseau Resend :', err);
   }
-
-  // On répond ok même si l'email a échoué : les données sont sauvegardées.
-  return NextResponse.json({ ok: true });
+  return false;
 }
