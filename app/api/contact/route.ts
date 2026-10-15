@@ -8,6 +8,8 @@ interface ContactPayload {
   company?: string;
   need?: string;
   message?: string;
+  /** Langue du site au moment de l'envoi, pour l'accusé de réception. Français par défaut. */
+  lang?: string;
   // Honeypot anti-spam : doit toujours rester vide (rempli uniquement par les bots).
   website?: string;
 }
@@ -70,6 +72,11 @@ export async function POST(request: Request) {
   }
 
   const emailSent = await sendEmail({ name, email, phone, company, need, message });
+
+  // Accusé de réception au prospect, seulement si la demande nous est bien parvenue.
+  if (submissionId || emailSent) {
+    await sendConfirmation(email, name, body.lang === 'en' ? 'en' : 'fr');
+  }
 
   if (!submissionId && !emailSent) {
     return NextResponse.json(
@@ -144,4 +151,60 @@ async function sendEmail(c: {
     console.error('[contact] Erreur réseau Resend :', err);
   }
   return false;
+}
+
+const CONFIRMATION = {
+  fr: {
+    subject: 'Nous avons bien reçu votre demande — Herakia',
+    html: (firstName: string) => `
+      <p>Bonjour ${firstName},</p>
+      <p>Merci pour votre message : nous l'avons bien reçu.</p>
+      <p>Nous revenons vers vous <strong>sous 24 h ouvrées</strong> avec un premier diagnostic et une proposition de créneau pour en parler.</p>
+      <p>Si vous voulez ajouter une précision d'ici là, répondez simplement à cet e-mail.</p>
+      <p>À très vite,<br>L'équipe Herakia</p>
+    `,
+  },
+  en: {
+    subject: 'We received your request — Herakia',
+    html: (firstName: string) => `
+      <p>Hello ${firstName},</p>
+      <p>Thank you for your message: we have received it.</p>
+      <p>We will get back to you <strong>within 24 business hours</strong> with an initial assessment and a time slot to discuss it.</p>
+      <p>If you would like to add anything in the meantime, simply reply to this email.</p>
+      <p>Talk soon,<br>The Herakia team</p>
+    `,
+  },
+} as const;
+
+/**
+ * Accusé de réception envoyé au prospect. Il ne part que si `CONTACT_CONFIRM_FROM` est défini :
+ * l'expéditeur doit être une adresse @herakia.com, domaine à vérifier chez Resend au préalable.
+ * Un échec ici ne remet jamais en cause la demande, déjà reçue.
+ */
+async function sendConfirmation(to: string, name: string, lang: 'fr' | 'en'): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.CONTACT_CONFIRM_FROM;
+  if (!apiKey || !fromEmail) return;
+
+  const t = CONFIRMATION[lang];
+  const firstName = escapeHtml(name.split(/\s+/)[0]);
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: [to],
+        reply_to: process.env.CONTACT_TO_EMAIL || 'contact@herakia.com',
+        subject: t.subject,
+        html: t.html(firstName),
+      }),
+    });
+    if (!res.ok) console.error('[contact] Échec accusé de réception :', res.status, await res.text());
+  } catch (err) {
+    console.error('[contact] Erreur réseau accusé de réception :', err);
+  }
 }
