@@ -20,9 +20,6 @@ export const PRICE_MONTHLY = 79;
  */
 export const SHOW_QUOTE_FOLLOWUP = false;
 
-/** Délai d'installation annoncé, en jours. */
-export const DELAY_DAYS = 7;
-
 /** Vrai tant que DEMO_PHONE contient encore le placeholder (des « X »). */
 export const isDemoPhonePlaceholder = /x/i.test(DEMO_PHONE);
 

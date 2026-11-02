@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { AnimatePresence } from 'framer-motion';
-import { ArrowRight, Calendar, Mic, Phone, UserRound } from 'lucide-react';
+import { ArrowRight, Mic, ShieldCheck, Phone, UserRound } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -17,7 +17,7 @@ import { LockScreen } from '@/components/metiers/LockScreen';
 import { useLang, localize } from '@/components/i18n/LangProvider';
 import { prefersReducedMotion, useReveal, useScrambleRotate, useTextReveal } from '@/lib/anim';
 import { trackEvent } from '@/lib/gtag';
-import { DELAY_DAYS, DEMO_PHONE, PRICE_MONTHLY, PRICE_SETUP, euros, isDemoPhonePlaceholder } from '@/lib/offreArtisans';
+import { DEMO_PHONE, PRICE_MONTHLY, PRICE_SETUP, euros, isDemoPhonePlaceholder } from '@/lib/offreArtisans';
 
 /** Textes d'une page « Zéro appel manqué » (une version par métier, en FR et en EN). */
 export interface ZeroAppelText {
@@ -28,7 +28,7 @@ export interface ZeroAppelText {
   moments: readonly string[];
   subtitle: string;
   price: (setup: string, monthly: string) => string;
-  priceNote: (days: number) => string;
+  priceNote: string;
   ctaDemo: string;
   ctaCallback: string;
   demoNumber: (phone: string) => string;
@@ -52,7 +52,7 @@ export interface ZeroAppelText {
   faqEyebrow: string;
   faqTitle: string;
   faq: (setup: string, monthly: string) => readonly { q: string; a: string }[];
-  finalBadge: (days: number) => string;
+  finalBadge: string;
   finalTitle: string;
   finalText: string;
   finalFooter: string;
@@ -191,7 +191,7 @@ function Hero({
           <p data-reveal className="mt-8 border-l-2 border-green-primary pl-4 font-sans text-sm leading-relaxed text-text-secondary">
             <span className="font-display text-base font-semibold text-text-primary">{t.price(setup, monthly)}</span>
             <br />
-            {t.priceNote(DELAY_DAYS)}
+            {t.priceNote}
           </p>
         </div>
 
@@ -395,7 +395,7 @@ function Roi({ t, setup, monthly }: { t: ZeroAppelText; setup: string; monthly: 
             className="mt-10 flex flex-col gap-1 rounded-2xl border border-border-green bg-green-primary/[0.06] p-6 sm:flex-row sm:items-baseline sm:justify-between"
           >
             <p className="font-display text-2xl font-bold text-green-primary md:text-3xl">{t.price(setup, monthly)}</p>
-            <p className="font-mono text-xs uppercase tracking-wider text-text-muted">{t.priceNote(DELAY_DAYS)}</p>
+            <p className="font-mono text-xs uppercase tracking-wider text-text-muted">{t.priceNote}</p>
           </div>
         </div>
       </div>
@@ -452,8 +452,8 @@ function Final({
             data-reveal
             className="inline-flex items-center gap-2 rounded-full border border-border-green bg-green-subtle px-4 py-1.5 font-mono text-xs uppercase tracking-wider text-green-primary"
           >
-            <Calendar className="h-3.5 w-3.5" />
-            {t.finalBadge(DELAY_DAYS)}
+            <ShieldCheck className="h-3.5 w-3.5" />
+            {t.finalBadge}
           </div>
           <h2 ref={titleRef} data-split className="h-display mt-8 text-[clamp(2rem,4.4vw,4.25rem)] [&_[data-word]]:whitespace-nowrap">
             {t.finalTitle}

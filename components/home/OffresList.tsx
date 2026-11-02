@@ -8,7 +8,7 @@ import { useLang, localize } from '@/components/i18n/LangProvider';
 import { trackEvent } from '@/lib/gtag';
 import { SmsExample } from '@/components/metiers/SmsExample';
 import { METIERS } from '@/lib/metiers';
-import { DELAY_DAYS, PRICE_MONTHLY, PRICE_SETUP, SHOW_QUOTE_FOLLOWUP, demoHref, euros } from '@/lib/offreArtisans';
+import { PRICE_MONTHLY, PRICE_SETUP, SHOW_QUOTE_FOLLOWUP, demoHref, euros } from '@/lib/offreArtisans';
 
 /**
  * Prix d'orientation des formules sur mesure (« projets typiques dès … »), en euros. Ce sont des
@@ -42,7 +42,7 @@ const TEXT = {
     highlightBadge: 'Recommandé',
     cta: 'Démarrer un projet',
     readyTitle: 'Prêt à installer',
-    readyIntro: 'Une solution déjà au point, installée chez vous en quelques jours.',
+    readyIntro: 'Une solution déjà au point, réglée pour votre métier.',
     customTitle: 'Sur mesure',
     customIntro: 'Pour aller plus loin : un projet conçu avec vous, à partir de votre organisation.',
     zam: {
@@ -51,13 +51,12 @@ const TEXT = {
       pitch: 'Quand vous ne pouvez pas répondre, votre téléphone est décroché.',
       price: (setup: string, monthly: string) => `Dès ${setup} + ${monthly}/mois`,
       priceNote: 'installation + abonnement, sans engagement',
-      features: (days: number) => [
+      features: [
         "Un assistant IA décroche quand vous ne pouvez pas répondre",
         "Il pose les bonnes questions selon votre métier : qui appelle, pourquoi, quand rappeler",
         `Déjà réglé pour : ${METIERS.map((m) => m.label.fr.toLowerCase()).join(', ')}`,
         'Vous recevez un résumé par SMS ou WhatsApp',
         ...(SHOW_QUOTE_FOLLOWUP ? ['En option : relance automatique des devis sans réponse'] : []),
-        `Installé en ${days} jours`,
       ],
       demo: 'Écouter la démo',
       more: 'Voir par métier',
@@ -129,7 +128,7 @@ const TEXT = {
     highlightBadge: 'Recommended',
     cta: 'Start a project',
     readyTitle: 'Ready to install',
-    readyIntro: 'A proven solution, set up for you in a few days.',
+    readyIntro: 'A proven solution, set up for your line of work.',
     customTitle: 'Bespoke',
     customIntro: 'To go further: a project designed with you, around your organisation.',
     zam: {
@@ -138,13 +137,12 @@ const TEXT = {
       pitch: 'When you can’t answer, your phone still gets picked up.',
       price: (setup: string, monthly: string) => `From ${setup} + ${monthly}/month`,
       priceNote: 'setup + subscription, no commitment',
-      features: (days: number) => [
+      features: [
         "An AI assistant picks up when you can't answer",
         'It asks the right questions for your line of work: who is calling, why, when to call back',
         `Already set up for: ${METIERS.map((m) => m.label.en.toLowerCase()).join(', ')}`,
         'You get a summary by text message or WhatsApp',
         ...(SHOW_QUOTE_FOLLOWUP ? ['Optional: automatic follow-up of unanswered quotes'] : []),
-        `Set up in ${days} days`,
       ],
       demo: 'Hear the demo',
       more: 'See by line of work',
@@ -293,7 +291,7 @@ export function OffresList() {
 
           <div className="flex flex-col [grid-area:list]">
             <ul className="flex-1 space-y-3.5">
-              {t.zam.features(DELAY_DAYS).map((feature) => (
+              {t.zam.features.map((feature) => (
                 <li key={feature} className="flex items-start gap-3">
                   <Check className="mt-1 h-4 w-4 shrink-0 text-green-primary" />
                   <span className="font-sans text-base leading-snug text-text-primary/85">{feature}</span>
