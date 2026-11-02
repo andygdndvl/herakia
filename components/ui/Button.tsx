@@ -49,8 +49,16 @@ export function Button({
   const classes = `${base} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
 
   if (href) {
+    // Liens d'appel ou de messagerie : simple <a>, le routeur Next n'a rien à précharger.
+    if (/^(tel|mailto|sms):/.test(href)) {
+      return (
+        <a href={href} onClick={onClick} aria-label={ariaLabel} className={classes}>
+          {children}
+        </a>
+      );
+    }
     return (
-      <Link href={href} aria-label={ariaLabel} className={classes}>
+      <Link href={href} onClick={onClick} aria-label={ariaLabel} className={classes}>
         {children}
       </Link>
     );

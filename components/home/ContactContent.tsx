@@ -2,12 +2,13 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Building2, Calendar, Check, Mail, MessageSquare, Phone, Send, User, Sparkles } from 'lucide-react';
-import { useState, type FormEvent, type ChangeEvent } from 'react';
+import { useEffect, useState, type FormEvent, type ChangeEvent } from 'react';
 import { Badge } from '@/components/ui/Badge';
 import { useLang } from '@/components/i18n/LangProvider';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { PhoneFormField } from './PhoneFormField';
 import { trackEvent } from '@/lib/gtag';
+import { METIERS } from '@/lib/metiers';
 
 interface FormState {
   name: string;
@@ -73,6 +74,8 @@ const TEXT = {
       message: 'Décrivez votre besoin en au moins 20 caractères.',
     },
     serviceOptions: [
+      // Une option par page métier (lib/metiers.ts), pour savoir d'où vient la demande.
+      ...METIERS.map((m) => ({ value: m.offerId, label: `Zéro appel manqué (${m.label.fr.toLowerCase()})` })),
       { value: 'audit-diagnostic', label: 'Audit & Diagnostic' },
       { value: 'agents-ia', label: "Mise en place d'agents IA" },
       { value: 'systeme-automatise', label: "Création d'un système automatisé complet" },
@@ -121,6 +124,7 @@ const TEXT = {
       message: 'Describe your need in at least 20 characters.',
     },
     serviceOptions: [
+      ...METIERS.map((m) => ({ value: m.offerId, label: `Zero missed calls (${m.label.en.toLowerCase()})` })),
       { value: 'audit-diagnostic', label: 'Audit & Assessment' },
       { value: 'agents-ia', label: 'AI Agent Implementation' },
       { value: 'systeme-automatise', label: 'Complete Automated System' },
@@ -364,6 +368,15 @@ export function ContactContent() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
+
+  // `/contact?offre=<valeur>` (ex. depuis la page artisans) présélectionne l'offre. Lu après le
+  // montage plutôt qu'avec useSearchParams, qui obligerait à rendre la page côté client.
+  useEffect(() => {
+    const offre = new URLSearchParams(window.location.search).get('offre');
+    if (offre && t.serviceOptions.some((o) => o.value === offre)) {
+      setValues((v) => (v.need ? v : { ...v, need: offre }));
+    }
+  }, [t]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

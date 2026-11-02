@@ -41,6 +41,8 @@ const en: Dictionary = {
     ctaSecondary: 'Explore our solutions',
     chip1: 'Free assessment',
     chip2: '100% bespoke',
+    metiersLead: 'Zero missed calls: a phone assistant',
+    metiersLink: 'set up for your line of work →',
     proofRating: '5.0',
     proofAria: 'Google rating and client review',
     proofQuote: 'A real time-saver and a very fine discovery.',

@@ -69,15 +69,19 @@ function Waveform() {
   );
 }
 
-export function MeetTia() {
+/**
+ * `title` / `pitch` : surcharges des pages métiers, qui présentent Tia comme démo de leur assistant.
+ * `standalone` : ajoute la marge du haut quand la section ne suit pas l'objet de l'accueil.
+ */
+export function MeetTia({ title, pitch, standalone = false }: { title?: string; pitch?: string; standalone?: boolean } = {}) {
   const lang = useLang();
-  const t = TEXT[lang];
+  const t = { ...TEXT[lang], ...(title ? { title } : {}), ...(pitch ? { pitch } : {}) };
   const [open, setOpen] = useState(false);
   const revealRef = useReveal<HTMLDivElement>({ stagger: 120 });
 
   return (
     // Palier 1, entre l'objet (0) et les chantiers (0)
-    <section className="tier-1 px-6 pb-24 lg:px-8">
+    <section className={`tier-1 px-6 pb-24 lg:px-8 ${standalone ? 'pt-24' : ''}`}>
       <div className="mx-auto max-w-4xl">
         <div ref={revealRef}>
         <div data-reveal className="text-center">

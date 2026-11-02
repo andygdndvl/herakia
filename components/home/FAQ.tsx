@@ -10,7 +10,7 @@ interface FAQItem {
   answer: string;
 }
 
-function FAQAccordion({ item, open, onToggle }: { item: FAQItem; open: boolean; onToggle: () => void }) {
+export function FAQAccordion({ item, open, onToggle }: { item: FAQItem; open: boolean; onToggle: () => void }) {
   return (
     <div className="border-b border-border-subtle">
       <button

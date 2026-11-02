@@ -55,7 +55,7 @@ const TEXT = {
         pains: [
           'Les leads chauds refroidissent pendant qu’on traite le reste',
           'Le CRM n’est jamais à jour — impossible de piloter au réel',
-          'On rate des deals sans même savoir lesquels',
+          'En rendez-vous ou en visite, le téléphone sonne dans le vide',
         ],
         reply: 'Un agent qualifie et relance vos leads, le CRM se met à jour seul. Vos commerciaux vendent.',
       },
@@ -92,7 +92,7 @@ const TEXT = {
         pains: [
           'Hot leads cool down while we deal with everything else',
           'The CRM is never up to date — impossible to steer on real data',
-          'We miss deals without even knowing which ones',
+          'In a meeting or at a viewing, the phone rings unanswered',
         ],
         reply: 'An agent qualifies and follows up your leads, the CRM updates itself. Your reps sell.',
       },

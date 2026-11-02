@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import Link from 'next/link';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { HeroProof } from '@/components/home/HeroProof';
@@ -126,6 +127,14 @@ export function Hero() {
               <span className="h-1 w-1 rounded-full bg-green-primary" /> {dict.hero.chip2}
             </span>
           </div>
+
+          {/* Lien discret vers l'offre d'entrée, déclinée par métier (page d'aiguillage /metiers). */}
+          <p data-reveal className="mt-5 font-sans text-sm text-text-muted">
+            {dict.hero.metiersLead}{' '}
+            <Link href={localize(lang, '/metiers')} className="text-green-primary underline-offset-4 hover:underline">
+              {dict.hero.metiersLink}
+            </Link>
+          </p>
         </div>
       </div>
 
