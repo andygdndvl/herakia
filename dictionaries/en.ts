@@ -81,7 +81,7 @@ const en: Dictionary = {
       {
         question: 'How long does it take to set up a solution with Herakia?',
         answer:
-          'It depends on the scope. A first simple automation can be in production within a few days; a broader bespoke solution (several tools, business rules, testing) usually takes two to four weeks, prototype and validation included.',
+          'It depends on the scope: a simple automation is quicker than a broader bespoke solution (several tools, business rules, testing). You get the timeline before we start, prototype and validation included.',
       },
       {
         question: 'Which tools integrate with your automations?',

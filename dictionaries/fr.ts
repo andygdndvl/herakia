@@ -86,7 +86,7 @@ const fr = {
       {
         question: 'Combien de temps pour mettre en place une solution avec Herakia ?',
         answer:
-          "Cela dépend du périmètre. Une première automatisation simple peut être en production en quelques jours ; une solution sur-mesure plus large (plusieurs outils, règles métier, tests) prend généralement de deux à quatre semaines, prototype et validation compris.",
+          "Cela dépend du périmètre : une automatisation simple va plus vite qu’une solution sur-mesure plus large (plusieurs outils, règles métier, tests). Le délai vous est donné avant de démarrer, prototype et validation compris.",
       },
       {
         question: "Quels outils s'intègrent avec vos automatisations ?",
