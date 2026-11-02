@@ -40,6 +40,7 @@ export function Navbar() {
   const links = [
     { href: '/', label: dict.nav.home },
     { href: '/services', label: dict.nav.services },
+    { href: '/metiers', label: dict.nav.metiers },
     { href: '/demo', label: dict.nav.demo },
     { href: '/faq', label: dict.nav.faq },
     { href: '/offres', label: dict.nav.offres },

@@ -7,14 +7,14 @@ import { METIERS_HUB_NOINDEX } from '@/lib/metiers';
 
 const META = {
   fr: {
-    title: 'Zéro appel manqué — Un assistant téléphonique IA pour votre métier',
+    title: 'Par métier — Ce qu’Herakia construit pour votre activité',
     description:
-      'Artisans, agences immobilières, cabinets comptables, cabinets de santé, écoles : un assistant IA décroche quand personne ne peut, et vous envoie le résumé par SMS.',
+      'Artisans, agences immobilières, cabinets comptables, cabinets de santé, écoles : assistant téléphonique, agents IA, automatisations et données, réglés pour votre métier.',
   },
   en: {
-    title: 'Zero missed calls — An AI phone assistant for your line of work',
+    title: 'By industry — What Herakia builds for your business',
     description:
-      'Tradespeople, estate agencies, accounting firms, healthcare practices, schools: an AI assistant picks up when nobody can and texts you the summary.',
+      'Tradespeople, estate agencies, accounting firms, healthcare practices, schools: phone assistant, AI agents, automations and data, set up for your line of work.',
   },
 } as const;
 

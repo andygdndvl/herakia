@@ -3,6 +3,7 @@ const fr = {
   nav: {
     home: 'Accueil',
     services: 'Services',
+    metiers: 'Métiers',
     offres: 'Offres',
     demo : 'Démos',
     faq: 'FAQ',
@@ -20,6 +21,7 @@ const fr = {
     colContact: 'Contact',
     colLegal: 'Légal',
     linkServices: 'Services',
+    linkMetiers: 'Métiers',
     linkOffres: 'Offres',
     linkMethod: 'Méthode',
     linkFaq: 'FAQ',

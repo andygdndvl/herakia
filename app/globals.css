@@ -194,6 +194,12 @@ select:-webkit-autofill {
   to { transform: translate(-9vw, -10vh) scale(1.1); }
 }
 
+/* Barre de progression d'un métier dans le hero de /metiers : sa fin fait passer au suivant. */
+@keyframes fill-bar {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 /* Arrivée d'un message dans la conversation des profils (Personae). */
 @keyframes chat-in {
   from { opacity: 0; transform: translateY(14px); }

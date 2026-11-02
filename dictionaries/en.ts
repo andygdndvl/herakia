@@ -5,6 +5,7 @@ const en: Dictionary = {
   nav: {
     home: 'Home',
     services: 'Services',
+    metiers: 'Industries',
     offres: 'Offers',
     demo : 'Demos',
     faq: 'FAQ',
@@ -22,6 +23,7 @@ const en: Dictionary = {
     colContact: 'Contact',
     colLegal: 'Legal',
     linkServices: 'Services',
+    linkMetiers: 'Industries',
     linkOffres: 'Offers',
     linkMethod: 'Method',
     linkFaq: 'FAQ',
