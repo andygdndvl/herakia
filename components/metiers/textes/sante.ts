@@ -30,8 +30,8 @@ export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
         text: 'Vous êtes en consultation, le secrétariat est déjà en ligne ou le cabinet est fermé : personne ne peut décrocher.',
       },
       {
-        title: 'L’assistant décroche',
-        text: 'Il se présente comme l’assistant automatisé du cabinet, rappelle d’appeler le 15 en cas d’urgence, puis note le nom, le motif de l’appel et les disponibilités du patient.',
+        title: 'Tia décroche',
+        text: 'Elle se présente comme l’assistante automatisée du cabinet, rappelle d’appeler le 15 en cas d’urgence, puis note le nom, le motif de l’appel et les disponibilités du patient.',
       },
       {
         title: 'Vous recevez le résumé',
@@ -43,11 +43,11 @@ export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Appel entrant',
       caller: '06 •• •• •• 29',
       ringingHint: 'Vous ne pouvez pas décrocher.',
-      assistant: 'Assistant du cabinet',
+      assistant: 'Tia, assistante du cabinet',
       dialogue: [
         {
           who: 'tia',
-          text: 'Cabinet du Dr Exemple, bonjour. Je suis l’assistant automatisé. En cas d’urgence, appelez le 15. Sinon, je prends votre message.',
+          text: 'Cabinet du Dr Exemple, bonjour. Je suis Tia, l’assistante automatisée. En cas d’urgence, appelez le 15. Sinon, je prends votre message.',
         },
         { who: 'client', text: 'Bonjour, je voudrais un rendez-vous, j’ai mal au dos depuis une semaine.' },
         { who: 'tia', text: 'C’est noté. Êtes-vous déjà suivi au cabinet, et quand êtes-vous disponible ?' },
@@ -67,22 +67,22 @@ export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos consultations, vos consignes et vos horaires.',
     andyNote:
-      'Je règle l’assistant avec vous : comment il présente le cabinet, ce qu’il demande au patient et ce qu’il ne dit jamais, et à qui envoyer le résumé. Ensuite, c’est moi que vous appelez.',
+      'Je règle Tia avec vous : comment elle présente le cabinet, ce qu’elle demande au patient et ce qu’elle ne dit jamais, et à qui envoyer le résumé. Ensuite, c’est moi que vous appelez.',
     roiTitle: 'Moins d’interruptions, plus aucun patient sans réponse',
     roiText: () =>
-      'Chaque appel pris par l’assistant, c’est une consultation que vous n’interrompez pas, et un patient qui n’a pas à rappeler trois fois. Le message vous arrive trié : nouveau patient ou patient suivi, motif, disponibilités.',
+      'Chaque appel pris par Tia, c’est une consultation que vous n’interrompez pas, et un patient qui n’a pas à rappeler trois fois. Le message vous arrive trié : nouveau patient ou patient suivi, motif, disponibilités.',
     faq: (monthly) => [
       {
-        q: 'Est-ce que l’assistant donne des conseils médicaux ?',
-        a: 'Non, jamais. Il prend le message et le transmet. En cas d’urgence, il demande d’appeler le 15. C’est vous qui décidez de la suite.',
+        q: 'Est-ce que Tia donne des conseils médicaux ?',
+        a: 'Non, jamais. Elle prend le message et le transmet. En cas d’urgence, elle demande d’appeler le 15. C’est vous qui décidez de la suite.',
       },
       {
         q: 'Et les données de santé de mes patients ?',
-        a: 'Ce sont des données sensibles, encadrées par le RGPD. Avant toute installation, on décide ensemble de ce que l’assistant note, de ce qui transite par SMS, et de l’endroit où c’est conservé.',
+        a: 'Ce sont des données sensibles, encadrées par le RGPD. Avant toute installation, on décide ensemble de ce que Tia note, de ce qui transite par SMS, et de l’endroit où c’est conservé.',
       },
       {
         q: 'Et si j’ai déjà un agenda en ligne ?',
-        a: 'L’assistant ne le remplace pas : il prend les appels que personne ne peut décrocher. Il peut aussi indiquer au patient votre lien de prise de rendez-vous en ligne.',
+        a: 'Tia ne le remplace pas : elle prend les appels que personne ne peut décrocher. Elle peut aussi indiquer au patient votre lien de prise de rendez-vous en ligne.',
       },
       {
         q: 'Combien ça coûte ?',
@@ -90,7 +90,7 @@ export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Est-ce que ça s’installe sur le numéro du cabinet ?',
-        a: 'Oui, vous gardez votre numéro. On met en place un renvoi d’appel vers l’assistant quand personne ne répond ou que la ligne est occupée. Vos patients composent le même numéro qu’avant.',
+        a: 'Oui, vous gardez votre numéro. On met en place un renvoi d’appel vers Tia quand personne ne répond ou que la ligne est occupée. Vos patients composent le même numéro qu’avant.',
       },
       FAQ_TIA.fr,
       FAQ_ARRET.fr,
@@ -120,8 +120,8 @@ export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
         text: 'You are in a consultation, the front desk is busy or the practice is closed: nobody can pick up.',
       },
       {
-        title: 'The assistant picks up',
-        text: 'It introduces itself as the practice’s automated assistant, reminds the caller to dial the emergency number if it is urgent, then notes the name, the reason for the call and the patient’s availability.',
+        title: 'Tia picks up',
+        text: 'She introduces herself as the practice’s automated assistant, reminds the caller to dial the emergency number if it is urgent, then notes the name, the reason for the call and the patient’s availability.',
       },
       {
         title: 'You get the summary',
@@ -133,11 +133,11 @@ export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Incoming call',
       caller: '06 •• •• •• 29',
       ringingHint: 'You can’t pick up.',
-      assistant: 'Practice assistant',
+      assistant: 'Tia, practice assistant',
       dialogue: [
         {
           who: 'tia',
-          text: 'Dr Example’s practice, hello. I’m the automated assistant. If this is an emergency, call 112. Otherwise, I’ll take your message.',
+          text: 'Dr Example’s practice, hello. I’m Tia, the automated assistant. If this is an emergency, call 112. Otherwise, I’ll take your message.',
         },
         { who: 'client', text: 'Hello, I’d like an appointment, my back has hurt for a week.' },
         { who: 'tia', text: 'Noted. Are you already a patient here, and when are you available?' },
@@ -157,22 +157,22 @@ export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your consultations, your instructions and your hours.',
     andyNote:
-      'I set up the assistant with you: how it introduces the practice, what it asks patients and what it never says, and who gets the summary. After that, I’m the one you call.',
+      'I set up Tia with you: how she introduces the practice, what she asks patients and what she never says, and who gets the summary. After that, I’m the one you call.',
     roiTitle: 'Fewer interruptions, no patient left without an answer',
     roiText: () =>
-      'Every call the assistant takes is a consultation you don’t interrupt, and a patient who doesn’t have to call three times. The message reaches you sorted: new or existing patient, reason, availability.',
+      'Every call Tia takes is a consultation you don’t interrupt, and a patient who doesn’t have to call three times. The message reaches you sorted: new or existing patient, reason, availability.',
     faq: (monthly) => [
       {
-        q: 'Does the assistant give medical advice?',
-        a: 'No, never. It takes the message and passes it on. If it is urgent, it tells the caller to dial the emergency number. You decide what happens next.',
+        q: 'Does Tia give medical advice?',
+        a: 'No, never. She takes the message and passes it on. If it is urgent, she tells the caller to dial the emergency number. You decide what happens next.',
       },
       {
         q: 'What about my patients’ health data?',
-        a: 'It is sensitive data, governed by the GDPR. Before any setup, we decide together what the assistant records, what goes by text message, and where it is stored.',
+        a: 'It is sensitive data, governed by the GDPR. Before any setup, we decide together what Tia records, what goes by text message, and where it is stored.',
       },
       {
         q: 'What if I already have online booking?',
-        a: 'The assistant doesn’t replace it: it takes the calls nobody can answer. It can also give patients your online booking link.',
+        a: 'Tia doesn’t replace it: she takes the calls nobody can answer. She can also give patients your online booking link.',
       },
       {
         q: 'How much does it cost?',
@@ -180,7 +180,7 @@ export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Does it work with the practice’s number?',
-        a: 'Yes, you keep your number. We set up call forwarding to the assistant when nobody answers or the line is busy. Your patients dial the same number as before.',
+        a: 'Yes, you keep your number. We set up call forwarding to Tia when nobody answers or the line is busy. Your patients dial the same number as before.',
       },
       FAQ_TIA.en,
       FAQ_ARRET.en,

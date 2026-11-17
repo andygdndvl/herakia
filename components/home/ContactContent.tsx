@@ -9,6 +9,7 @@ import { isValidPhoneNumber } from 'react-phone-number-input';
 import { PhoneFormField } from './PhoneFormField';
 import { trackEvent } from '@/lib/gtag';
 import { METIERS } from '@/lib/metiers';
+import { isTiaOffer } from '@/lib/offreTia';
 
 interface FormState {
   name: string;
@@ -63,6 +64,9 @@ const TEXT = {
     genericError: 'Une erreur est survenue. Réessayez ou écrivez-nous par email.',
     successTitle: 'Message envoyé.',
     successBody: (name: string) => `Merci ${name}, nous revenons vers vous sous 24h ouvrées.`,
+    successBodyTia: (name: string) => `Merci ${name}, vous êtes sur la liste d’attente de Tia : on vous prévient dès l’ouverture.`,
+    messageTia: 'Votre activité (facultatif)',
+    placeholderTia: 'Ex : agence immobilière, 3 agents, à Nice',
     sendAnother: 'Envoyer un autre message',
     errors: {
       name: 'Veuillez indiquer votre nom.',
@@ -115,6 +119,9 @@ const TEXT = {
     genericError: 'Something went wrong. Try again or email us.',
     successTitle: 'Message sent.',
     successBody: (name: string) => `Thanks ${name}, we’ll get back to you within 24 business hours.`,
+    successBodyTia: (name: string) => `Thanks ${name}, you’re on Tia’s waiting list: we’ll let you know as soon as she opens.`,
+    messageTia: 'Your business (optional)',
+    placeholderTia: 'e.g. estate agency, 3 agents, in Nice',
     sendAnother: 'Send another message',
     errors: {
       name: 'Please enter your name.',
@@ -160,7 +167,8 @@ function validate(values: FormState, messages: ErrorMessages): FormErrors {
   }
   if (!values.company.trim()) errors.company = messages.company;
   if (!values.need) errors.need = messages.need;
-  if (values.message.trim().length < 20) {
+  // Liste d'attente Tia : le message est facultatif.
+  if (!isTiaOffer(values.need) && values.message.trim().length < 20) {
     errors.message = messages.message;
   }
   return errors;
@@ -593,12 +601,12 @@ export function ContactContent() {
 
                   <InputField
                     id="message"
-                    label={t.fields.message}
+                    label={isTiaOffer(values.need) ? t.messageTia : t.fields.message}
                     value={values.message}
                     error={errors.message}
                     touched={touched.message}
                     icon={<MessageSquare className="h-3.5 w-3.5" />}
-                    placeholder={t.placeholders.message}
+                    placeholder={isTiaOffer(values.need) ? t.placeholderTia : t.placeholders.message}
                     textarea
                     onChange={handleChange}
                     onBlur={() => handleBlur('message')}
@@ -697,7 +705,7 @@ export function ContactContent() {
                     {t.successTitle}
                   </h2>
                   <p className="mt-3 font-sans text-text-secondary">
-                    {t.successBody(values.name.split(' ')[0])}
+                    {(isTiaOffer(values.need) ? t.successBodyTia : t.successBody)(values.name.split(' ')[0])}
                   </p>
                   <button
                     type="button"

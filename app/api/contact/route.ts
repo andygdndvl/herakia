@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isTiaOffer } from '@/lib/offreTia';
 
 interface ContactPayload {
   name?: string;
@@ -45,7 +46,8 @@ export async function POST(request: Request) {
   const need = (body.need ?? '').trim();
   const message = (body.message ?? '').trim();
 
-  if (!name || !email || !phone || !need || !message) {
+  // Le message est facultatif pour la liste d'attente Tia (lib/offreTia.ts).
+  if (!name || !email || !phone || !need || (!message && !isTiaOffer(need))) {
     return NextResponse.json(
       { error: 'Nom, email, téléphone, service et message sont requis.' },
       { status: 400 },
@@ -127,7 +129,7 @@ async function sendEmail(c: {
     <p><strong>Entreprise :</strong> ${c.company ? escapeHtml(c.company) : '—'}</p>
     <p><strong>Offre souhaitée :</strong> ${escapeHtml(c.need)}</p>
     <p><strong>Message :</strong></p>
-    <p style="white-space:pre-wrap">${escapeHtml(c.message)}</p>
+    <p style="white-space:pre-wrap">${escapeHtml(c.message || '(pas de message)')}</p>
   `;
 
   try {

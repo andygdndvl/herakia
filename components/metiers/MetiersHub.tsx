@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
@@ -423,9 +424,13 @@ function Tabs({ t, tab, setTab }: { t: T; tab: MetierSlug; setTab: (s: MetierSlu
                     >
                       <Glow />
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="grid h-10 w-10 place-items-center rounded-full bg-green-subtle text-green-primary">
-                          <Icon className="h-5 w-5" aria-hidden="true" />
-                        </span>
+                        {ready ? (
+                          <TiaAvatar className="h-10 w-10" />
+                        ) : (
+                          <span className="grid h-10 w-10 place-items-center rounded-full bg-green-subtle text-green-primary">
+                            <Icon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        )}
                         <span
                           className={`rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${
                             ready ? 'bg-green-primary text-on-green' : 'border border-border-strong text-text-muted'
@@ -490,7 +495,11 @@ function Savoirs({ t }: { t: T }) {
                   className="group relative isolate flex h-full flex-col overflow-hidden p-7 transition-colors hover:bg-bg-secondary/60"
                 >
                   <Glow />
-                  <Icon className="h-6 w-6 text-green-primary transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:scale-110" aria-hidden="true" />
+                  {s.id === 'telephone' ? (
+                    <TiaAvatar className="h-12 w-12" />
+                  ) : (
+                    <Icon className="h-6 w-6 text-green-primary transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:scale-110" aria-hidden="true" />
+                  )}
                   <h3 className="mt-5 font-display text-lg font-semibold leading-snug text-text-primary">{s.title}</h3>
                   <p className="mt-2 font-sans text-sm leading-relaxed text-text-secondary">{s.text}</p>
                   <ArrowRight
@@ -544,5 +553,20 @@ function Final({ t, lang }: { t: T; lang: 'fr' | 'en' }) {
         </div>
       </div>
     </section>
+  );
+}
+
+/** Portrait rond de Tia, à la place de l'icône sur les cartes qui la présentent. */
+function TiaAvatar({ className }: { className: string }) {
+  return (
+    <span className={`relative block shrink-0 ${className}`}>
+      <Image
+        src="/tia-avatar.png"
+        alt="Tia"
+        fill
+        sizes="48px"
+        className="rounded-full object-cover object-top ring-2 ring-green-primary/60"
+      />
+    </span>
   );
 }

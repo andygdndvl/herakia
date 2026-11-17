@@ -25,8 +25,8 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
         text: 'Vous êtes en rendez-vous, en clôture ou déjà en ligne : personne ne peut décrocher.',
       },
       {
-        title: 'L’assistant décroche',
-        text: 'Il se présente comme l’assistant automatisé du cabinet, demande s’il s’agit d’un client ou d’un nouveau contact, et note le dossier, l’objet de l’appel et l’échéance éventuelle.',
+        title: 'Tia décroche',
+        text: 'Elle se présente comme l’assistante automatisée du cabinet, demande s’il s’agit d’un client ou d’un nouveau contact, et note le dossier, l’objet de l’appel et l’échéance éventuelle.',
       },
       {
         title: 'Vous recevez le résumé',
@@ -38,9 +38,9 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Appel entrant',
       caller: '06 •• •• •• 62',
       ringingHint: 'Vous ne pouvez pas décrocher.',
-      assistant: 'Assistant du cabinet',
+      assistant: 'Tia, assistante du cabinet',
       dialogue: [
-        { who: 'tia', text: 'Cabinet Exemple, bonjour. Je suis l’assistant automatisé, je prends votre message.' },
+        { who: 'tia', text: 'Cabinet Exemple, bonjour. Je suis Tia, l’assistante automatisée, je prends votre message.' },
         { who: 'client', text: 'Bonjour, je crée mon entreprise et je cherche un expert-comptable.' },
         { who: 'tia', text: 'Très bien. Quelle activité, et sous quelle forme pensez-vous la créer ?' },
         { who: 'client', text: 'Un restaurant, en SAS. Rappelez-moi demain matin.' },
@@ -59,7 +59,7 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos missions, vos clients et vos horaires.',
     andyNote:
-      'Je règle l’assistant avec vous : comment il présente le cabinet, les questions à poser à un client ou à un nouveau contact, et à qui envoyer le résumé. Ensuite, c’est moi que vous appelez.',
+      'Je règle Tia avec vous : comment elle présente le cabinet, les questions à poser à un client ou à un nouveau contact, et à qui envoyer le résumé. Ensuite, c’est moi que vous appelez.',
     roiTitle: 'Une lettre de mission signée paie Tia pour l’année',
     roiText: (monthly) =>
       `Un chef d’entreprise qui cherche un expert-comptable contacte souvent plusieurs cabinets. S’il tombe sur la messagerie, il appelle le suivant. Il suffit qu’un seul de ces appels devienne une lettre de mission pour payer plus d’un an de Tia à ${monthly} par mois.`,
@@ -70,11 +70,11 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Est-ce que ça s’installe sur le numéro du cabinet ?',
-        a: 'Oui, vous gardez vos numéros. On met en place un renvoi d’appel vers l’assistant quand personne ne répond ou que la ligne est occupée. Vos clients composent le même numéro qu’avant.',
+        a: 'Oui, vous gardez vos numéros. On met en place un renvoi d’appel vers Tia quand personne ne répond ou que la ligne est occupée. Vos clients composent le même numéro qu’avant.',
       },
       {
-        q: 'Est-ce qu’il répond aux questions comptables ou fiscales ?',
-        a: 'Non. L’assistant prend le message et le trie, il ne donne aucun conseil : c’est vous ou vos collaborateurs qui répondez au client.',
+        q: 'Est-ce que Tia répond aux questions comptables ou fiscales ?',
+        a: 'Non. Tia prend le message et le trie, elle ne donne aucun conseil : c’est vous ou vos collaborateurs qui répondez au client.',
       },
       {
         q: 'Qui reçoit les résumés ?',
@@ -82,7 +82,7 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Vos clients sauront-ils que c’est une IA ?',
-        a: 'Oui. L’assistant se présente dès le début comme un assistant automatisé qui prend le message pour le cabinet. Vos clients savent à qui ils parlent, et c’est vous qui les rappelez.',
+        a: 'Oui. Tia se présente dès le début comme une assistante automatisée qui prend le message pour le cabinet. Vos clients savent à qui ils parlent, et c’est vous qui les rappelez.',
       },
       FAQ_TIA.fr,
       FAQ_ARRET.fr,
@@ -112,8 +112,8 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
         text: 'You are in a meeting, closing accounts or already on the phone: nobody can pick up.',
       },
       {
-        title: 'The assistant picks up',
-        text: 'It introduces itself as the firm’s automated assistant, asks whether the caller is a client or a new enquiry, and notes the file, the reason for the call and any deadline.',
+        title: 'Tia picks up',
+        text: 'She introduces herself as the firm’s automated assistant, asks whether the caller is a client or a new enquiry, and notes the file, the reason for the call and any deadline.',
       },
       {
         title: 'You get the summary',
@@ -125,9 +125,9 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Incoming call',
       caller: '06 •• •• •• 62',
       ringingHint: 'You can’t pick up.',
-      assistant: 'Firm assistant',
+      assistant: 'Tia, firm assistant',
       dialogue: [
-        { who: 'tia', text: 'Example & Partners, hello. I’m the automated assistant, I’ll take your message.' },
+        { who: 'tia', text: 'Example & Partners, hello. I’m Tia, the automated assistant, I’ll take your message.' },
         { who: 'client', text: 'Hello, I’m starting a business and I’m looking for an accountant.' },
         { who: 'tia', text: 'Of course. What kind of business, and what legal structure are you planning?' },
         { who: 'client', text: 'A restaurant, as a company. Call me back tomorrow morning.' },
@@ -146,7 +146,7 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your services, your clients and your hours.',
     andyNote:
-      'I set up the assistant with you: how it introduces the firm, what to ask a client or a new enquiry, and who gets the summary. After that, I’m the one you call.',
+      'I set up Tia with you: how she introduces the firm, what to ask a client or a new enquiry, and who gets the summary. After that, I’m the one you call.',
     roiTitle: 'One signed engagement letter pays for a year of Tia',
     roiText: (monthly) =>
       `A business owner looking for an accountant often contacts several firms. If they reach voicemail, they call the next one. It only takes one of those calls turning into an engagement to pay for more than a year of Tia at ${monthly} a month.`,
@@ -157,11 +157,11 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Does it work with the firm’s number?',
-        a: 'Yes, you keep your numbers. We set up call forwarding to the assistant when nobody answers or the line is busy. Your clients dial the same number as before.',
+        a: 'Yes, you keep your numbers. We set up call forwarding to Tia when nobody answers or the line is busy. Your clients dial the same number as before.',
       },
       {
         q: 'Does it answer accounting or tax questions?',
-        a: 'No. The assistant takes and sorts the message; it gives no advice. You or your team answer the client.',
+        a: 'No. Tia takes and sorts the message; she gives no advice. You or your team answer the client.',
       },
       {
         q: 'Who gets the summaries?',
@@ -169,7 +169,7 @@ export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Will your clients know it’s an AI?',
-        a: 'Yes. The assistant introduces itself from the start as an automated assistant taking a message for the firm. Your clients know who they are talking to, and you are the one who calls them back.',
+        a: 'Yes. Tia introduces herself from the start as an automated assistant taking a message for the firm. Your clients know who they are talking to, and you are the one who calls them back.',
       },
       FAQ_TIA.en,
       FAQ_ARRET.en,

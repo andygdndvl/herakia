@@ -20,7 +20,7 @@ export interface SavoirFaireMetier {
 
 /**
  * Ce qu'Herakia construit pour chaque métier (page /metiers). Le premier cas est toujours
- * l'assistant téléphonique, prêt à installer ; les autres sont du sur-mesure, décrits comme ce
+ * Tia (liste d'attente) ; les autres sont du sur-mesure, décrits comme ce
  * qu'on construit, sans résultat chiffré inventé.
  */
 export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: SavoirFaireMetier }> = {
@@ -32,7 +32,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Appels décrochés sur le chantier',
-          text: 'L’assistant prend le nom, l’adresse, le type de travaux et l’urgence, et vous envoie le résumé par SMS.',
+          text: 'Tia prend le nom, l’adresse, le type de travaux et l’urgence, et vous envoie le résumé par SMS.',
         },
         {
           savoir: 'workflows',
@@ -58,7 +58,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Calls answered on site',
-          text: 'The assistant takes the name, address, type of work and urgency, and texts you the summary.',
+          text: 'Tia takes the name, address, type of work and urgency, and texts you the summary.',
         },
         {
           savoir: 'workflows',
@@ -86,7 +86,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Appels décrochés pendant les visites',
-          text: 'Vendeur ou acquéreur, l’assistant note le projet, le bien, le secteur et le moment où rappeler.',
+          text: 'Vendeur ou acquéreur, Tia note le projet, le bien, le secteur et le moment où rappeler.',
         },
         {
           savoir: 'agents',
@@ -112,7 +112,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Calls answered during viewings',
-          text: 'Seller or buyer, the assistant notes the project, the property, the area and when to call back.',
+          text: 'Seller or buyer, Tia notes the project, the property, the area and when to call back.',
         },
         {
           savoir: 'agents',
@@ -140,7 +140,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Appels triés pendant vos rendez-vous',
-          text: 'Client du cabinet ou nouveau contact, l’assistant note le dossier, l’objet et l’échéance éventuelle.',
+          text: 'Client du cabinet ou nouveau contact, Tia note le dossier, l’objet et l’échéance éventuelle.',
         },
         {
           savoir: 'workflows',
@@ -166,7 +166,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Calls sorted during your meetings',
-          text: 'Existing client or new enquiry, the assistant notes the file, the reason and any deadline.',
+          text: 'Existing client or new enquiry, Tia notes the file, the reason and any deadline.',
         },
         {
           savoir: 'workflows',
@@ -194,7 +194,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Messages pris pendant les consultations',
-          text: 'L’assistant note le motif et les disponibilités, oriente les urgences vers le 15 et ne donne jamais d’avis médical.',
+          text: 'Tia note le motif et les disponibilités, oriente les urgences vers le 15 et ne donne jamais d’avis médical.',
         },
         {
           savoir: 'agents',
@@ -220,7 +220,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Messages taken during consultations',
-          text: 'The assistant notes the reason and availability, directs emergencies to the emergency number and never gives medical advice.',
+          text: 'Tia notes the reason and availability, directs emergencies to the emergency number and never gives medical advice.',
         },
         {
           savoir: 'agents',
@@ -248,7 +248,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Appels des candidats pris pendant les cours',
-          text: 'Candidat ou parent, l’assistant note la formation visée, le niveau et la rentrée souhaitée.',
+          text: 'Candidat ou parent, Tia note la formation visée, le niveau et la rentrée souhaitée.',
         },
         {
           savoir: 'agents',
@@ -276,7 +276,7 @@ export const SAVOIR_FAIRE: Record<MetierSlug, { fr: SavoirFaireMetier; en: Savoi
         {
           savoir: 'telephone',
           title: 'Applicant calls taken during class',
-          text: 'Applicant or parent, the assistant notes the programme, the level and the preferred start date.',
+          text: 'Applicant or parent, Tia notes the programme, the level and the preferred start date.',
         },
         {
           savoir: 'agents',

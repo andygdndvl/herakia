@@ -26,8 +26,8 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
         text: 'L’équipe est en cours, en entretien d’admission ou déjà en ligne : personne ne peut décrocher.',
       },
       {
-        title: 'L’assistant décroche',
-        text: 'Il se présente comme l’assistant automatisé de l’école, demande s’il parle au candidat ou à un parent, et note la formation visée, le niveau actuel et la rentrée souhaitée.',
+        title: 'Tia décroche',
+        text: 'Elle se présente comme l’assistante automatisée de l’école, demande si elle parle au candidat ou à un parent, et note la formation visée, le niveau actuel et la rentrée souhaitée.',
       },
       {
         title: 'Vous recevez le résumé',
@@ -39,9 +39,9 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Appel entrant',
       caller: '06 •• •• •• 35',
       ringingHint: 'Personne ne peut décrocher.',
-      assistant: 'Assistant de l’école',
+      assistant: 'Tia, assistante de l’école',
       dialogue: [
-        { who: 'tia', text: 'École Exemple, bonjour. Je suis l’assistant automatisé, je prends votre message.' },
+        { who: 'tia', text: 'École Exemple, bonjour. Je suis Tia, l’assistante automatisée, je prends votre message.' },
         { who: 'client', text: 'Bonjour, j’appelle pour ma fille, elle voudrait s’inscrire en BTS.' },
         { who: 'tia', text: 'Très bien. Pour quelle rentrée, et quel est son niveau actuel ?' },
         { who: 'client', text: 'Septembre, elle est en terminale. Rappelez-moi après 17 h.' },
@@ -60,7 +60,7 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos formations, vos campus et vos horaires.',
     andyNote:
-      'Je règle l’assistant avec vous : comment il présente l’école, les questions à poser à un candidat ou à un parent, et à quel chargé d’admission envoyer le résumé. Ensuite, c’est moi que vous appelez.',
+      'Je règle Tia avec vous : comment elle présente l’école, les questions à poser à un candidat ou à un parent, et à quel chargé d’admission envoyer le résumé. Ensuite, c’est moi que vous appelez.',
     roiTitle: 'Une inscription récupérée paie Tia pour l’année',
     roiText: (monthly) =>
       `En période d’inscriptions, un candidat contacte plusieurs écoles. S’il tombe sur la messagerie, il appelle la suivante. Il suffit qu’un seul de ces appels devienne une inscription pour payer plus d’un an de Tia à ${monthly} par mois.`,
@@ -71,7 +71,7 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Est-ce que ça s’installe sur le numéro de l’école ?',
-        a: 'Oui, vous gardez vos numéros. On met en place un renvoi d’appel vers l’assistant quand personne ne répond ou que la ligne est occupée. Candidats et parents composent le même numéro qu’avant.',
+        a: 'Oui, vous gardez vos numéros. On met en place un renvoi d’appel vers Tia quand personne ne répond ou que la ligne est occupée. Candidats et parents composent le même numéro qu’avant.',
       },
       {
         q: 'Nous avons plusieurs campus ou formations : qui reçoit les résumés ?',
@@ -79,7 +79,7 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Les candidats sauront-ils que c’est une IA ?',
-        a: 'Oui. L’assistant se présente dès le début comme un assistant automatisé qui prend le message pour l’école. Candidats et parents savent à qui ils parlent, et c’est votre équipe qui les rappelle.',
+        a: 'Oui. Tia se présente dès le début comme une assistante automatisée qui prend le message pour l’école. Candidats et parents savent à qui ils parlent, et c’est votre équipe qui les rappelle.',
       },
       FAQ_TIA.fr,
       FAQ_ARRET.fr,
@@ -109,8 +109,8 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
         text: 'The team is teaching, in an admissions interview or already on the phone: nobody can pick up.',
       },
       {
-        title: 'The assistant picks up',
-        text: 'It introduces itself as the school’s automated assistant, asks whether it is speaking to the applicant or a parent, and notes the programme, current level and preferred start date.',
+        title: 'Tia picks up',
+        text: 'She introduces herself as the school’s automated assistant, asks whether she is speaking to the applicant or a parent, and notes the programme, current level and preferred start date.',
       },
       {
         title: 'You get the summary',
@@ -122,9 +122,9 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Incoming call',
       caller: '06 •• •• •• 35',
       ringingHint: 'Nobody can pick up.',
-      assistant: 'School assistant',
+      assistant: 'Tia, school assistant',
       dialogue: [
-        { who: 'tia', text: 'Example School, hello. I’m the automated assistant, I’ll take your message.' },
+        { who: 'tia', text: 'Example School, hello. I’m Tia, the automated assistant, I’ll take your message.' },
         { who: 'client', text: 'Hello, I’m calling for my daughter, she’d like to enrol in a two-year diploma.' },
         { who: 'tia', text: 'Of course. For which intake, and what is her current level?' },
         { who: 'client', text: 'September, she’s in her final year of school. Call me after 5 pm.' },
@@ -143,7 +143,7 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your programmes, your campuses and your hours.',
     andyNote:
-      'I set up the assistant with you: how it introduces the school, what to ask an applicant or a parent, and which admissions officer gets the summary. After that, I’m the one you call.',
+      'I set up Tia with you: how she introduces the school, what to ask an applicant or a parent, and which admissions officer gets the summary. After that, I’m the one you call.',
     roiTitle: 'One recovered enrolment pays for a year of Tia',
     roiText: (monthly) =>
       `During admissions season, an applicant contacts several schools. If they reach voicemail, they call the next one. It only takes one of those calls turning into an enrolment to pay for more than a year of Tia at ${monthly} a month.`,
@@ -154,7 +154,7 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Does it work with the school’s number?',
-        a: 'Yes, you keep your numbers. We set up call forwarding to the assistant when nobody answers or the line is busy. Applicants and parents dial the same number as before.',
+        a: 'Yes, you keep your numbers. We set up call forwarding to Tia when nobody answers or the line is busy. Applicants and parents dial the same number as before.',
       },
       {
         q: 'We have several campuses or programmes: who gets the summaries?',
@@ -162,7 +162,7 @@ export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Will applicants know it’s an AI?',
-        a: 'Yes. The assistant introduces itself from the start as an automated assistant taking a message for the school. Applicants and parents know who they are talking to, and your team calls them back.',
+        a: 'Yes. Tia introduces herself from the start as an automated assistant taking a message for the school. Applicants and parents know who they are talking to, and your team calls them back.',
       },
       FAQ_TIA.en,
       FAQ_ARRET.en,

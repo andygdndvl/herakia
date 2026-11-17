@@ -25,8 +25,8 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
         text: 'Vous êtes en visite, en rendez-vous d’estimation ou déjà en ligne : personne ne peut décrocher.',
       },
       {
-        title: 'L’assistant décroche',
-        text: 'Il se présente comme l’assistant automatisé de l’agence, demande s’il s’agit d’une vente, d’un achat ou d’une location, et note le bien, le secteur et le moment où rappeler.',
+        title: 'Tia décroche',
+        text: 'Elle se présente comme l’assistante automatisée de l’agence, demande s’il s’agit d’une vente, d’un achat ou d’une location, et note le bien, le secteur et le moment où rappeler.',
       },
       {
         title: 'Vous recevez le résumé',
@@ -38,9 +38,9 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Appel entrant',
       caller: '06 •• •• •• 47',
       ringingHint: 'Vous ne pouvez pas décrocher.',
-      assistant: 'Assistant de l’agence',
+      assistant: 'Tia, assistante de l’agence',
       dialogue: [
-        { who: 'tia', text: 'Agence Exemple, bonjour. Je suis l’assistant automatisé, je prends votre message.' },
+        { who: 'tia', text: 'Agence Exemple, bonjour. Je suis Tia, l’assistante automatisée, je prends votre message.' },
         { who: 'client', text: 'Bonjour, je voudrais faire estimer mon appartement.' },
         { who: 'tia', text: 'Très bien. Quel type de bien, et dans quel quartier ?' },
         { who: 'client', text: 'Un T3, à Libération. Rappelez-moi avant 18 h.' },
@@ -59,7 +59,7 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos biens, vos secteurs et vos horaires.',
     andyNote:
-      'Je règle l’assistant avec vous : comment il présente l’agence, les questions à poser à un vendeur ou à un acquéreur, et à qui envoyer le résumé. Ensuite, c’est moi que vous appelez.',
+      'Je règle Tia avec vous : comment elle présente l’agence, les questions à poser à un vendeur ou à un acquéreur, et à qui envoyer le résumé. Ensuite, c’est moi que vous appelez.',
     roiTitle: 'Un mandat récupéré paie Tia pour l’année',
     roiText: (monthly) =>
       `Un propriétaire qui veut faire estimer son bien appelle souvent plusieurs agences. S’il tombe sur la messagerie, il appelle la suivante. Il suffit qu’un seul de ces appels devienne un mandat pour payer plus d’un an de Tia à ${monthly} par mois.`,
@@ -70,7 +70,7 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Est-ce que ça s’installe sur le numéro de l’agence ?',
-        a: 'Oui, vous gardez vos numéros : celui de l’agence comme les portables des agents. On met en place un renvoi d’appel vers l’assistant quand personne ne répond ou que la ligne est occupée. Vos clients composent le même numéro qu’avant.',
+        a: 'Oui, vous gardez vos numéros : celui de l’agence comme les portables des agents. On met en place un renvoi d’appel vers Tia quand personne ne répond ou que la ligne est occupée. Vos clients composent le même numéro qu’avant.',
       },
       {
         q: 'Nous sommes plusieurs agents : qui reçoit les résumés ?',
@@ -78,7 +78,7 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Vos clients sauront-ils que c’est une IA ?',
-        a: 'Oui. L’assistant se présente dès le début comme un assistant automatisé qui prend le message pour l’agence. Vos clients savent à qui ils parlent, et c’est vous qui les rappelez.',
+        a: 'Oui. Tia se présente dès le début comme une assistante automatisée qui prend le message pour l’agence. Vos clients savent à qui ils parlent, et c’est vous qui les rappelez.',
       },
       FAQ_TIA.fr,
       FAQ_ARRET.fr,
@@ -108,8 +108,8 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
         text: 'You are at a viewing, at a valuation appointment or already on the phone: nobody can pick up.',
       },
       {
-        title: 'The assistant picks up',
-        text: 'It introduces itself as the agency’s automated assistant, asks whether it is a sale, a purchase or a rental, and takes down the property, the area and when to call back.',
+        title: 'Tia picks up',
+        text: 'She introduces herself as the agency’s automated assistant, asks whether it is a sale, a purchase or a rental, and takes down the property, the area and when to call back.',
       },
       {
         title: 'You get the summary',
@@ -121,9 +121,9 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Incoming call',
       caller: '06 •• •• •• 47',
       ringingHint: 'You can’t pick up.',
-      assistant: 'Agency assistant',
+      assistant: 'Tia, agency assistant',
       dialogue: [
-        { who: 'tia', text: 'Example Estates, hello. I’m the automated assistant, I’ll take your message.' },
+        { who: 'tia', text: 'Example Estates, hello. I’m Tia, the automated assistant, I’ll take your message.' },
         { who: 'client', text: 'Hello, I’d like a valuation for my flat.' },
         { who: 'tia', text: 'Of course. What type of property, and in which area?' },
         { who: 'client', text: 'A 2-bed, in Libération. Call me back before 6 pm.' },
@@ -142,7 +142,7 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your properties, your areas and your hours.',
     andyNote:
-      'I set up the assistant with you: how it introduces the agency, what to ask a seller or a buyer, and who gets the summary. After that, I’m the one you call.',
+      'I set up Tia with you: how she introduces the agency, what to ask a seller or a buyer, and who gets the summary. After that, I’m the one you call.',
     roiTitle: 'One recovered listing pays for a year of Tia',
     roiText: (monthly) =>
       `An owner who wants a valuation often calls several agencies. If they reach voicemail, they call the next one. It only takes one of those calls turning into a listing to pay for more than a year of Tia at ${monthly} a month.`,
@@ -153,7 +153,7 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Does it work with the agency’s number?',
-        a: 'Yes, you keep your numbers: the agency line as well as the agents’ mobiles. We set up call forwarding to the assistant when nobody answers or the line is busy. Your clients dial the same number as before.',
+        a: 'Yes, you keep your numbers: the agency line as well as the agents’ mobiles. We set up call forwarding to Tia when nobody answers or the line is busy. Your clients dial the same number as before.',
       },
       {
         q: 'We have several agents: who gets the summaries?',
@@ -161,7 +161,7 @@ export const IMMOBILIER: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Will your clients know it’s an AI?',
-        a: 'Yes. The assistant introduces itself from the start as an automated assistant taking a message for the agency. Your clients know who they are talking to, and you are the one who calls them back.',
+        a: 'Yes. Tia introduces herself from the start as an automated assistant taking a message for the agency. Your clients know who they are talking to, and you are the one who calls them back.',
       },
       FAQ_TIA.en,
       FAQ_ARRET.en,

@@ -22,8 +22,8 @@ export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
     steps: [
       { title: 'Un client appelle', text: 'Vous êtes sur un chantier, sur l’échelle ou en rendez-vous : vous ne pouvez pas répondre.' },
       {
-        title: 'L’assistant décroche',
-        text: 'Il se présente comme votre assistant automatisé et note le nom, l’adresse du chantier, le type de travaux et l’urgence.',
+        title: 'Tia décroche',
+        text: 'Elle se présente comme votre assistante automatisée et note le nom, l’adresse du chantier, le type de travaux et l’urgence.',
       },
       { title: 'Vous recevez le résumé', text: 'Par SMS ou WhatsApp, en quelques secondes. Vous rappelez quand vous voulez, avec toutes les infos.' },
     ],
@@ -32,9 +32,9 @@ export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Appel entrant',
       caller: '06 •• •• •• 18',
       ringingHint: 'Vous avez les mains prises.',
-      assistant: 'Assistant de l’entreprise',
+      assistant: 'Tia, assistante de l’entreprise',
       dialogue: [
-        { who: 'tia', text: 'Entreprise Exemple, bonjour. Je suis l’assistant automatisé, je prends votre message.' },
+        { who: 'tia', text: 'Entreprise Exemple, bonjour. Je suis Tia, l’assistante automatisée, je prends votre message.' },
         { who: 'client', text: 'Bonjour, j’ai une fuite sous l’évier de la cuisine.' },
         { who: 'tia', text: 'D’accord. À quelle adresse, et est-ce que l’eau coule encore ?' },
         { who: 'client', text: '12 rue des Lilas, à Nice. Oui, ça coule encore.' },
@@ -53,7 +53,7 @@ export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos travaux, votre secteur et vos horaires.',
     andyNote:
-      'Je règle l’assistant avec vous : comment il présente votre entreprise, les questions à poser selon les travaux, et où envoyer le résumé. Ensuite, c’est moi que vous appelez.',
+      'Je règle Tia avec vous : comment elle présente votre entreprise, les questions à poser selon les travaux, et où envoyer le résumé. Ensuite, c’est moi que vous appelez.',
     roiTitle: 'Un chantier récupéré paie Tia pour l’année',
     roiText: (monthly) =>
       `Un appel sans réponse, c’est souvent un client qui appelle le suivant sur sa liste. Il suffit qu’un seul de ces appels devienne un chantier pour payer plus d’un an de Tia à ${monthly} par mois.`,
@@ -64,11 +64,11 @@ export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Est-ce que ça s’installe sur mon numéro actuel ?',
-        a: 'Oui, vous gardez votre numéro. On met en place un renvoi d’appel vers l’assistant quand vous ne répondez pas ou que vous êtes déjà en ligne. Vos clients composent le même numéro qu’avant.',
+        a: 'Oui, vous gardez votre numéro. On met en place un renvoi d’appel vers Tia quand vous ne répondez pas ou que vous êtes déjà en ligne. Vos clients composent le même numéro qu’avant.',
       },
       {
         q: 'Mes clients sauront-ils que c’est une IA ?',
-        a: 'Oui. L’assistant se présente dès le début comme un assistant automatisé qui prend le message pour vous. Vos clients savent à qui ils parlent, et c’est vous qui les rappelez.',
+        a: 'Oui. Tia se présente dès le début comme une assistante automatisée qui prend le message pour vous. Vos clients savent à qui ils parlent, et c’est vous qui les rappelez.',
       },
       FAQ_TIA.fr,
       FAQ_ARRET.fr,
@@ -95,8 +95,8 @@ export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
     steps: [
       { title: 'A customer calls', text: 'You are on a job site, up a ladder or with a client: you can’t answer.' },
       {
-        title: 'The assistant picks up',
-        text: 'It introduces itself as your automated assistant and takes the name, the job site address, the type of work and the urgency.',
+        title: 'Tia picks up',
+        text: 'She introduces herself as your automated assistant and takes the name, the job site address, the type of work and the urgency.',
       },
       { title: 'You get the summary', text: 'By text message or WhatsApp, within seconds. You call back when it suits you, with all the details.' },
     ],
@@ -105,9 +105,9 @@ export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
       ringing: 'Incoming call',
       caller: '06 •• •• •• 18',
       ringingHint: 'Your hands are full.',
-      assistant: 'Company assistant',
+      assistant: 'Tia, company assistant',
       dialogue: [
-        { who: 'tia', text: 'Example Ltd, hello. I’m the automated assistant, I’ll take your message.' },
+        { who: 'tia', text: 'Example Ltd, hello. I’m Tia, the automated assistant, I’ll take your message.' },
         { who: 'client', text: 'Hello, I have a leak under the kitchen sink.' },
         { who: 'tia', text: 'Alright. What’s the address, and is the water still running?' },
         { who: 'client', text: '12 rue des Lilas, in Nice. Yes, it’s still running.' },
@@ -126,7 +126,7 @@ export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
     tiaText:
       'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your trade, your area and your hours.',
     andyNote:
-      'I set up the assistant with you: how it introduces your business, what to ask depending on the job, and where to send the summary. After that, I’m the one you call.',
+      'I set up Tia with you: how she introduces your business, what to ask depending on the job, and where to send the summary. After that, I’m the one you call.',
     roiTitle: 'One recovered job pays for a year of Tia',
     roiText: (monthly) =>
       `An unanswered call is often a customer who moves on to the next name on their list. It only takes one of those calls turning into a job to pay for more than a year of Tia at ${monthly} a month.`,
@@ -137,11 +137,11 @@ export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
       },
       {
         q: 'Does it work with my current number?',
-        a: 'Yes, you keep your number. We set up call forwarding to the assistant when you don’t answer or are already on a call. Your customers dial the same number as before.',
+        a: 'Yes, you keep your number. We set up call forwarding to Tia when you don’t answer or are already on a call. Your customers dial the same number as before.',
       },
       {
         q: 'Will my customers know it’s an AI?',
-        a: 'Yes. The assistant introduces itself from the start as an automated assistant taking a message for you. Your customers know who they are talking to, and you are the one who calls them back.',
+        a: 'Yes. Tia introduces herself from the start as an automated assistant taking a message for you. Your customers know who they are talking to, and you are the one who calls them back.',
       },
       FAQ_TIA.en,
       FAQ_ARRET.en,

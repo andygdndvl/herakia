@@ -31,3 +31,8 @@ export function demoHref(lang: string): string {
 export function euros(value: number, lang: string): string {
   return `${value.toLocaleString(lang === 'en' ? 'en-GB' : 'fr-FR')}\u00a0€`; // insécable : « 79 » et « € » restent sur la même ligne
 }
+
+/** Vrai pour une demande de liste d'attente Tia (`tia` ou `tia-<métier>`) : le message y est facultatif. */
+export function isTiaOffer(need: string): boolean {
+  return need === 'tia' || need.startsWith('tia-');
+}
