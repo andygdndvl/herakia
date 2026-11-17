@@ -17,17 +17,17 @@ import { LockScreen } from '@/components/metiers/LockScreen';
 import { useLang, localize } from '@/components/i18n/LangProvider';
 import { prefersReducedMotion, useReveal, useScrambleRotate, useTextReveal } from '@/lib/anim';
 import { trackEvent } from '@/lib/gtag';
-import { DEMO_PHONE, PRICE_MONTHLY, PRICE_SETUP, euros, isDemoPhonePlaceholder } from '@/lib/offreArtisans';
+import { DEMO_PHONE, PRICE_MONTHLY, euros, isDemoPhonePlaceholder } from '@/lib/offreTia';
 
-/** Textes d'une page « Zéro appel manqué » (une version par métier, en FR et en EN). */
-export interface ZeroAppelText {
+/** Textes d'une page métier de Tia (une version par métier, en FR et en EN). */
+export interface TiaLandingText {
   eyebrow: string;
   titleLead: string;
   titleAccent: string;
   /** Ligne en petites capitales sous le titre, réécrite en boucle : les moments où l'on ne peut pas décrocher. */
   moments: readonly string[];
   subtitle: string;
-  price: (setup: string, monthly: string) => string;
+  price: (monthly: string) => string;
   priceNote: string;
   ctaDemo: string;
   ctaCallback: string;
@@ -48,10 +48,10 @@ export interface ZeroAppelText {
   tiaText: string;
   roiEyebrow: string;
   roiTitle: string;
-  roiText: (setup: string) => string;
+  roiText: (monthly: string) => string;
   faqEyebrow: string;
   faqTitle: string;
-  faq: (setup: string, monthly: string) => readonly { q: string; a: string }[];
+  faq: (monthly: string) => readonly { q: string; a: string }[];
   finalBadge: string;
   finalTitle: string;
   finalText: string;
@@ -62,24 +62,23 @@ export interface ZeroAppelText {
 const SCRIPT_MS = [0, 900, 1700, 2150, 2600, 3300, 4200];
 
 /**
- * Page de prospection « Zéro appel manqué », commune à tous les métiers (lib/metiers.ts). Elle
+ * Page de prospection de Tia, commune à tous les métiers (lib/metiers.ts). Elle
  * reprend la grammaire de l'accueil (bandeau de logos, conversation
  * des profils, Tia, avis Google, FAQ en accordéon, bloc final en palier 2) avec un hero à elle. Prix, délai et numéro
- * de démo viennent de lib/offreArtisans.ts ; textes, identifiant de page (analytics) et offre
+ * de démo viennent de lib/offreTia.ts ; textes, identifiant de page (analytics) et offre
  * présélectionnée viennent de chaque métier.
  */
-export function ZeroAppelLanding({
+export function TiaLanding({
   text,
   page,
   offerId,
 }: {
-  text: { fr: ZeroAppelText; en: ZeroAppelText };
+  text: { fr: TiaLandingText; en: TiaLandingText };
   page: string;
   offerId: string;
 }) {
   const lang = useLang();
   const t = text[lang];
-  const setup = euros(PRICE_SETUP, lang);
   const monthly = euros(PRICE_MONTHLY, lang);
   const callback = `${localize(lang, '/contact')}?offre=${offerId}`;
   const [tiaOpen, setTiaOpen] = useState(false);
@@ -97,14 +96,14 @@ export function ZeroAppelLanding({
     <>
       <Navbar />
       <main>
-        <Hero t={t} setup={setup} monthly={monthly} callback={callback} demoProps={demoProps} onContact={onContact} />
+        <Hero t={t} monthly={monthly} callback={callback} demoProps={demoProps} onContact={onContact} />
         <TrustedBy />
         <PersonaChat t={t} />
         <HowItWorks t={t} />
         <MeetTia title={t.tiaTitle} pitch={t.tiaText} standalone />
-        <Roi t={t} setup={setup} monthly={monthly} />
+        <Roi t={t} monthly={monthly} />
         <GoogleReviews />
-        <Faq t={t} setup={setup} monthly={monthly} />
+        <Faq t={t} monthly={monthly} />
         <Final t={t} callback={callback} demoProps={demoProps} onContact={onContact} />
       </main>
       <Footer />
@@ -126,14 +125,12 @@ type DemoProps = (location: string) => { href?: string; onClick: () => void };
  */
 function Hero({
   t,
-  setup,
   monthly,
   callback,
   demoProps,
   onContact,
 }: {
-  t: ZeroAppelText;
-  setup: string;
+  t: TiaLandingText;
   monthly: string;
   callback: string;
   demoProps: DemoProps;
@@ -189,7 +186,7 @@ function Hero({
             </p>
           )}
           <p data-reveal className="mt-8 border-l-2 border-green-primary pl-4 font-sans text-sm leading-relaxed text-text-secondary">
-            <span className="font-display text-base font-semibold text-text-primary">{t.price(setup, monthly)}</span>
+            <span className="font-display text-base font-semibold text-text-primary">{t.price(monthly)}</span>
             <br />
             {t.priceNote}
           </p>
@@ -239,7 +236,7 @@ function AndyAvatar() {
 }
 
 /** « Vous reconnaissez-vous ? » : la conversation des profils de l'accueil, jouée une fois quand elle arrive à l'écran. */
-function PersonaChat({ t }: { t: ZeroAppelText }) {
+function PersonaChat({ t }: { t: TiaLandingText }) {
   const headRef = useReveal<HTMLDivElement>();
   const roomRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(0);
@@ -351,7 +348,7 @@ function PersonaChat({ t }: { t: ZeroAppelText }) {
 }
 
 /** L'appel raconté sur un téléphone, sous un titre éditorial aligné à gauche comme « À propos ». */
-function HowItWorks({ t }: { t: ZeroAppelText }) {
+function HowItWorks({ t }: { t: TiaLandingText }) {
   const titleRef = useTextReveal<HTMLHeadingElement>({ by: 'words' });
   const bodyRef = useReveal<HTMLDivElement>({ y: 32, delay: 200 });
   return (
@@ -376,7 +373,7 @@ function HowItWorks({ t }: { t: ZeroAppelText }) {
 }
 
 /** Le calcul : un titre éditorial et le prix, sans chiffre de résultat inventé. */
-function Roi({ t, setup, monthly }: { t: ZeroAppelText; setup: string; monthly: string }) {
+function Roi({ t, monthly }: { t: TiaLandingText; monthly: string }) {
   const titleRef = useTextReveal<HTMLHeadingElement>({ by: 'words' });
   const bodyRef = useReveal<HTMLDivElement>({ stagger: 90, delay: 200 });
   return (
@@ -388,13 +385,13 @@ function Roi({ t, setup, monthly }: { t: ZeroAppelText; setup: string; monthly: 
         </h2>
         <div ref={bodyRef}>
           <p data-reveal className="mt-8 font-sans text-lg leading-relaxed text-text-secondary">
-            {t.roiText(setup)}
+            {t.roiText(monthly)}
           </p>
           <div
             data-reveal
             className="mt-10 flex flex-col gap-1 rounded-2xl border border-border-green bg-green-primary/[0.06] p-6 sm:flex-row sm:items-baseline sm:justify-between"
           >
-            <p className="font-display text-2xl font-bold text-green-primary md:text-3xl">{t.price(setup, monthly)}</p>
+            <p className="font-display text-2xl font-bold text-green-primary md:text-3xl">{t.price(monthly)}</p>
             <p className="font-mono text-xs uppercase tracking-wider text-text-muted">{t.priceNote}</p>
           </div>
         </div>
@@ -404,7 +401,7 @@ function Roi({ t, setup, monthly }: { t: ZeroAppelText; setup: string; monthly: 
 }
 
 /** FAQ dans l'accordéon de l'accueil. */
-function Faq({ t, setup, monthly }: { t: ZeroAppelText; setup: string; monthly: string }) {
+function Faq({ t, monthly }: { t: TiaLandingText; monthly: string }) {
   const headRef = useReveal<HTMLDivElement>();
   const [open, setOpen] = useState(0);
   return (
@@ -415,7 +412,7 @@ function Faq({ t, setup, monthly }: { t: ZeroAppelText; setup: string; monthly: 
           <h2 className="h-section mt-4">{t.faqTitle}</h2>
         </div>
         <div data-reveal className="mt-16">
-          {t.faq(setup, monthly).map((item, i) => (
+          {t.faq(monthly).map((item, i) => (
             <FAQAccordion
               key={item.q}
               item={{ question: item.q, answer: item.a }}
@@ -436,7 +433,7 @@ function Final({
   demoProps,
   onContact,
 }: {
-  t: ZeroAppelText;
+  t: TiaLandingText;
   callback: string;
   demoProps: DemoProps;
   onContact: (location: string) => () => void;

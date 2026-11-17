@@ -1,4 +1,4 @@
-import type { ZeroAppelText } from '@/components/metiers/ZeroAppelLanding';
+import type { TiaLandingText } from '@/components/metiers/TiaLanding';
 import type { MetierSlug } from '@/lib/metiers';
 import { ARTISANS } from '@/components/metiers/textes/artisans';
 import { IMMOBILIER } from '@/components/metiers/textes/immobilier';
@@ -7,7 +7,7 @@ import { SANTE } from '@/components/metiers/textes/sante';
 import { ENSEIGNEMENT } from '@/components/metiers/textes/enseignement';
 
 /** Les textes de chaque métier. Ils contiennent des fonctions (prix, FAQ) : à n'importer que côté client. */
-export const TEXTES: Record<MetierSlug, { fr: ZeroAppelText; en: ZeroAppelText }> = {
+export const TEXTES: Record<MetierSlug, { fr: TiaLandingText; en: TiaLandingText }> = {
   artisans: ARTISANS,
   immobilier: IMMOBILIER,
   comptables: COMPTABLES,

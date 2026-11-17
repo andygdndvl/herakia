@@ -1,12 +1,11 @@
-import type { ZeroAppelText } from '@/components/metiers/ZeroAppelLanding';
-import { COMMUN, FAQ_ARRET } from '@/components/metiers/textes/commun';
-import { SHOW_QUOTE_FOLLOWUP } from '@/lib/offreArtisans';
+import type { TiaLandingText } from '@/components/metiers/TiaLanding';
+import { COMMUN, FAQ_ARRET, FAQ_TIA } from '@/components/metiers/textes/commun';
 
-export const ARTISANS: { fr: ZeroAppelText; en: ZeroAppelText } = {
+export const ARTISANS: { fr: TiaLandingText; en: TiaLandingText } = {
   fr: {
     ...COMMUN.fr,
-    eyebrow: 'Pour les artisans du bâtiment',
-    titleLead: 'Zéro appel manqué ',
+    eyebrow: 'Tia · pour les artisans du bâtiment',
+    titleLead: 'Plus aucun appel perdu ',
     titleAccent: 'sur vos chantiers.',
     moments: ['SUR L’ÉCHELLE', 'SOUS UN ÉVIER', 'SUR LA ROUTE', 'EN RENDEZ-VOUS CLIENT'],
     persona: {
@@ -19,7 +18,7 @@ export const ARTISANS: { fr: ZeroAppelText; en: ZeroAppelText } = {
       ],
     },
     subtitle:
-      'Quand vous avez les mains prises, un assistant IA décroche à votre place, note la demande et vous l’envoie par SMS ou WhatsApp.',
+      'Quand vous avez les mains prises, Tia, votre assistante IA, décroche à votre place, note la demande et vous l’envoie par SMS ou WhatsApp.',
     steps: [
       { title: 'Un client appelle', text: 'Vous êtes sur un chantier, sur l’échelle ou en rendez-vous : vous ne pouvez pas répondre.' },
       {
@@ -52,16 +51,16 @@ export const ARTISANS: { fr: ZeroAppelText; en: ZeroAppelText } = {
     },
     smsNote: 'Maquette d’illustration : le nom, l’adresse et le numéro sont fictifs.',
     tiaText:
-      'Tia est l’assistante vocale d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Celui de votre entreprise suivra le même principe, réglé sur vos travaux, votre secteur et vos horaires.',
+      'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos travaux, votre secteur et vos horaires.',
     andyNote:
       'Je règle l’assistant avec vous : comment il présente votre entreprise, les questions à poser selon les travaux, et où envoyer le résumé. Ensuite, c’est moi que vous appelez.',
-    roiTitle: 'Un chantier récupéré rembourse l’installation',
-    roiText: (setup) =>
-      `Un appel sans réponse, c’est souvent un client qui appelle le suivant sur sa liste. Il suffit qu’un seul de ces appels devienne un chantier pour couvrir les ${setup} d’installation.`,
-    faq: (setup, monthly) => [
+    roiTitle: 'Un chantier récupéré paie Tia pour l’année',
+    roiText: (monthly) =>
+      `Un appel sans réponse, c’est souvent un client qui appelle le suivant sur sa liste. Il suffit qu’un seul de ces appels devienne un chantier pour payer plus d’un an de Tia à ${monthly} par mois.`,
+    faq: (monthly) => [
       {
         q: 'Combien ça coûte ?',
-        a: `Dès ${setup} d’installation, puis ${monthly} par mois, sans engagement. Le prix exact dépend de vos besoins${SHOW_QUOTE_FOLLOWUP ? ' (par exemple la relance automatique des devis)' : ''} et vous est donné avant de démarrer.`,
+        a: `Dès ${monthly} HT par mois, sans frais d’installation ni engagement. Tia ouvre bientôt : inscrivez-vous sur la liste d’attente pour être prévenu en premier. Le prix exact dépend de vos besoins et vous est donné avant de démarrer.`,
       },
       {
         q: 'Est-ce que ça s’installe sur mon numéro actuel ?',
@@ -71,14 +70,15 @@ export const ARTISANS: { fr: ZeroAppelText; en: ZeroAppelText } = {
         q: 'Mes clients sauront-ils que c’est une IA ?',
         a: 'Oui. L’assistant se présente dès le début comme un assistant automatisé qui prend le message pour vous. Vos clients savent à qui ils parlent, et c’est vous qui les rappelez.',
       },
+      FAQ_TIA.fr,
       FAQ_ARRET.fr,
     ],
     finalTitle: 'Le prochain appel, vous ne le manquerez pas.',
   },
   en: {
     ...COMMUN.en,
-    eyebrow: 'For building tradespeople',
-    titleLead: 'Zero missed calls ',
+    eyebrow: 'Tia · for building tradespeople',
+    titleLead: 'No more lost calls ',
     titleAccent: 'on your job sites.',
     moments: ['UP A LADDER', 'UNDER A SINK', 'ON THE ROAD', 'WITH A CLIENT'],
     persona: {
@@ -91,7 +91,7 @@ export const ARTISANS: { fr: ZeroAppelText; en: ZeroAppelText } = {
       ],
     },
     subtitle:
-      'When your hands are full, an AI assistant picks up for you, takes down the request and sends it to you by text message or WhatsApp.',
+      'When your hands are full, Tia, your AI assistant, picks up for you, takes down the request and sends it to you by text message or WhatsApp.',
     steps: [
       { title: 'A customer calls', text: 'You are on a job site, up a ladder or with a client: you can’t answer.' },
       {
@@ -124,16 +124,16 @@ export const ARTISANS: { fr: ZeroAppelText; en: ZeroAppelText } = {
     },
     smsNote: 'Illustration only: the name, address and number are fictitious.',
     tiaText:
-      'Tia is Herakia’s voice assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. Yours will work the same way, set up for your trade, your area and your hours.',
+      'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your trade, your area and your hours.',
     andyNote:
       'I set up the assistant with you: how it introduces your business, what to ask depending on the job, and where to send the summary. After that, I’m the one you call.',
-    roiTitle: 'One recovered job pays for the setup',
-    roiText: (setup) =>
-      `An unanswered call is often a customer who moves on to the next name on their list. It only takes one of those calls turning into a job to cover the ${setup} setup.`,
-    faq: (setup, monthly) => [
+    roiTitle: 'One recovered job pays for a year of Tia',
+    roiText: (monthly) =>
+      `An unanswered call is often a customer who moves on to the next name on their list. It only takes one of those calls turning into a job to pay for more than a year of Tia at ${monthly} a month.`,
+    faq: (monthly) => [
       {
         q: 'How much does it cost?',
-        a: `From ${setup} setup, then ${monthly} per month, with no commitment. The exact price depends on your needs${SHOW_QUOTE_FOLLOWUP ? ' (for example automatic follow-up of quotes)' : ''} and is given to you before we start.`,
+        a: `From ${monthly} per month excl. VAT, with no setup fee and no commitment. Tia opens soon: join the waiting list to be the first to know. The exact price depends on your needs and is given to you before we start.`,
       },
       {
         q: 'Does it work with my current number?',
@@ -143,6 +143,7 @@ export const ARTISANS: { fr: ZeroAppelText; en: ZeroAppelText } = {
         q: 'Will my customers know it’s an AI?',
         a: 'Yes. The assistant introduces itself from the start as an automated assistant taking a message for you. Your customers know who they are talking to, and you are the one who calls them back.',
       },
+      FAQ_TIA.en,
       FAQ_ARRET.en,
     ],
     finalTitle: 'You won’t miss the next call.',

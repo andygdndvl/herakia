@@ -1,11 +1,11 @@
-import type { ZeroAppelText } from '@/components/metiers/ZeroAppelLanding';
-import { COMMUN, FAQ_ARRET } from '@/components/metiers/textes/commun';
+import type { TiaLandingText } from '@/components/metiers/TiaLanding';
+import { COMMUN, FAQ_ARRET, FAQ_TIA } from '@/components/metiers/textes/commun';
 
 /** Écoles et organismes de formation. */
-export const ENSEIGNEMENT: { fr: ZeroAppelText; en: ZeroAppelText } = {
+export const ENSEIGNEMENT: { fr: TiaLandingText; en: TiaLandingText } = {
   fr: {
     ...COMMUN.fr,
-    eyebrow: 'Pour les écoles et organismes de formation',
+    eyebrow: 'Tia · pour les écoles et organismes de formation',
     titleLead: 'Chaque candidat rappelé, ',
     titleAccent: 'même pendant les cours.',
     moments: ['EN COURS', 'EN ENTRETIEN D’ADMISSION', 'EN SALON ÉTUDIANT', 'EN PORTES OUVERTES'],
@@ -19,7 +19,7 @@ export const ENSEIGNEMENT: { fr: ZeroAppelText; en: ZeroAppelText } = {
       ],
     },
     subtitle:
-      'Quand l’équipe est en cours, en jury ou en salon, un assistant IA décroche, note le projet du candidat ou du parent et vous l’envoie par SMS ou WhatsApp.',
+      'Quand l’équipe est en cours, en jury ou en salon, Tia, votre assistante IA, décroche, note le projet du candidat ou du parent et vous l’envoie par SMS ou WhatsApp.',
     steps: [
       {
         title: 'Un candidat appelle',
@@ -58,16 +58,16 @@ export const ENSEIGNEMENT: { fr: ZeroAppelText; en: ZeroAppelText } = {
     },
     smsNote: 'Maquette d’illustration : le nom, le projet et le numéro sont fictifs.',
     tiaText:
-      'Tia est l’assistante vocale d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Celui de votre école suivra le même principe, réglé sur vos formations, vos campus et vos horaires.',
+      'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos formations, vos campus et vos horaires.',
     andyNote:
       'Je règle l’assistant avec vous : comment il présente l’école, les questions à poser à un candidat ou à un parent, et à quel chargé d’admission envoyer le résumé. Ensuite, c’est moi que vous appelez.',
-    roiTitle: 'Une inscription récupérée rembourse l’installation',
-    roiText: (setup) =>
-      `En période d’inscriptions, un candidat contacte plusieurs écoles. S’il tombe sur la messagerie, il appelle la suivante. Il suffit qu’un seul de ces appels devienne une inscription pour couvrir les ${setup} d’installation.`,
-    faq: (setup, monthly) => [
+    roiTitle: 'Une inscription récupérée paie Tia pour l’année',
+    roiText: (monthly) =>
+      `En période d’inscriptions, un candidat contacte plusieurs écoles. S’il tombe sur la messagerie, il appelle la suivante. Il suffit qu’un seul de ces appels devienne une inscription pour payer plus d’un an de Tia à ${monthly} par mois.`,
+    faq: (monthly) => [
       {
         q: 'Combien ça coûte ?',
-        a: `Dès ${setup} d’installation, puis ${monthly} par mois, sans engagement. Le prix exact dépend de votre établissement (nombre de lignes, nombre de campus) et vous est donné avant de démarrer.`,
+        a: `Dès ${monthly} HT par mois, sans frais d’installation ni engagement. Tia ouvre bientôt : inscrivez-vous sur la liste d’attente pour être prévenu en premier. Le prix exact dépend de votre établissement (nombre de lignes, nombre de campus) et vous est donné avant de démarrer.`,
       },
       {
         q: 'Est-ce que ça s’installe sur le numéro de l’école ?',
@@ -81,13 +81,14 @@ export const ENSEIGNEMENT: { fr: ZeroAppelText; en: ZeroAppelText } = {
         q: 'Les candidats sauront-ils que c’est une IA ?',
         a: 'Oui. L’assistant se présente dès le début comme un assistant automatisé qui prend le message pour l’école. Candidats et parents savent à qui ils parlent, et c’est votre équipe qui les rappelle.',
       },
+      FAQ_TIA.fr,
       FAQ_ARRET.fr,
     ],
     finalTitle: 'Le prochain candidat qui appelle, c’est vous qui le rappelez.',
   },
   en: {
     ...COMMUN.en,
-    eyebrow: 'For schools and training providers',
+    eyebrow: 'Tia · for schools and training providers',
     titleLead: 'Every applicant called back, ',
     titleAccent: 'even during class.',
     moments: ['IN CLASS', 'IN AN ADMISSIONS INTERVIEW', 'AT AN EDUCATION FAIR', 'AT AN OPEN DAY'],
@@ -101,7 +102,7 @@ export const ENSEIGNEMENT: { fr: ZeroAppelText; en: ZeroAppelText } = {
       ],
     },
     subtitle:
-      'When the team is teaching, on an admissions panel or at a fair, an AI assistant picks up, notes the applicant’s or parent’s plans and sends them to you by text message or WhatsApp.',
+      'When the team is teaching, on an admissions panel or at a fair, Tia, your AI assistant, picks up, notes the applicant’s or parent’s plans and sends them to you by text message or WhatsApp.',
     steps: [
       {
         title: 'An applicant calls',
@@ -140,16 +141,16 @@ export const ENSEIGNEMENT: { fr: ZeroAppelText; en: ZeroAppelText } = {
     },
     smsNote: 'Illustration only: the name, plan and number are fictitious.',
     tiaText:
-      'Tia is Herakia’s voice assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. Your school’s will work the same way, set up for your programmes, your campuses and your hours.',
+      'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your programmes, your campuses and your hours.',
     andyNote:
       'I set up the assistant with you: how it introduces the school, what to ask an applicant or a parent, and which admissions officer gets the summary. After that, I’m the one you call.',
-    roiTitle: 'One recovered enrolment pays for the setup',
-    roiText: (setup) =>
-      `During admissions season, an applicant contacts several schools. If they reach voicemail, they call the next one. It only takes one of those calls turning into an enrolment to cover the ${setup} setup.`,
-    faq: (setup, monthly) => [
+    roiTitle: 'One recovered enrolment pays for a year of Tia',
+    roiText: (monthly) =>
+      `During admissions season, an applicant contacts several schools. If they reach voicemail, they call the next one. It only takes one of those calls turning into an enrolment to pay for more than a year of Tia at ${monthly} a month.`,
+    faq: (monthly) => [
       {
         q: 'How much does it cost?',
-        a: `From ${setup} setup, then ${monthly} per month, with no commitment. The exact price depends on your institution (number of lines, number of campuses) and is given to you before we start.`,
+        a: `From ${monthly} per month excl. VAT, with no setup fee and no commitment. Tia opens soon: join the waiting list to be the first to know. The exact price depends on your institution (number of lines, number of campuses) and is given to you before we start.`,
       },
       {
         q: 'Does it work with the school’s number?',
@@ -163,6 +164,7 @@ export const ENSEIGNEMENT: { fr: ZeroAppelText; en: ZeroAppelText } = {
         q: 'Will applicants know it’s an AI?',
         a: 'Yes. The assistant introduces itself from the start as an automated assistant taking a message for the school. Applicants and parents know who they are talking to, and your team calls them back.',
       },
+      FAQ_TIA.en,
       FAQ_ARRET.en,
     ],
     finalTitle: 'The next applicant who calls is the one you call back.',

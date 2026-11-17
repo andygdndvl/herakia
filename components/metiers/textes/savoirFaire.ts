@@ -1,6 +1,6 @@
 import type { MetierSlug } from '@/lib/metiers';
 
-/** Le savoir-faire mobilisé : `telephone` = l'offre « Zéro appel manqué », les autres = pages /services/<id>. */
+/** Le savoir-faire mobilisé : `telephone` = Tia, les autres = pages /services/<id>. */
 export type Savoir = 'telephone' | 'workflows' | 'agents' | 'llm' | 'data';
 
 export interface CasMetier {

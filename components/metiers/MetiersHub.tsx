@@ -29,7 +29,7 @@ import { useLang, localize } from '@/components/i18n/LangProvider';
 import { prefersReducedMotion, useReveal, useTextReveal } from '@/lib/anim';
 import { trackEvent } from '@/lib/gtag';
 import { METIERS, type MetierSlug } from '@/lib/metiers';
-import { PRICE_SETUP, euros } from '@/lib/offreArtisans';
+import { PRICE_MONTHLY, euros } from '@/lib/offreTia';
 
 const METIER_ICONS: Record<MetierSlug, LucideIcon> = {
   artisans: HardHat,
@@ -57,20 +57,20 @@ const TEXT = {
       'Assistant téléphonique, agents IA, automatisations, réponses à vos clients, données remises d’aplomb : choisissez votre métier pour voir ce qu’on peut prendre en charge.',
     ctaPick: 'Choisir mon métier',
     ctaProject: 'Démarrer un projet',
-    chips: ['Prêt à installer ou sur mesure', 'Diagnostic offert'],
+    chips: ['Tia dès 79 €/mois ou sur mesure', 'Diagnostic offert'],
     windowLabel: 'Pris en charge',
     showMetier: (label: string) => `Voir l’exemple : ${label}`,
     tabsEyebrow: 'Choisissez votre métier',
     tabsTitle: 'Il parle la langue de votre métier.',
-    ready: (price: string) => `Prêt à installer · dès ${price}`,
+    ready: (price: string) => `Bientôt · dès ${price}/mois`,
     custom: 'Sur mesure',
-    seeAssistant: 'Voir l’assistant téléphonique',
+    seeAssistant: 'Voir Tia pour mon métier',
     seeService: 'Voir ce savoir-faire',
     talk: 'Parler de mon cas',
     savoirEyebrow: 'Nos savoir-faire',
     savoirTitle: 'Six façons de vous rendre du temps.',
     savoirs: [
-      { id: 'telephone', title: 'Zéro appel manqué', text: 'Un assistant téléphonique prêt à installer, réglé pour votre métier.', href: '/offres' },
+      { id: 'telephone', title: 'Tia, votre super-agent IA', text: 'Elle répond au téléphone et aux messages, prend vos rendez-vous et relance vos devis.', href: '/offres' },
       { id: 'workflows', title: 'Vos process qui tournent seuls', text: 'Vos outils dialoguent, vos tâches répétitives disparaissent.', href: '/services/workflows' },
       { id: 'agents', title: 'Un assistant taillé pour votre métier', text: 'La capacité d’un collaborateur, sans le recrutement.', href: '/services/agents' },
       { id: 'llm', title: 'Vos clients répondus, 24/7', text: 'Une IA qui connaît votre entreprise et parle à vos clients.', href: '/services/llm' },
@@ -91,20 +91,20 @@ const TEXT = {
       'Phone assistant, AI agents, automations, answers for your customers, data put back in order: choose your line of work to see what we can take on.',
     ctaPick: 'Choose my line of work',
     ctaProject: 'Start a project',
-    chips: ['Ready to install or bespoke', 'Free assessment'],
+    chips: ['Tia from €79/month or bespoke', 'Free assessment'],
     windowLabel: 'Taken care of',
     showMetier: (label: string) => `Show the example: ${label}`,
     tabsEyebrow: 'Choose your line of work',
     tabsTitle: 'It speaks the language of your trade.',
-    ready: (price: string) => `Ready to install · from ${price}`,
+    ready: (price: string) => `Soon · from ${price}/month`,
     custom: 'Bespoke',
-    seeAssistant: 'See the phone assistant',
+    seeAssistant: 'See Tia for my line of work',
     seeService: 'See this expertise',
     talk: 'Talk about my case',
     savoirEyebrow: 'What we do',
     savoirTitle: 'Six ways to give you back your time.',
     savoirs: [
-      { id: 'telephone', title: 'Zero missed calls', text: 'A ready-to-install phone assistant, set up for your line of work.', href: '/offres' },
+      { id: 'telephone', title: 'Tia, your AI super-agent', text: 'She answers calls and messages, books your appointments and follows up on your quotes.', href: '/offres' },
       { id: 'workflows', title: 'Processes that run themselves', text: 'Your tools talk to each other, your repetitive tasks disappear.', href: '/services/workflows' },
       { id: 'agents', title: 'An assistant built for your business', text: 'The capacity of an extra team member, without the hiring.', href: '/services/agents' },
       { id: 'llm', title: 'Your customers answered, 24/7', text: 'An AI that knows your business and talks to your customers.', href: '/services/llm' },
@@ -431,7 +431,7 @@ function Tabs({ t, tab, setTab }: { t: T; tab: MetierSlug; setTab: (s: MetierSlu
                             ready ? 'bg-green-primary text-on-green' : 'border border-border-strong text-text-muted'
                           }`}
                         >
-                          {ready ? t.ready(euros(PRICE_SETUP, lang)) : t.custom}
+                          {ready ? t.ready(euros(PRICE_MONTHLY, lang)) : t.custom}
                         </span>
                         {c.proof && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-signal-late/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-signal-late">

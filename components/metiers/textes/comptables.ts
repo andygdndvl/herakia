@@ -1,10 +1,10 @@
-import type { ZeroAppelText } from '@/components/metiers/ZeroAppelLanding';
-import { COMMUN, FAQ_ARRET } from '@/components/metiers/textes/commun';
+import type { TiaLandingText } from '@/components/metiers/TiaLanding';
+import { COMMUN, FAQ_ARRET, FAQ_TIA } from '@/components/metiers/textes/commun';
 
-export const COMPTABLES: { fr: ZeroAppelText; en: ZeroAppelText } = {
+export const COMPTABLES: { fr: TiaLandingText; en: TiaLandingText } = {
   fr: {
     ...COMMUN.fr,
-    eyebrow: 'Pour les cabinets d’expertise comptable',
+    eyebrow: 'Tia · pour les cabinets d’expertise comptable',
     titleLead: 'Chaque appel décroché, ',
     titleAccent: 'même en période fiscale.',
     moments: ['EN RENDEZ-VOUS CLIENT', 'EN CLÔTURE DE BILAN', 'EN PLEINE TVA', 'EN RÉUNION D’ASSOCIÉS'],
@@ -18,7 +18,7 @@ export const COMPTABLES: { fr: ZeroAppelText; en: ZeroAppelText } = {
       ],
     },
     subtitle:
-      'Quand vous êtes en rendez-vous ou plongé dans un bilan, un assistant IA décroche à votre place, note qui appelle et pourquoi, et vous l’envoie par SMS ou WhatsApp.',
+      'Quand vous êtes en rendez-vous ou plongé dans un bilan, Tia, votre assistante IA, décroche à votre place, note qui appelle et pourquoi, et vous l’envoie par SMS ou WhatsApp.',
     steps: [
       {
         title: 'Un client appelle',
@@ -57,16 +57,16 @@ export const COMPTABLES: { fr: ZeroAppelText; en: ZeroAppelText } = {
     },
     smsNote: 'Maquette d’illustration : le nom, le projet et le numéro sont fictifs.',
     tiaText:
-      'Tia est l’assistante vocale d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Celui de votre cabinet suivra le même principe, réglé sur vos missions, vos clients et vos horaires.',
+      'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos missions, vos clients et vos horaires.',
     andyNote:
       'Je règle l’assistant avec vous : comment il présente le cabinet, les questions à poser à un client ou à un nouveau contact, et à qui envoyer le résumé. Ensuite, c’est moi que vous appelez.',
-    roiTitle: 'Une lettre de mission signée rembourse l’installation',
-    roiText: (setup) =>
-      `Un chef d’entreprise qui cherche un expert-comptable contacte souvent plusieurs cabinets. S’il tombe sur la messagerie, il appelle le suivant. Il suffit qu’un seul de ces appels devienne une lettre de mission pour couvrir les ${setup} d’installation.`,
-    faq: (setup, monthly) => [
+    roiTitle: 'Une lettre de mission signée paie Tia pour l’année',
+    roiText: (monthly) =>
+      `Un chef d’entreprise qui cherche un expert-comptable contacte souvent plusieurs cabinets. S’il tombe sur la messagerie, il appelle le suivant. Il suffit qu’un seul de ces appels devienne une lettre de mission pour payer plus d’un an de Tia à ${monthly} par mois.`,
+    faq: (monthly) => [
       {
         q: 'Combien ça coûte ?',
-        a: `Dès ${setup} d’installation, puis ${monthly} par mois, sans engagement. Le prix exact dépend de votre cabinet (nombre de lignes, nombre de collaborateurs) et vous est donné avant de démarrer.`,
+        a: `Dès ${monthly} HT par mois, sans frais d’installation ni engagement. Tia ouvre bientôt : inscrivez-vous sur la liste d’attente pour être prévenu en premier. Le prix exact dépend de votre cabinet (nombre de lignes, nombre de collaborateurs) et vous est donné avant de démarrer.`,
       },
       {
         q: 'Est-ce que ça s’installe sur le numéro du cabinet ?',
@@ -84,13 +84,14 @@ export const COMPTABLES: { fr: ZeroAppelText; en: ZeroAppelText } = {
         q: 'Vos clients sauront-ils que c’est une IA ?',
         a: 'Oui. L’assistant se présente dès le début comme un assistant automatisé qui prend le message pour le cabinet. Vos clients savent à qui ils parlent, et c’est vous qui les rappelez.',
       },
+      FAQ_TIA.fr,
       FAQ_ARRET.fr,
     ],
     finalTitle: 'Le prochain client qui appelle, c’est vous qui le rappelez.',
   },
   en: {
     ...COMMUN.en,
-    eyebrow: 'For accounting firms',
+    eyebrow: 'Tia · for accounting firms',
     titleLead: 'Every call answered, ',
     titleAccent: 'even at tax time.',
     moments: ['IN A CLIENT MEETING', 'CLOSING THE BOOKS', 'DURING VAT RETURNS', 'IN A PARTNERS’ MEETING'],
@@ -104,7 +105,7 @@ export const COMPTABLES: { fr: ZeroAppelText; en: ZeroAppelText } = {
       ],
     },
     subtitle:
-      'When you are in a meeting or deep in a year-end close, an AI assistant picks up for you, notes who is calling and why, and sends it to you by text message or WhatsApp.',
+      'When you are in a meeting or deep in a year-end close, Tia, your AI assistant, picks up for you, notes who is calling and why, and sends it to you by text message or WhatsApp.',
     steps: [
       {
         title: 'A client calls',
@@ -143,16 +144,16 @@ export const COMPTABLES: { fr: ZeroAppelText; en: ZeroAppelText } = {
     },
     smsNote: 'Illustration only: the name, project and number are fictitious.',
     tiaText:
-      'Tia is Herakia’s voice assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. Your firm’s will work the same way, set up for your services, your clients and your hours.',
+      'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your services, your clients and your hours.',
     andyNote:
       'I set up the assistant with you: how it introduces the firm, what to ask a client or a new enquiry, and who gets the summary. After that, I’m the one you call.',
-    roiTitle: 'One signed engagement letter pays for the setup',
-    roiText: (setup) =>
-      `A business owner looking for an accountant often contacts several firms. If they reach voicemail, they call the next one. It only takes one of those calls turning into an engagement to cover the ${setup} setup.`,
-    faq: (setup, monthly) => [
+    roiTitle: 'One signed engagement letter pays for a year of Tia',
+    roiText: (monthly) =>
+      `A business owner looking for an accountant often contacts several firms. If they reach voicemail, they call the next one. It only takes one of those calls turning into an engagement to pay for more than a year of Tia at ${monthly} a month.`,
+    faq: (monthly) => [
       {
         q: 'How much does it cost?',
-        a: `From ${setup} setup, then ${monthly} per month, with no commitment. The exact price depends on your firm (number of lines, number of staff) and is given to you before we start.`,
+        a: `From ${monthly} per month excl. VAT, with no setup fee and no commitment. Tia opens soon: join the waiting list to be the first to know. The exact price depends on your firm (number of lines, number of staff) and is given to you before we start.`,
       },
       {
         q: 'Does it work with the firm’s number?',
@@ -170,6 +171,7 @@ export const COMPTABLES: { fr: ZeroAppelText; en: ZeroAppelText } = {
         q: 'Will your clients know it’s an AI?',
         a: 'Yes. The assistant introduces itself from the start as an automated assistant taking a message for the firm. Your clients know who they are talking to, and you are the one who calls them back.',
       },
+      FAQ_TIA.en,
       FAQ_ARRET.en,
     ],
     finalTitle: 'The next client who calls is the one you call back.',

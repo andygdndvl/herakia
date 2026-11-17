@@ -74,8 +74,10 @@ const TEXT = {
       message: 'Décrivez votre besoin en au moins 20 caractères.',
     },
     serviceOptions: [
-      // Une option par page métier (lib/metiers.ts), pour savoir d'où vient la demande.
-      ...METIERS.map((m) => ({ value: m.offerId, label: `Zéro appel manqué (${m.label.fr.toLowerCase()})` })),
+      // Liste d'attente de Tia : une option générale (page Offres) et une par page métier
+      // (lib/metiers.ts), pour savoir d'où vient la demande.
+      { value: 'tia', label: 'Tia, liste d’attente' },
+      ...METIERS.map((m) => ({ value: m.offerId, label: `Tia, liste d’attente (${m.label.fr.toLowerCase()})` })),
       { value: 'audit-diagnostic', label: 'Audit & Diagnostic' },
       { value: 'agents-ia', label: "Mise en place d'agents IA" },
       { value: 'systeme-automatise', label: "Création d'un système automatisé complet" },
@@ -124,7 +126,8 @@ const TEXT = {
       message: 'Describe your need in at least 20 characters.',
     },
     serviceOptions: [
-      ...METIERS.map((m) => ({ value: m.offerId, label: `Zero missed calls (${m.label.en.toLowerCase()})` })),
+      { value: 'tia', label: 'Tia, waiting list' },
+      ...METIERS.map((m) => ({ value: m.offerId, label: `Tia, waiting list (${m.label.en.toLowerCase()})` })),
       { value: 'audit-diagnostic', label: 'Audit & Assessment' },
       { value: 'agents-ia', label: 'AI Agent Implementation' },
       { value: 'systeme-automatise', label: 'Complete Automated System' },

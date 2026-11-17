@@ -1,15 +1,15 @@
-import type { ZeroAppelText } from '@/components/metiers/ZeroAppelLanding';
-import { COMMUN, FAQ_ARRET } from '@/components/metiers/textes/commun';
+import type { TiaLandingText } from '@/components/metiers/TiaLanding';
+import { COMMUN, FAQ_ARRET, FAQ_TIA } from '@/components/metiers/textes/commun';
 
 /**
  * Santé : l'assistant ne donne jamais d'avis médical et oriente toute urgence vers le 15 (le 112
  * en anglais). Aucune promesse d'hébergement certifié : le traitement des données se décide avec
  * le cabinet avant l'installation.
  */
-export const SANTE: { fr: ZeroAppelText; en: ZeroAppelText } = {
+export const SANTE: { fr: TiaLandingText; en: TiaLandingText } = {
   fr: {
     ...COMMUN.fr,
-    eyebrow: 'Pour les cabinets de santé',
+    eyebrow: 'Tia · pour les cabinets de santé',
     titleLead: 'Chaque patient entendu, ',
     titleAccent: 'même en consultation.',
     moments: ['EN CONSULTATION', 'EN VISITE À DOMICILE', 'PENDANT UN SOIN', 'APRÈS LA FERMETURE'],
@@ -23,7 +23,7 @@ export const SANTE: { fr: ZeroAppelText; en: ZeroAppelText } = {
       ],
     },
     subtitle:
-      'Quand vous êtes en consultation et que le secrétariat est déjà en ligne, un assistant IA décroche, prend le message du patient et vous l’envoie par SMS ou WhatsApp.',
+      'Quand vous êtes en consultation et que le secrétariat est déjà en ligne, Tia, votre assistante IA, décroche, prend le message du patient et vous l’envoie par SMS ou WhatsApp.',
     steps: [
       {
         title: 'Un patient appelle',
@@ -65,13 +65,13 @@ export const SANTE: { fr: ZeroAppelText; en: ZeroAppelText } = {
     },
     smsNote: 'Maquette d’illustration : le nom, le motif et le numéro sont fictifs.',
     tiaText:
-      'Tia est l’assistante vocale d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Celui de votre cabinet suivra le même principe, réglé sur vos consultations, vos consignes et vos horaires.',
+      'Tia est l’assistante IA d’Herakia. Parlez-lui depuis cette page : vous entendrez sa voix, sa façon d’écouter et de reformuler. Chez vous, elle sera réglée sur vos consultations, vos consignes et vos horaires.',
     andyNote:
       'Je règle l’assistant avec vous : comment il présente le cabinet, ce qu’il demande au patient et ce qu’il ne dit jamais, et à qui envoyer le résumé. Ensuite, c’est moi que vous appelez.',
     roiTitle: 'Moins d’interruptions, plus aucun patient sans réponse',
     roiText: () =>
       'Chaque appel pris par l’assistant, c’est une consultation que vous n’interrompez pas, et un patient qui n’a pas à rappeler trois fois. Le message vous arrive trié : nouveau patient ou patient suivi, motif, disponibilités.',
-    faq: (setup, monthly) => [
+    faq: (monthly) => [
       {
         q: 'Est-ce que l’assistant donne des conseils médicaux ?',
         a: 'Non, jamais. Il prend le message et le transmet. En cas d’urgence, il demande d’appeler le 15. C’est vous qui décidez de la suite.',
@@ -86,19 +86,20 @@ export const SANTE: { fr: ZeroAppelText; en: ZeroAppelText } = {
       },
       {
         q: 'Combien ça coûte ?',
-        a: `Dès ${setup} d’installation, puis ${monthly} par mois, sans engagement. Le prix exact dépend de votre cabinet (nombre de lignes, nombre de praticiens) et vous est donné avant de démarrer.`,
+        a: `Dès ${monthly} HT par mois, sans frais d’installation ni engagement. Tia ouvre bientôt : inscrivez-vous sur la liste d’attente pour être prévenu en premier. Le prix exact dépend de votre cabinet (nombre de lignes, nombre de praticiens) et vous est donné avant de démarrer.`,
       },
       {
         q: 'Est-ce que ça s’installe sur le numéro du cabinet ?',
         a: 'Oui, vous gardez votre numéro. On met en place un renvoi d’appel vers l’assistant quand personne ne répond ou que la ligne est occupée. Vos patients composent le même numéro qu’avant.',
       },
+      FAQ_TIA.fr,
       FAQ_ARRET.fr,
     ],
     finalTitle: 'Le prochain patient qui appelle aura une réponse.',
   },
   en: {
     ...COMMUN.en,
-    eyebrow: 'For healthcare practices',
+    eyebrow: 'Tia · for healthcare practices',
     titleLead: 'Every patient heard, ',
     titleAccent: 'even during consultations.',
     moments: ['IN A CONSULTATION', 'ON A HOME VISIT', 'DURING TREATMENT', 'AFTER HOURS'],
@@ -112,7 +113,7 @@ export const SANTE: { fr: ZeroAppelText; en: ZeroAppelText } = {
       ],
     },
     subtitle:
-      'When you are with a patient and the front desk is already on the phone, an AI assistant picks up, takes the patient’s message and sends it to you by text message or WhatsApp.',
+      'When you are with a patient and the front desk is already on the phone, Tia, your AI assistant, picks up, takes the patient’s message and sends it to you by text message or WhatsApp.',
     steps: [
       {
         title: 'A patient calls',
@@ -154,13 +155,13 @@ export const SANTE: { fr: ZeroAppelText; en: ZeroAppelText } = {
     },
     smsNote: 'Illustration only: the name, reason and number are fictitious.',
     tiaText:
-      'Tia is Herakia’s voice assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. Your practice’s will work the same way, set up for your consultations, your instructions and your hours.',
+      'Tia is Herakia’s AI assistant. Talk to her from this page: you’ll hear her voice and how she listens and rephrases. With you, she will be set up for your consultations, your instructions and your hours.',
     andyNote:
       'I set up the assistant with you: how it introduces the practice, what it asks patients and what it never says, and who gets the summary. After that, I’m the one you call.',
     roiTitle: 'Fewer interruptions, no patient left without an answer',
     roiText: () =>
       'Every call the assistant takes is a consultation you don’t interrupt, and a patient who doesn’t have to call three times. The message reaches you sorted: new or existing patient, reason, availability.',
-    faq: (setup, monthly) => [
+    faq: (monthly) => [
       {
         q: 'Does the assistant give medical advice?',
         a: 'No, never. It takes the message and passes it on. If it is urgent, it tells the caller to dial the emergency number. You decide what happens next.',
@@ -175,12 +176,13 @@ export const SANTE: { fr: ZeroAppelText; en: ZeroAppelText } = {
       },
       {
         q: 'How much does it cost?',
-        a: `From ${setup} setup, then ${monthly} per month, with no commitment. The exact price depends on your practice (number of lines, number of practitioners) and is given to you before we start.`,
+        a: `From ${monthly} per month excl. VAT, with no setup fee and no commitment. Tia opens soon: join the waiting list to be the first to know. The exact price depends on your practice (number of lines, number of practitioners) and is given to you before we start.`,
       },
       {
         q: 'Does it work with the practice’s number?',
         a: 'Yes, you keep your number. We set up call forwarding to the assistant when nobody answers or the line is busy. Your patients dial the same number as before.',
       },
+      FAQ_TIA.en,
       FAQ_ARRET.en,
     ],
     finalTitle: 'The next patient who calls will get an answer.',

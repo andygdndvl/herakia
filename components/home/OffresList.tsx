@@ -1,14 +1,14 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, Check, Phone } from 'lucide-react';
+import { ArrowRight, Check, Phone, TrendingUp } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useLang, localize } from '@/components/i18n/LangProvider';
 import { trackEvent } from '@/lib/gtag';
 import { SmsExample } from '@/components/metiers/SmsExample';
-import { METIERS } from '@/lib/metiers';
-import { PRICE_MONTHLY, PRICE_SETUP, SHOW_QUOTE_FOLLOWUP, demoHref, euros } from '@/lib/offreArtisans';
+import { PRICE_MONTHLY, demoHref, euros } from '@/lib/offreTia';
 
 /**
  * Prix d'orientation des formules sur mesure (« projets typiques dès … »), en euros. Ce sont des
@@ -16,6 +16,11 @@ import { PRICE_MONTHLY, PRICE_SETUP, SHOW_QUOTE_FOLLOWUP, demoHref, euros } from
  */
 const PRICE_AGENTS_FROM = 1500;
 const PRICE_SYSTEM_FROM = 4000;
+/** Mensualités d'orientation (hébergement, suivi, maintenance), affichées « dès ». */
+const PRICE_AGENTS_MONTHLY = 99;
+const PRICE_SYSTEM_MONTHLY = 250;
+/** Repère salarié de la carte Agents : coût mensuel chargé d'un(e) assistant(e), calculé par nos soins. */
+const EMPLOYEE_MONTHLY_COST = 2800;
 
 interface Formule {
   id: string;
@@ -27,39 +32,49 @@ interface Formule {
    *  conservé ici tant qu'Andy n'a pas tranché entre le supprimer et le replacer ailleurs. */
   description: string;
   features: string[];
-  priceLines: string[];
+  /** Montant principal (« Dès 1 500 € », « Offert »). */
+  price: string;
+  /** Mensualité, affichée sous le montant principal. */
+  monthly?: string;
+  /** Petite note sous les montants (HT, projets typiques…). */
+  priceNote: string;
+  /** Repère de comparaison (coût d'un salarié), sous le prix. */
+  benchmark?: string;
+  /** Preuve client, sous le prix. */
+  proof?: string;
   highlighted: boolean;
 }
 
 const TEXT = {
   fr: {
     badge: 'Nos formules',
-    titleLead: 'Des formules ',
-    titleAccent: 'prêtes à installer',
-    titleTail: ', ou construites sur mesure.',
+    titleLead: 'Un agent ',
+    titleAccent: 'prêt à l’emploi',
+    titleTail: ', ou un projet sur mesure.',
     subtitle:
       "De l'audit initial au système complet, chaque formule est calibrée sur votre organisation — jamais un produit sur étagère.",
-    highlightBadge: 'Recommandé',
-    cta: 'Démarrer un projet',
-    readyTitle: 'Prêt à installer',
-    readyIntro: 'Une solution déjà au point, réglée pour votre métier.',
+    highlightBadge: 'Conseillé pour démarrer',
+    cta: 'Réserver mon audit gratuit',
+    readyTitle: 'Prêt à l’emploi',
+    readyIntro: 'Un seul agent pour le téléphone, les messages, les rendez-vous et les relances.',
     customTitle: 'Sur mesure',
     customIntro: 'Pour aller plus loin : un projet conçu avec vous, à partir de votre organisation.',
-    zam: {
-      badge: 'Nouveauté',
-      title: 'Zéro appel manqué',
-      pitch: 'Quand vous ne pouvez pas répondre, votre téléphone est décroché.',
-      price: (setup: string, monthly: string) => `Dès ${setup} + ${monthly}/mois`,
-      priceNote: 'installation + abonnement, sans engagement',
+    tia: {
+      badge: 'Bientôt · liste d’attente ouverte',
+      title: 'Tia',
+      avatarAlt: 'Tia, le super-agent IA d’Herakia',
+      pitch: 'Le super-agent IA qui répond, planifie et relance à votre place.',
+      price: (monthly: string) => `Dès ${monthly}/mois`,
+      priceNote: 'HT · sans frais d’installation, sans engagement',
       features: [
-        "Un assistant IA décroche quand vous ne pouvez pas répondre",
-        "Il pose les bonnes questions selon votre métier : qui appelle, pourquoi, quand rappeler",
-        `Déjà réglé pour : ${METIERS.map((m) => m.label.fr.toLowerCase()).join(', ')}`,
-        'Vous recevez un résumé par SMS ou WhatsApp',
-        ...(SHOW_QUOTE_FOLLOWUP ? ['En option : relance automatique des devis sans réponse'] : []),
+        'Répond au téléphone 24 h/24 et vous envoie un résumé de chaque appel',
+        'Répond à vos messages : WhatsApp, e-mail, chat de votre site',
+        'Prend les rendez-vous directement dans votre agenda',
+        'Relance vos devis sans réponse et vos factures impayées',
+        'Réglée pour votre métier : les bonnes questions, votre ton, vos horaires',
       ],
-      demo: 'Écouter la démo',
-      more: 'Voir par métier',
+      waitlist: 'Rejoindre la liste d’attente',
+      demo: 'Parler à Tia',
     },
     includedTitle: 'Inclus dans toutes les formules',
     included: [
@@ -81,7 +96,8 @@ const TEXT = {
           'Estimation chiffrée du gain, piste par piste',
           'Feuille de route priorisée, remise en main propre',
         ],
-        priceLines: ['Offert', 'Sans engagement de la suite'],
+        price: 'Offert',
+        priceNote: 'Sans engagement de la suite',
         highlighted: false,
       },
       {
@@ -97,8 +113,12 @@ const TEXT = {
           'Fonctionne en continu, y compris le soir et le week-end',
           'Vous gardez le contrôle : il agit dans le cadre que vous fixez',
         ],
-        priceLines: [`Dès ${euros(PRICE_AGENTS_FROM, 'fr')}`, 'Projets typiques, + mensualités'],
-        highlighted: false,
+        price: `Dès ${euros(PRICE_AGENTS_FROM, 'fr')}`,
+        monthly: `+ dès ${euros(PRICE_AGENTS_MONTHLY, 'fr')}/mois`,
+        priceNote: 'HT · projets typiques',
+        benchmark: `Pour comparer : un(e) assistant(e) salarié(e) coûte environ ${euros(EMPLOYEE_MONTHLY_COST, 'fr')} par mois, charges comprises.`,
+        proof: "Chez IPSSI : des dizaines d'heures de saisie supprimées chaque semaine.",
+        highlighted: true,
       },
       {
         id: 'systeme',
@@ -113,39 +133,42 @@ const TEXT = {
           'Intégration avec vos outils existants si nécessaire (CRM, facturation, mails…)',
           'Suivi, maintenance et évolutions après la mise en production',
         ],
-        priceLines: [`Dès ${euros(PRICE_SYSTEM_FROM, 'fr')}`, 'Projets typiques, + mensualités'],
+        price: `Dès ${euros(PRICE_SYSTEM_FROM, 'fr')}`,
+        monthly: `+ dès ${euros(PRICE_SYSTEM_MONTHLY, 'fr')}/mois`,
+        priceNote: 'HT · projets typiques',
         highlighted: false,
       },
     ],
   },
   en: {
     badge: 'Our plans',
-    titleLead: 'Plans ',
-    titleAccent: 'ready to install',
-    titleTail: ', or built to measure.',
+    titleLead: 'An agent ',
+    titleAccent: 'ready to use',
+    titleTail: ', or a bespoke project.',
     subtitle:
       'From the initial assessment to the full system, every plan is calibrated to your organisation — never off-the-shelf.',
-    highlightBadge: 'Recommended',
-    cta: 'Start a project',
-    readyTitle: 'Ready to install',
-    readyIntro: 'A proven solution, set up for your line of work.',
+    highlightBadge: 'Suggested starting point',
+    cta: 'Book my free audit',
+    readyTitle: 'Ready to use',
+    readyIntro: 'One agent for calls, messages, appointments and follow-ups.',
     customTitle: 'Bespoke',
     customIntro: 'To go further: a project designed with you, around your organisation.',
-    zam: {
-      badge: 'New',
-      title: 'Zero missed calls',
-      pitch: 'When you can’t answer, your phone still gets picked up.',
-      price: (setup: string, monthly: string) => `From ${setup} + ${monthly}/month`,
-      priceNote: 'setup + subscription, no commitment',
+    tia: {
+      badge: 'Coming soon · waiting list open',
+      title: 'Tia',
+      avatarAlt: 'Tia, Herakia’s AI super-agent',
+      pitch: 'The AI super-agent that answers, schedules and follows up for you.',
+      price: (monthly: string) => `From ${monthly}/month`,
+      priceNote: 'excl. VAT · no setup fee, no commitment',
       features: [
-        "An AI assistant picks up when you can't answer",
-        'It asks the right questions for your line of work: who is calling, why, when to call back',
-        `Already set up for: ${METIERS.map((m) => m.label.en.toLowerCase()).join(', ')}`,
-        'You get a summary by text message or WhatsApp',
-        ...(SHOW_QUOTE_FOLLOWUP ? ['Optional: automatic follow-up of unanswered quotes'] : []),
+        'Answers the phone 24/7 and sends you a summary of every call',
+        'Answers your messages: WhatsApp, email, your website chat',
+        'Books appointments straight into your calendar',
+        'Follows up on unanswered quotes and unpaid invoices',
+        'Set up for your line of work: the right questions, your tone, your hours',
       ],
-      demo: 'Hear the demo',
-      more: 'See by line of work',
+      waitlist: 'Join the waiting list',
+      demo: 'Talk to Tia',
     },
     includedTitle: 'Included in every plan',
     included: [
@@ -167,7 +190,8 @@ const TEXT = {
           'A costed estimate of the gain, avenue by avenue',
           'A prioritised roadmap, handed over to you',
         ],
-        priceLines: ['Free', 'No commitment to go further'],
+        price: 'Free',
+        priceNote: 'No commitment to go further',
         highlighted: false,
       },
       {
@@ -183,8 +207,12 @@ const TEXT = {
           'Works around the clock, evenings and weekends included',
           'You stay in control: it acts within the boundaries you set',
         ],
-        priceLines: [`From ${euros(PRICE_AGENTS_FROM, 'en')}`, 'Typical projects, + monthly fee'],
-        highlighted: false,
+        price: `From ${euros(PRICE_AGENTS_FROM, 'en')}`,
+        monthly: `+ from ${euros(PRICE_AGENTS_MONTHLY, 'en')}/month`,
+        priceNote: 'excl. VAT · typical projects',
+        benchmark: `For comparison: a salaried assistant costs around ${euros(EMPLOYEE_MONTHLY_COST, 'en')} a month, employer charges included.`,
+        proof: 'At IPSSI: dozens of hours of data entry removed every week.',
+        highlighted: true,
       },
       {
         id: 'systeme',
@@ -199,7 +227,9 @@ const TEXT = {
           'Integration with your existing tools where useful (CRM, invoicing, email…)',
           'Ongoing support, maintenance and improvements after launch',
         ],
-        priceLines: [`From ${euros(PRICE_SYSTEM_FROM, 'en')}`, 'Typical projects, + monthly fee'],
+        price: `From ${euros(PRICE_SYSTEM_FROM, 'en')}`,
+        monthly: `+ from ${euros(PRICE_SYSTEM_MONTHLY, 'en')}/month`,
+        priceNote: 'excl. VAT · typical projects',
         highlighted: false,
       },
     ],
@@ -212,7 +242,6 @@ export function OffresList() {
   const formules: Formule[] = t.formules.map((f) => ({
     ...f,
     features: [...f.features],
-    priceLines: [...f.priceLines],
   }));
 
   return (
@@ -256,9 +285,9 @@ export function OffresList() {
         </div>
       </section>
 
-      {/* Prêt à installer : l'offre d'entrée, déclinée par métier (lib/metiers.ts). Large et
-          en deux colonnes sur ordinateur (promesse et prix à gauche, contenu et boutons à droite),
-          empilée sur mobile. Les valeurs (prix, délai, numéro) viennent de lib/offreArtisans.ts. */}
+      {/* Prêt à l'emploi : Tia, l'offre d'entrée (liste d'attente tant qu'elle n'est pas ouverte).
+          Large et en deux colonnes sur ordinateur (promesse et prix à gauche, contenu et boutons à
+          droite), empilée sur mobile. Prix et numéro de démo viennent de lib/offreTia.ts. */}
       <section aria-labelledby="offres-ready" className="relative px-6 pb-20 pt-4 lg:px-8">
         <SectionHeading id="offres-ready" title={t.readyTitle} intro={t.readyIntro} compact />
         <motion.div
@@ -269,21 +298,36 @@ export function OffresList() {
           className="relative mx-auto grid max-w-5xl gap-8 rounded-3xl border border-green-primary/45 [grid-template-areas:'head'_'list'_'sms'] md:[grid-template-areas:'head_list'_'sms_list'] bg-bg-secondary bg-[radial-gradient(120%_70%_at_50%_0%,rgb(var(--green-primary)/0.16),rgb(var(--green-primary)/0.04)_60%)] px-5 py-9 shadow-[0_24px_60px_-28px_rgb(var(--green-primary)/0.35)] sm:px-7 md:grid-cols-[1fr_1.1fr] md:gap-x-12 md:gap-y-8 md:px-10"
         >
           <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-green-primary px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-on-green">
-            {t.zam.badge}
+            {t.tia.badge}
           </span>
 
           {/* Mobile : en-tête, liste, boutons, puis l'exemple de SMS. Ordinateur : en-tête et SMS à
               gauche, liste et boutons à droite. */}
           <div className="[grid-area:head]">
-            <h3 className="font-display text-2xl font-semibold leading-tight tracking-[-0.015em] text-text-primary md:text-[2rem]">
-              {t.zam.title}
-            </h3>
-            <p className="mt-3 font-sans text-base leading-snug text-green-primary md:text-lg">{t.zam.pitch}</p>
+            <div className="flex items-center gap-4">
+              <div className="relative h-16 w-16 shrink-0 md:h-20 md:w-20">
+                <Image
+                  src="/tia-avatar.png"
+                  alt={t.tia.avatarAlt}
+                  fill
+                  sizes="80px"
+                  className="rounded-full object-cover object-top ring-2 ring-green-primary/60 ring-offset-2 ring-offset-bg-secondary"
+                />
+                <span
+                  className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full border-2 border-bg-secondary bg-green-primary"
+                  aria-hidden="true"
+                />
+              </div>
+              <h3 className="font-display text-2xl font-semibold leading-tight tracking-[-0.015em] text-text-primary md:text-[2rem]">
+                {t.tia.title}
+              </h3>
+            </div>
+            <p className="mt-3 font-sans text-base leading-snug text-green-primary md:text-lg">{t.tia.pitch}</p>
             <div className="mt-6 border-y border-border-subtle py-4">
               <p className="whitespace-nowrap font-display text-[clamp(1.45rem,6.4vw,2.25rem)] font-bold leading-none tracking-[-0.02em] text-green-primary">
-                {t.zam.price(euros(PRICE_SETUP, lang), euros(PRICE_MONTHLY, lang))}
+                {t.tia.price(euros(PRICE_MONTHLY, lang))}
               </p>
-              <p className="mt-2 font-sans text-sm text-text-muted">{t.zam.priceNote}</p>
+              <p className="mt-2 font-sans text-sm text-text-muted">{t.tia.priceNote}</p>
             </div>
           </div>
 
@@ -291,7 +335,7 @@ export function OffresList() {
 
           <div className="flex flex-col [grid-area:list]">
             <ul className="flex-1 space-y-3.5">
-              {t.zam.features.map((feature) => (
+              {t.tia.features.map((feature) => (
                 <li key={feature} className="flex items-start gap-3">
                   <Check className="mt-1 h-4 w-4 shrink-0 text-green-primary" />
                   <span className="font-sans text-base leading-snug text-text-primary/85">{feature}</span>
@@ -300,33 +344,32 @@ export function OffresList() {
             </ul>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button
-                href={demoHref(lang)}
+                href={`${localize(lang, '/contact')}?offre=tia`}
                 variant="primary"
+                size="md"
+                className="whitespace-nowrap sm:flex-[1.4]"
+                onClick={() => trackEvent('offer_click', { location: 'offres', offer: 'tia' })}
+              >
+                {t.tia.waitlist}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button
+                href={demoHref(lang)}
+                variant="secondary"
                 size="md"
                 className="sm:flex-1"
                 onClick={() => trackEvent('demo_click', { location: 'offres' })}
               >
                 <Phone className="h-4 w-4" />
-                {t.zam.demo}
-              </Button>
-              <Button
-                href={localize(lang, '/metiers')}
-                variant="secondary"
-                size="md"
-                className="sm:flex-1"
-                onClick={() => trackEvent('offer_click', { location: 'offres', offer: 'zero-appel-manque' })}
-              >
-                {t.zam.more}
-                <ArrowRight className="h-4 w-4" />
+                {t.tia.demo}
               </Button>
             </div>
           </div>
         </motion.div>
       </section>
 
-      {/* Sur mesure : les trois formules d'origine, à égalité depuis que le badge « Recommandé »
-          est passé à l'offre prête à installer. Le style « allumé » reste disponible via
-          `highlighted` si une formule redevient la recommandée. */}
+      {/* Sur mesure : les trois formules d'origine. La carte Agents est « allumée » comme point de
+          départ conseillé (`highlighted`) ; toutes mènent à l'audit gratuit, vrai point d'entrée. */}
       <section aria-labelledby="offres-custom" className="relative px-6 pb-16 lg:px-8">
         <SectionHeading id="offres-custom" title={t.customTitle} intro={t.customIntro} />
         <div className="mx-auto grid max-w-6xl items-stretch gap-6 md:grid-cols-3">
@@ -339,7 +382,7 @@ export function OffresList() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={`relative flex flex-col rounded-3xl border transition-colors duration-300 ${
                 formule.highlighted
-                  ? 'border-green-primary/45 bg-bg-secondary bg-[radial-gradient(120%_70%_at_50%_0%,rgb(var(--green-primary)/0.16),rgb(var(--green-primary)/0.04)_60%)] px-7 py-10 shadow-[0_24px_60px_-28px_rgb(var(--green-primary)/0.35)] md:px-8'
+                  ? 'border-green-primary/45 bg-bg-secondary bg-[radial-gradient(120%_70%_at_50%_0%,rgb(var(--green-primary)/0.16),rgb(var(--green-primary)/0.04)_60%)] px-6 py-8 shadow-[0_24px_60px_-28px_rgb(var(--green-primary)/0.35)] md:px-7'
                   : 'border-border-subtle bg-white/[0.02] px-6 py-8 hover:border-border-strong md:px-7'
               }`}
             >
@@ -373,12 +416,29 @@ export function OffresList() {
                     formule.highlighted ? 'text-green-primary' : 'text-text-primary'
                   }`}
                 >
-                  {formule.priceLines[0]}
+                  {formule.price}
                 </p>
-                {formule.priceLines[1] && (
-                  <p className="mt-1.5 font-sans text-xs text-text-muted">{formule.priceLines[1]}</p>
+                {formule.monthly && (
+                  <p className="mt-2 font-display text-lg font-semibold leading-none tracking-[-0.01em] text-text-primary/85">
+                    {formule.monthly}
+                  </p>
                 )}
+                <p className="mt-2 font-sans text-xs text-text-muted">{formule.priceNote}</p>
               </div>
+
+              {(formule.benchmark || formule.proof) && (
+                <div className="mt-4 space-y-2.5">
+                  {formule.benchmark && (
+                    <p className="font-sans text-xs leading-snug text-text-muted">{formule.benchmark}</p>
+                  )}
+                  {formule.proof && (
+                    <p className="flex items-start gap-2 rounded-xl border border-green-primary/25 bg-green-primary/[0.06] px-3 py-2 font-sans text-xs leading-snug text-text-primary/85">
+                      <TrendingUp className="mt-px h-3.5 w-3.5 shrink-0 text-green-primary" />
+                      {formule.proof}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <ul className="mt-5 flex-1 space-y-3">
                 {formule.features.map((feature) => (
@@ -394,6 +454,7 @@ export function OffresList() {
                 variant={formule.highlighted ? 'primary' : 'secondary'}
                 size="md"
                 className="mt-8 w-full"
+                onClick={() => trackEvent('offer_click', { location: 'offres', offer: formule.id })}
               >
                 {t.cta}
               </Button>

@@ -16,7 +16,7 @@ const TEXT = {
 const ROTATE_MS = 4500;
 
 /**
- * Maquette du résumé reçu après un appel, sur la carte « Zéro appel manqué » de la page Offres.
+ * Maquette du résumé reçu après un appel, sur la carte Tia de la page Offres.
  * Elle passe d'un métier à l'autre (résumés des pages métiers, lib/metiers.ts) ; en mouvement
  * réduit, elle reste sur le premier. Toujours marquée « Exemple » : les données sont fictives.
  */
